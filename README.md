@@ -1,4 +1,4 @@
-# Welcome to StackEdit!
+# xGetter!
 
 ရုပ်ရှင်နဲ့ Video App ဖန်တီးချင်သူတွေအနေနဲ့ အသုံးဝင်မယ့် Lib လေးတစ်ခုဖန်တီးပေးထားပါတယ်။
 Video တွေကို အကန့်အသတ်မရှိ Free တင်လို့ရပြီး ကြည့်တဲ့အချိန်မှာကြော်ငြာအရမ်းတက်တဲ့
@@ -59,8 +59,9 @@ Lib နာမည်ကိုတော့ **xGetter** လို့ပဲပေး
             });
 
 အသုံးပြုရတာလည်းလွယ်ပါတယ် :)
-Example APK => http://bit.ly/2TDvLQ2
-Example Project => http://bit.ly/2Sr6Hiw
-Repo => https://github.com/KhunHtetzNaing/xGetter
+
+ - Example APK => http://bit.ly/2TDvLQ2
+ - Example Project => http://bit.ly/2Sr6Hiw
+ - Repo => https://github.com/KhunHtetzNaing/xGetter
 
 #HtetzNaing #XGetter #2019
