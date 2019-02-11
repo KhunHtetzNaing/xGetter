@@ -1,10 +1,13 @@
-package com.htetznaing.megaupdownload;
+package com.htetznaing.xgetterexample;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.htetznaing.xgetter.XGetter;
 
@@ -41,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private void letGo(String url){
         progressDialog.show();
         org = url;
-        xGetter.find(url);
+        if (checkInternet()) {
+            xGetter.find(url);
+        }
     }
 
     public void openload(View view) {
@@ -70,5 +75,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void rapidvideo(View view) {
         letGo("https://www.rapidvideo.com/v/FY1NF585GW");
+    }
+
+    public boolean checkInternet(){
+        boolean what = false;
+        CheckInternet checkNet = new CheckInternet(this);
+        if (checkNet.isInternetOn()){
+            what = true;
+        }else{
+            what = false;
+            Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
+        }
+        return what;
     }
 }

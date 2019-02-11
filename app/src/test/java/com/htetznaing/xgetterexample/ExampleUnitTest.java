@@ -1,4 +1,4 @@
-package com.htetznaing.megaupdownload;
+package com.htetznaing.xgetterexample;
 
 import org.junit.Test;
 
