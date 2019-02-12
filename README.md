@@ -12,8 +12,8 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 ကိုယ်ပိုင် Player နဲ့တိုက်ရိုက်ပြမလား
 အဆင်ပြေသလိုအသုံးချနိုင်ပါတယ်။
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
-**Openload**
-**Streamango**
+- **Openload**
+- **Streamango**
 **MegaUp**
 **Streamcherry**
 **RapidVideo**
