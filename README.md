@@ -14,12 +14,12 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
 - **Openload**
 - **Streamango**
-**MegaUp**
-**Streamcherry**
-**RapidVideo**
-**Mp4Upload**
-**VidCloud**
-**SendVid**
+- **MegaUp**
+- **Streamcherry**
+- **RapidVideo**
+- **Mp4Upload**
+- **VidCloud**
+- **SendVid**
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
 အခြားအခမဲ့ Video တင်လို့ရတဲ့ Site တွေကိုလည်းထပ်ဖြည့်ပေးသွားပါ့မယ် :)
