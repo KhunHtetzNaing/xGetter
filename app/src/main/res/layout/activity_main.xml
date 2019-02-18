@@ -1,69 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ScrollView
+    <RelativeLayout
+        android:layout_marginTop="3dp"
+        android:padding="5dp"
+        android:gravity="center"
+        android:id="@+id/head"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
+        <Button
+            android:onClick="fetch"
+            android:id="@+id/btn_fetch"
+            android:layout_alignParentRight="true"
+            android:text="Fetch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/edit_query"
+            android:hint="Enter your url"
+            android:singleLine="true"
+            android:layout_marginRight="3dp"
+            android:layout_toLeftOf="@id/btn_fetch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/main"
+        android:layout_below="@id/head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:padding="16dp"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:autoLink="all"
-                android:id="@+id/test"
+            <LinearLayout
+                android:padding="3dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content">
 
-            <Button
-                android:onClick="openload"
-                android:text="Openload"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <Button
+                    android:onClick="openload"
+                    android:text="Openload"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-            <Button
-                android:onClick="streamango"
-                android:text="Streamango"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <Button
+                    android:onClick="streamango"
+                    android:text="Streamango"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-            <Button
-                android:onClick="streamcherry"
-                android:text="Streamcherry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <Button
+                    android:onClick="streamcherry"
+                    android:text="Streamcherry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-            <Button
-                android:onClick="megaup"
-                android:text="MegaUp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <Button
+                    android:onClick="megaup"
+                    android:text="MegaUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-            <Button
-                android:onClick="mp4upload"
-                android:text="Mp4Upload"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <Button
+                    android:onClick="mp4upload"
+                    android:text="Mp4Upload"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-            <Button
-                android:onClick="vidcloud"
-                android:text="VidCloud"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            </LinearLayout>
 
-            <Button
-                android:onClick="rapidvideo"
-                android:text="RapidVideo"
+            <LinearLayout
+                android:padding="3dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:onClick="vidcloud"
+                    android:text="VidCloud"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="rapidvideo"
+                    android:text="RapidVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="gdrive"
+                    android:text="Google Drive"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="gphotos"
+                    android:text="Google Photos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:onClick="fb"
+                    android:text="Facebook"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+    <TextView
+        android:layout_margin="5dp"
+        android:layout_below="@id/main"
+        android:id="@+id/dev"
+        android:onClick="dev"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="Developed By Khun Htetz Naing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
