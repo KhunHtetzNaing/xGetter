@@ -4,7 +4,158 @@
 [![](https://jitpack.io/v/KhunHtetzNaing/XGetter.svg)](https://jitpack.io/#KhunHtetzNaing/XGetter)
 
   
+**#Zawgyi**
 
+႐ုပ္ရွင္နဲ႔ Video App ဖန္တီးခ်င္သူေတြအေနနဲ႔
+
+အသုံးဝင္မယ့္ Lib ေလးတစ္ခုဖန္တီးေပးထားပါတယ္။
+
+Video ေတြကို အကန္႔အသတ္မရွိ Free တင္လို႔ရၿပီး
+
+ၾကည့္တဲ့အခ်ိန္မွာေၾကာ္ျငာအရမ္းတက္တဲ့
+
+Openload, Streamango တို႔လိုလင့္ေတြကေန
+
+ေၾကာ္ျငာၾကည့္စရာမလိုပဲ
+
+တိုက္႐ိုက္ေဒါင္းဖို႔လင့္ဆြဲထုတ္ေပးႏိုင္တဲ့ေကာင္ေလးပါ။
+
+ရလာတဲ့လင့္ကို တိုက္႐ိုက္ေဒါင္းမလား
+
+ကိုယ္ပိုင္ Player နဲ႔တိုက္႐ိုက္ျပမလား
+
+အဆင္ေျပသလိုအသုံးခ်ႏိုင္ပါတယ္။
+
+ေလာလာဆယ္ပါဝင္တဲ့ Site ေတြကေတာ့
+- **Facebook**
+
+- **Google Drive**
+
+- **Google Photos**
+
+-  **Openload**
+
+-  **Streamango**
+
+-  **MegaUp**
+
+-  **Streamcherry**
+
+-  **RapidVideo**
+
+-  **Mp4Upload**
+
+-  **VidCloud**
+
+-  **SendVid**
+
+တို႔ပဲျဖစ္ပါတယ္။
+
+ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
+
+အျခားအခမဲ့ Video တင္လို႔ရတဲ့ Site ေတြကိုလည္းထပ္ျဖည့္ေပးသြားပါ့မယ္ :)
+
+အဲ့ေတာ့ Video Sharing App အတြက္ Host ဝယ္စရာမလိုေတာ့ဘူးေလေနာ္ ;)
+
+Lib နာမည္ကိုေတာ့ **xGetter** လို႔ပဲေပးထားပါတယ္။
+
+  
+
+အသုံးျပဳနည္း
+
+===========
+
+ပထမဦးဆုံး **build.gradle(project)** ထဲက
+
+  
+
+    allprojects {
+    
+    repositories {
+    
+    .......
+    
+    maven { url 'https://jitpack.io' } //ဒီကုဒ္ေလးထည့္ေပးပါ။
+    
+    }
+    
+    }
+
+  
+
+ၿပီးရင္ **build.gradle(app)** ထဲက
+
+  
+
+    dependencies {
+    
+    .........
+    
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.2'
+    
+    }
+
+  
+
+**Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
+
+**​AIDE** သမားဆိုရင္ေတာ့ **Save** ၿပီး **Download** လုပ္ခိုင္းရင္လုပ္ေပးပါ။
+
+**မွတ္ခ်က္။ ။အင္တာနက္ဖြင့္ထားဖို႔လိုပါမယ္**
+
+  
+
+ၿပီးရင္ေတာ့ကိုယ္ေခၚခ်င္တဲ့ Activity ကေန
+
+  
+
+    XGetter xGetter = new XGetter(this);
+    
+    xGetter.onFinish(new XGetter.OnTaskCompleted() {
+    
+    @Override
+    
+    public void onTaskCompleted(String vidURL) {
+    
+    // တိုက္႐ိုက္လင့္က vidURL
+    
+    }
+    
+    @Override  
+    public void onFbTaskCompleted(String sd, String hd) {  
+        //Facebook လင့္ျဖစ္ပါက ဒီထဲမွာ HD, SD ျပန္ရလာမည္
+    }
+    
+    @Override
+    
+    public void onError() {
+    
+    // Error
+    
+    }
+    
+    });
+    
+    xGetter.find("Video လင့္");
+
+  
+
+အသုံးျပဳရတာလည္းလြယ္ပါတယ္ :)
+
+  
+
+- Example APK => http://bit.ly/2TDvLQ2
+
+- Example Project => http://bit.ly/2Sr6Hiw
+
+- Repo => https://github.com/KhunHtetzNaing/xGetter
+
+  
+
+#HtetzNaing #XGetter #2019
+
+##
+**#Unicode**
 ရုပ်ရှင်နဲ့ Video App ဖန်တီးချင်သူတွေအနေနဲ့
 
 အသုံးဝင်မယ့် Lib လေးတစ်ခုဖန်တီးပေးထားပါတယ်။
