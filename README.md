@@ -68,17 +68,17 @@ Lib နာမည်ကိုတော့ **xGetter** လို့ပဲပေး
 
   
 
-allprojects {
-
-repositories {
-
-.......
-
-maven { url 'https://jitpack.io' } //ဒီကုဒ်လေးထည့်ပေးပါ။
-
-}
-
-}
+    allprojects {
+    
+    repositories {
+    
+    .......
+    
+    maven { url 'https://jitpack.io' } //ဒီကုဒ်လေးထည့်ပေးပါ။
+    
+    }
+    
+    }
 
   
 
@@ -86,13 +86,13 @@ maven { url 'https://jitpack.io' } //ဒီကုဒ်လေးထည့်ပ�
 
   
 
-dependencies {
-
-.........
-
-implementation 'com.github.KhunHtetzNaing:xGetter:1.2'
-
-}
+    dependencies {
+    
+    .........
+    
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.2'
+    
+    }
 
   
 
@@ -108,34 +108,34 @@ implementation 'com.github.KhunHtetzNaing:xGetter:1.2'
 
   
 
-XGetter xGetter = new XGetter(this);
-
-xGetter.onFinish(new XGetter.OnTaskCompleted() {
-
-@Override
-
-public void onTaskCompleted(String vidURL) {
-
-// တိုက်ရိုက်လင့်က vidURL
-
-}
-
-@Override  
-public void onFbTaskCompleted(String sd, String hd) {  
-    //Facebook လင့်ဖြစ်ပါက ဒီထဲမှာ HD, SD ပြန်ရလာမည်
-}
-
-@Override
-
-public void onError() {
-
-// Error
-
-}
-
-});
-
-xGetter.find("Video လင့္");
+    XGetter xGetter = new XGetter(this);
+    
+    xGetter.onFinish(new XGetter.OnTaskCompleted() {
+    
+    @Override
+    
+    public void onTaskCompleted(String vidURL) {
+    
+    // တိုက်ရိုက်လင့်က vidURL
+    
+    }
+    
+    @Override  
+    public void onFbTaskCompleted(String sd, String hd) {  
+        //Facebook လင့်ဖြစ်ပါက ဒီထဲမှာ HD, SD ပြန်ရလာမည်
+    }
+    
+    @Override
+    
+    public void onError() {
+    
+    // Error
+    
+    }
+    
+    });
+    
+    xGetter.find("Video လင့္");
 
   
 
