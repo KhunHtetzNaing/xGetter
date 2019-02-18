@@ -1,7 +1,7 @@
 
 # xGetter Library for Android!
 
-[![](https://jitpack.io/v/KhunHtetzNaing/xGetter.svg)](https://jitpack.io/#KhunHtetzNaing/xGetter)
+[![](https://jitpack.io/v/KhunHtetzNaing/XGetter.svg)](https://jitpack.io/#KhunHtetzNaing/XGetter)
 
   
 
