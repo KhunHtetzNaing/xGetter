@@ -227,9 +227,16 @@ Lib နာမည်ကိုတော့ **xGetter** လို့ပဲပေး
     
     maven { url 'https://jitpack.io' } //ဒီကုဒ်လေးထည့်ပေးပါ။
     
+<<<<<<< HEAD
+=======
+    }
+    
+>>>>>>> 626d7e556a80e7d614213c7bfced89f760d83d83
     }
     
     }
+
+  
 
   
 
@@ -293,6 +300,17 @@ Lib နာမည်ကိုတော့ **xGetter** လို့ပဲပေး
 အသုံးပြုရတာလည်းလွယ်ပါတယ် :)
 
   
+<<<<<<< HEAD
+=======
+
+- Example APK => http://bit.ly/2TDvLQ2
+
+- Example Project => http://bit.ly/2Sr6Hiw
+
+- Repo => https://github.com/KhunHtetzNaing/xGetter
+
+  
+>>>>>>> 626d7e556a80e7d614213c7bfced89f760d83d83
 
 - Example APK => http://bit.ly/2TDvLQ2
 
