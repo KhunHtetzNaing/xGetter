@@ -38,13 +38,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTaskCompleted(final String vidURL) {
                 progressDialog.dismiss();
-                done("Input\n"+org+"\n\nResult\n"+vidURL);
+                if (vidURL!=null) {
+                    done("Input\n" + org + "\n\nResult\n" + vidURL);
+                }else done("ERROR");
             }
 
             @Override
             public void onFbTaskCompleted(String sd, String hd) {
                 progressDialog.dismiss();
-                done("Input\n"+org+"\n\nHD\n"+hd+"\n\nSD\n"+sd);
+                if (sd!=null || hd!=null) {
+                    done("Input\n" + org + "\n\nHD\n" + hd + "\n\nSD\n" + sd);
+                }else done("ERROR");
             }
 
             @Override
@@ -119,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void done(String message){
-        System.out.printf(message);
         View view = getLayoutInflater().inflate(R.layout.done,null);
         TextView textView = view.findViewById(R.id.message);
         textView.setText(message);
