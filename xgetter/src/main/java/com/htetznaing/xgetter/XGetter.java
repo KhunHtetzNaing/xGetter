@@ -190,11 +190,11 @@ public class XGetter {
             //gdrive
             run = true;
             url = "https://drive.google.com/uc?id="+get_drive_id(url)+"&export=download";
-        }else if (check_fb_video(url)!=null){
+        }else if (check_fb_video(url)){
             //fb
             run = true;
             fb = true;
-            url = "https://www.facebook.com/video.php?v="+check_fb_video(url);
+//            url = "https://www.facebook.com/video.php?v="+check_fb_video(url);
         }
 
         if (run) {
@@ -208,26 +208,13 @@ public class XGetter {
         }else onComplete.onError();
     }
 
-    private String check_fb_video(String url){
+    private boolean check_fb_video(String url){
         final Pattern pattern = Pattern.compile(fb);
         final Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
-            String s = matcher.group(1);
-            if (s!=null) {
-                if (s.contains("v=")) {
-                    s = s.substring(s.indexOf("v=") + 2);
-                } else if (s.contains("vb.")) {
-                    for (int i = 1; i <= matcher.groupCount(); i++) {
-                        String temp = matcher.group(i);
-                        if (isNumber(temp)) {
-                            s = temp;
-                        }
-                    }
-                }
-                return s;
-            }
+            return true;
         }
-        return null;
+        return false;
     }
 
     private boolean isNumber(String str){
@@ -245,30 +232,51 @@ public class XGetter {
     }
 
     private void gphotoORfb(String url, final boolean fb){
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (fb){
-                    onComplete.onFbTaskCompleted(getFbLink(response,false),getFbLink(response,true));
-                }else {
-                    onComplete.onTaskCompleted(getGPhotoLink(response));
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                onComplete.onError();
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("User-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
-                return headers;
-            }
-        };
+        final String data = url;
+        if (url!=null) {
+            int method = Request.Method.GET;
 
-        Volley.newRequestQueue(context).add(request);
+            if (fb){
+                method = Request.Method.POST;
+                url = "https://fbdown.net/download.php";
+            }
+
+            StringRequest request = new StringRequest(method, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    if (fb) {
+                        onComplete.onFbTaskCompleted(getFbLink(response, false), getFbLink(response, true));
+                    } else {
+                        onComplete.onTaskCompleted(getGPhotoLink(response));
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onComplete.onError();
+                }
+            }) {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    if (fb) {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("URLz", data);
+                        return params;
+                    }
+                    return super.getParams();
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("User-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+                    return headers;
+                }
+            };
+
+            Volley.newRequestQueue(context).add(request);
+        }else onComplete.onError();
     }
 
     private String getGPhotoLink(String string){
@@ -287,16 +295,25 @@ public class XGetter {
         return null;
     }
 
-    private String getFbLink(String source,boolean hdquality){
-        String s=source;
-        String q=(hdquality?"hd_src:\"":"sd_src:\"");
-        int idx=s.indexOf(q);
-        if(idx!=-1){
-            s=s.substring(idx+q.length());
-            return s.substring(0,s.indexOf("\""));
-        }else{
-            return null;
+    private String getFbLink(String source,boolean hd){
+        if (source!=null) {
+            String end = "download=";
+            String start = (hd ? "id=\"hdlink\"" : "id=\"sdlink\"");
+            int idx = source.indexOf(start);
+            if (idx != -1) {
+                source = source.substring(idx + start.length());
+                String string = source.substring(0, source.indexOf(end));
+                if (string != null) {
+                    final String regex = "href=\"(.*?)\"";
+                    final Pattern pattern = Pattern.compile(regex);
+                    final Matcher matcher = pattern.matcher(string);
+                    if (matcher.find()) {
+                        return matcher.group(1).replace("&amp;","&");
+                    }
+                }
+            }
         }
+        return null;
     }
 
     private boolean check(String regex,String string){

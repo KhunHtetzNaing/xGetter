@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.htetznaing.xgetter.XGetter;
+import com.htetznaing.xgetterexample.Player.MyExoPlayer;
 
 public class MainActivity extends AppCompatActivity {
     XGetter xGetter;
@@ -39,22 +40,22 @@ public class MainActivity extends AppCompatActivity {
             public void onTaskCompleted(final String vidURL) {
                 progressDialog.dismiss();
                 if (vidURL!=null) {
-                    done("Input\n" + org + "\n\nResult\n" + vidURL);
-                }else done("ERROR");
+                    done(vidURL,null,null,false,false);
+                }else done(null,null,null,false,true);
             }
 
             @Override
             public void onFbTaskCompleted(String sd, String hd) {
                 progressDialog.dismiss();
                 if (sd!=null || hd!=null) {
-                    done("Input\n" + org + "\n\nHD\n" + hd + "\n\nSD\n" + sd);
-                }else done("ERROR");
+                    done(null,sd,hd,true,false);
+                }else done(null,null,null,false,true);
             }
 
             @Override
             public void onError() {
                 progressDialog.dismiss();
-                done("ERROR");
+                done(null,null,null,false,true);
             }
         });
 
@@ -122,14 +123,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void done(String message){
+    public void done(final String url, final String sd, final String hd, boolean fb, boolean error){
+        String message = null;
+        if (!error){
+            if (!fb) {
+                message = "Input\n" + org + "\n\nResult\n" + url;
+            }else message = "Input\n" + org + "\n\nHD\n" + hd + "\n\nSD\n" + sd;
+        }else message = "ERROR";
+
         View view = getLayoutInflater().inflate(R.layout.done,null);
         TextView textView = view.findViewById(R.id.message);
         textView.setText(message);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Done")
-                .setView(view)
-                .setPositiveButton("OK",null);
+                .setView(view);
+        if (!error) {
+            if (!fb) {
+                builder.setPositiveButton("Stream", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
+                        intent.putExtra("url", url);
+                        startActivity(intent);
+                    }
+                });
+            } else builder.setPositiveButton("SD", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
+                    intent.putExtra("url", sd);
+                    startActivity(intent);
+                }
+            })
+                    .setNegativeButton("HD", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
+                            intent.putExtra("url", hd);
+                            startActivity(intent);
+                        }
+                    });
+        }else builder.setPositiveButton("OK",null);
         builder.show();
     }
 
@@ -190,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("About")
                 .setView(view)
-                .setPositiveButton("OK",null);
+                .setPositiveButton("Stream", null);
         builder.show();
     }
 }
