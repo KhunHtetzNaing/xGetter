@@ -3,8 +3,10 @@ package com.htetznaing.xgetter;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.webkit.ConsoleMessage;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -35,6 +37,7 @@ public class XGetter {
     private WebView webView;
     private Context context;
     private OnTaskCompleted onComplete;
+    private final String agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
     private final String openload = "https?:\\/\\/(www\\.)?(openload|oload)\\.[^\\/,^\\.]{2,}\\/(embed|f)\\/.+";
     private final String fruits = "https?:\\/\\/(www\\.)?(streamango|fruitstreams|streamcherry|fruitadblock|fruithosts)\\.[^\\/,^\\.]{2,}\\/(f|embed)\\/.+";
     private final String megaup = "https?:\\/\\/(www\\.)?(megaup)\\.[^\\/,^\\.]{2,}\\/.+";
@@ -44,10 +47,10 @@ public class XGetter {
     private final String rapidvideo = "https?:\\/\\/(www\\.)?rapidvideo\\.[^\\/,^\\.]{2,}\\/(\\?v=[^&\\?]*|e\\/.+|v\\/.+)";
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
     private final String fb = "(?:https?://)?(?:www.|web.|m.)?facebook.com/(?:video.php\\?v=\\d+|photo.php\\?v=\\d+|\\?v=\\d+)|\\S+/videos/((\\S+)/(\\d+)|(\\d+))/?";
+    private final String mediafire = "https?:\\/\\/(www\\.)?(mediafire)\\.[^\\/,^\\.]{2,}\\/(file)\\/.+";
 
     public XGetter(Context view) {
         this.context=view;
-        init();
     }
 
     private void init(){
@@ -75,6 +78,13 @@ public class XGetter {
                 onComplete.onTaskCompleted(url);
             }
         });
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                System.out.println(consoleMessage.message());
+                return super.onConsoleMessage(consoleMessage);
+            }
+        });
     }
 
     class xJavascriptInterface {
@@ -92,46 +102,49 @@ public class XGetter {
     private void letFuck(WebView view) {
             String encoded = "LyoKICAgICAgICB4R2V0dGVyCiAgICAgICAgICBCeQogICAgS2h1biBIdGV0eiBOYWluZyBbZmIu\n" +
                     "Y29tL0tIdGV0ek5haW5nXQpSZXBvID0+IGh0dHBzOi8vZ2l0aHViLmNvbS9LaHVuSHRldHpOYWlu\n" +
-                    "Zy94R2V0dGVyCgoqLwoKdmFyIG9wZW5sb2FkID0gL2h0dHBzPzpcL1wvKHd3d1wuKT8ob3Blbmxv\n" +
-                    "YWR8b2xvYWQpXC5bXlwvLF5cLl17Mix9XC8oZW1iZWR8ZilcLy4rL2ksCiAgICBzdHJlYW0gPSAv\n" +
-                    "aHR0cHM/OlwvXC8od3d3XC4pPyhzdHJlYW1hbmdvfGZydWl0c3RyZWFtc3xzdHJlYW1jaGVycnl8\n" +
-                    "ZnJ1aXRhZGJsb2NrfGZydWl0aG9zdHMpXC5bXlwvLF5cLl17Mix9XC8oZnxlbWJlZClcLy4rL2ks\n" +
-                    "CiAgICBtZWdhdXAgPSAvaHR0cHM/OlwvXC8od3d3XC4pPyhtZWdhdXApXC5bXlwvLF5cLl17Mix9\n" +
-                    "XC8uKy9pLAogICAgbXA0dXBsb2FkID0gL2h0dHBzPzpcL1wvKHd3d1wuKT9tcDR1cGxvYWRcLlte\n" +
-                    "XC8sXlwuXXsyLH1cL2VtYmVkXC0uKy9pLAogICAgc2VuZHZpZCA9IC9odHRwcz86XC9cLyh3d3dc\n" +
-                    "Lik/KHNlbmR2aWQpXC5bXlwvLF5cLl17Mix9XC8uKy9pLAogICAgdmlkY2xvdWQgPSAvaHR0cHM/\n" +
-                    "OlwvXC8od3d3XC4pPyh2aWRjbG91ZHx2Y3N0cmVhbXxsb2FkdmlkKVwuW15cLyxeXC5dezIsfVwv\n" +
-                    "ZW1iZWRcLyhbYS16QS1aMC05XSopL2ksCiAgICByYXBpZHZpZGVvID0gL2h0dHBzPzpcL1wvKHd3\n" +
-                    "d1wuKT9yYXBpZHZpZGVvXC5bXlwvLF5cLl17Mix9XC8oXD92PVteJlw/XSp8ZVwvLit8dlwvLisp\n" +
-                    "L2k7CgppZiAob3BlbmxvYWQudGVzdCh3aW5kb3cubG9jYXRpb24uaHJlZikpIHsKICAgIHhHZXR0\n" +
-                    "ZXIuZnVjayhkb2N1bWVudC5sb2NhdGlvbi5wcm90b2NvbCArICcvLycgKyBkb2N1bWVudC5sb2Nh\n" +
-                    "dGlvbi5ob3N0ICsgJy9zdHJlYW0vJyArIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJEdHNCbGtW\n" +
-                    "RlF4IikudGV4dENvbnRlbnQgKyAnP21pbWU9dHJ1ZScpOwp9IGVsc2UgaWYgKHN0cmVhbS50ZXN0\n" +
-                    "KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdldHRlci5mdWNrKHdpbmRvdy5sb2NhdGlv\n" +
-                    "bi5wcm90b2NvbCArIHNyY2VzWzBdWyJzcmMiXSk7Cn0gZWxzZSBpZiAobWVnYXVwLnRlc3Qod2lu\n" +
-                    "ZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICBzZWNvbmRzID0gMDsKICAgIGRpc3BsYXkoKTsKICAg\n" +
-                    "IHdpbmRvdy5sb2NhdGlvbi5yZXBsYWNlKGRvY3VtZW50LmdldEVsZW1lbnRzQnlDbGFzc05hbWUo\n" +
-                    "ImJ0biBidG4tZGVmYXVsdCIpLml0ZW0oMCkuaHJlZik7Cn0gZWxzZSBpZiAobXA0dXBsb2FkLnRl\n" +
-                    "c3Qod2luZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICB4R2V0dGVyLmZ1Y2soZG9jdW1lbnQuZ2V0\n" +
-                    "RWxlbWVudHNCeUNsYXNzTmFtZSgnanctdmlkZW8ganctcmVzZXQnKS5pdGVtKDApLnNyYyk7Cn0g\n" +
-                    "ZWxzZSBpZiAocmFwaWR2aWRlby50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdl\n" +
-                    "dHRlci5mdWNrKGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5pdGVtKDAp\n" +
-                    "LnNyYyk7Cn0gZWxzZSBpZiAoc2VuZHZpZC50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewog\n" +
-                    "ICAgeEdldHRlci5mdWNrKGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5p\n" +
-                    "dGVtKDApLnNyYyk7Cn0gZWxzZSBpZiAodmlkY2xvdWQudGVzdCh3aW5kb3cubG9jYXRpb24uaHJl\n" +
-                    "ZikpIHsKICAgICQuYWpheCh7CiAgICAgICAgdXJsOiAnL2Rvd25sb2FkJywKICAgICAgICBtZXRo\n" +
-                    "b2Q6ICdQT1NUJywKICAgICAgICBkYXRhOiB7CiAgICAgICAgICAgIGZpbGVfaWQ6IGZpbGVJRAog\n" +
-                    "ICAgICAgIH0sCiAgICAgICAgZGF0YVR5cGU6ICdqc29uJywKICAgICAgICBzdWNjZXNzOiBmdW5j\n" +
-                    "dGlvbihyZXMpIHsKICAgICAgICAgICAgJCgnLnF1YWxpdHktbWVudScpLmh0bWwocmVzLmh0bWwp\n" +
-                    "OwogICAgICAgICAgICB2YXIgZGF0YSA9IHJlcy5odG1sOwogICAgICAgICAgICB2YXIgcmVnZXgg\n" +
-                    "PSAvaHJlZj0iKC4qPykiLzsKICAgICAgICAgICAgdmFyIG07CiAgICAgICAgICAgIGlmICgobSA9\n" +
-                    "IHJlZ2V4LmV4ZWMoZGF0YSkpICE9PSBudWxsKSB7CiAgICAgICAgICAgICAgICB4R2V0dGVyLmZ1\n" +
-                    "Y2sobVsxXSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9KTsKfSBlbHNlIGlmKHdpbmRv\n" +
-                    "dy5sb2NhdGlvbi5ob3N0ID09ICdkcml2ZS5nb29nbGUuY29tJyl7Cglkb2N1bWVudC5nZXRFbGVt\n" +
-                    "ZW50QnlJZCgndWMtZG93bmxvYWQtbGluaycpLmNsaWNrKCk7Cn0KCi8qClN1cHBvcnRlZCBTaXRl\n" +
-                    "cwo9PiBPcGVubG9hZCAoQWxsIGRvbWFpbnMpCj0+IEZydWl0U3RyZWFtcyAoU3RyZWFtY2hlcnJ5\n" +
-                    "LFN0cmVhbWFuZ28gYW5kIGV0Yy4uKQo9PiBNcDRVcGxvYWQKPT4gUmFwaWRWaWRlbwo9PiBTZW5k\n" +
-                    "VmlkCj0+IE1lZ2FVcAo9PiBWaWRDbG91ZCAoQWxsIGRvbWFpbnMpCiov";
+                    "Zy94R2V0dGVyCgoqLwp2YXIgb3BlbmxvYWQgPSAvaHR0cHM/OlwvXC8od3d3XC4pPyhvcGVubG9h\n" +
+                    "ZHxvbG9hZClcLlteXC8sXlwuXXsyLH1cLyhlbWJlZHxmKVwvLisvaSwKICAgIHN0cmVhbSA9IC9o\n" +
+                    "dHRwcz86XC9cLyh3d3dcLik/KHN0cmVhbWFuZ298ZnJ1aXRzdHJlYW1zfHN0cmVhbWNoZXJyeXxm\n" +
+                    "cnVpdGFkYmxvY2t8ZnJ1aXRob3N0cylcLlteXC8sXlwuXXsyLH1cLyhmfGVtYmVkKVwvLisvaSwK\n" +
+                    "ICAgIG1lZ2F1cCA9IC9odHRwcz86XC9cLyh3d3dcLik/KG1lZ2F1cClcLlteXC8sXlwuXXsyLH1c\n" +
+                    "Ly4rL2ksCiAgICBtcDR1cGxvYWQgPSAvaHR0cHM/OlwvXC8od3d3XC4pP21wNHVwbG9hZFwuW15c\n" +
+                    "LyxeXC5dezIsfVwvZW1iZWRcLS4rL2ksCiAgICBzZW5kdmlkID0gL2h0dHBzPzpcL1wvKHd3d1wu\n" +
+                    "KT8oc2VuZHZpZClcLlteXC8sXlwuXXsyLH1cLy4rL2ksCiAgICB2aWRjbG91ZCA9IC9odHRwcz86\n" +
+                    "XC9cLyh3d3dcLik/KHZpZGNsb3VkfHZjc3RyZWFtfGxvYWR2aWQpXC5bXlwvLF5cLl17Mix9XC9l\n" +
+                    "bWJlZFwvKFthLXpBLVowLTldKikvaSwKICAgIHJhcGlkdmlkZW8gPSAvaHR0cHM/OlwvXC8od3d3\n" +
+                    "XC4pP3JhcGlkdmlkZW9cLlteXC8sXlwuXXsyLH1cLyhcP3Y9W14mXD9dKnxlXC8uK3x2XC8uKykv\n" +
+                    "aTsKCmlmIChvcGVubG9hZC50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgdmFyIHNw\n" +
+                    "YW4gPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJzcGFuIik7CiAgICBmb3IgKHZhciBpID0g\n" +
+                    "MDsgaSA8IHNwYW4ubGVuZ3RoOyBpKyspIHsKICAgICAgICB2YXIgbG9sID0gc3Bhbi5pdGVtKGkp\n" +
+                    "LnRleHRDb250ZW50OwogICAgICAgIGlmIChsb2wuaW5kZXhPZignficpICE9IC0xKSB7CiAgICAg\n" +
+                    "ICAgICAgIHhHZXR0ZXIuZnVjayhkb2N1bWVudC5sb2NhdGlvbi5wcm90b2NvbCArICcvLycgKyBk\n" +
+                    "b2N1bWVudC5sb2NhdGlvbi5ob3N0ICsgJy9zdHJlYW0vJyArIGxvbCArICc/bWltZT10cnVlJyk7\n" +
+                    "CiAgICAgICAgfQogICAgfQp9IGVsc2UgaWYgKHN0cmVhbS50ZXN0KHdpbmRvdy5sb2NhdGlvbi5o\n" +
+                    "cmVmKSkgewogICAgeEdldHRlci5mdWNrKHdpbmRvdy5sb2NhdGlvbi5wcm90b2NvbCArIHNyY2Vz\n" +
+                    "WzBdWyJzcmMiXSk7Cn0gZWxzZSBpZiAobWVnYXVwLnRlc3Qod2luZG93LmxvY2F0aW9uLmhyZWYp\n" +
+                    "KSB7CiAgICBzZWNvbmRzID0gMDsKICAgIGRpc3BsYXkoKTsKICAgIHdpbmRvdy5sb2NhdGlvbi5y\n" +
+                    "ZXBsYWNlKGRvY3VtZW50LmdldEVsZW1lbnRzQnlDbGFzc05hbWUoImJ0biBidG4tZGVmYXVsdCIp\n" +
+                    "Lml0ZW0oMCkuaHJlZik7Cn0gZWxzZSBpZiAobXA0dXBsb2FkLnRlc3Qod2luZG93LmxvY2F0aW9u\n" +
+                    "LmhyZWYpKSB7CiAgICB4R2V0dGVyLmZ1Y2soZG9jdW1lbnQuZ2V0RWxlbWVudHNCeUNsYXNzTmFt\n" +
+                    "ZSgnanctdmlkZW8ganctcmVzZXQnKS5pdGVtKDApLnNyYyk7Cn0gZWxzZSBpZiAocmFwaWR2aWRl\n" +
+                    "by50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdldHRlci5mdWNrKGRvY3VtZW50\n" +
+                    "LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5pdGVtKDApLnNyYyk7Cn0gZWxzZSBpZiAo\n" +
+                    "c2VuZHZpZC50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdldHRlci5mdWNrKGRv\n" +
+                    "Y3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5pdGVtKDApLnNyYyk7Cn0gZWxz\n" +
+                    "ZSBpZiAodmlkY2xvdWQudGVzdCh3aW5kb3cubG9jYXRpb24uaHJlZikpIHsKICAgICQuYWpheCh7\n" +
+                    "CiAgICAgICAgdXJsOiAnL2Rvd25sb2FkJywKICAgICAgICBtZXRob2Q6ICdQT1NUJywKICAgICAg\n" +
+                    "ICBkYXRhOiB7CiAgICAgICAgICAgIGZpbGVfaWQ6IGZpbGVJRAogICAgICAgIH0sCiAgICAgICAg\n" +
+                    "ZGF0YVR5cGU6ICdqc29uJywKICAgICAgICBzdWNjZXNzOiBmdW5jdGlvbihyZXMpIHsKICAgICAg\n" +
+                    "ICAgICAgJCgnLnF1YWxpdHktbWVudScpLmh0bWwocmVzLmh0bWwpOwogICAgICAgICAgICB2YXIg\n" +
+                    "ZGF0YSA9IHJlcy5odG1sOwogICAgICAgICAgICB2YXIgcmVnZXggPSAvaHJlZj0iKC4qPykiLzsK\n" +
+                    "ICAgICAgICAgICAgdmFyIG07CiAgICAgICAgICAgIGlmICgobSA9IHJlZ2V4LmV4ZWMoZGF0YSkp\n" +
+                    "ICE9PSBudWxsKSB7CiAgICAgICAgICAgICAgICB4R2V0dGVyLmZ1Y2sobVsxXSk7CiAgICAgICAg\n" +
+                    "ICAgIH0KICAgICAgICB9CiAgICB9KTsKfSBlbHNlIGlmICh3aW5kb3cubG9jYXRpb24uaG9zdCA9\n" +
+                    "PSAnZHJpdmUuZ29vZ2xlLmNvbScpIHsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd1Yy1k\n" +
+                    "b3dubG9hZC1saW5rJykuY2xpY2soKTsKfQoKLyoKU3VwcG9ydGVkIFNpdGVzCj0+IE9wZW5sb2Fk\n" +
+                    "IChBbGwgZG9tYWlucykKPT4gRnJ1aXRTdHJlYW1zIChTdHJlYW1jaGVycnksU3RyZWFtYW5nbyBh\n" +
+                    "bmQgZXRjLi4pCj0+IE1wNFVwbG9hZAo9PiBSYXBpZFZpZGVvCj0+IFNlbmRWaWQKPT4gTWVnYVVw\n" +
+                    "Cj0+IFZpZENsb3VkIChBbGwgZG9tYWlucykKKi8=";
             view.loadUrl("javascript:(function() {" +
                     "var parent = document.getElementsByTagName('head').item(0);" +
                     "var script = document.createElement('script');" +
@@ -143,8 +156,10 @@ public class XGetter {
     }
 
     public void find(String url){
+        init();
         boolean fb = false;
         boolean run = false;
+        boolean mfire = false;
         if (check(openload,url)){
             //Openload
             run = true;
@@ -194,14 +209,19 @@ public class XGetter {
             //fb
             run = true;
             fb = true;
-//            url = "https://www.facebook.com/video.php?v="+check_fb_video(url);
+        }else if (check(mediafire,url)){
+            //mediafire
+            run = true;
+            mfire = true;
         }
 
         if (run) {
             if (check(gphoto,url)){
                 gphotoORfb(url,false);
-            }else if (fb){
-                gphotoORfb(url,true);
+            }else if (fb) {
+                gphotoORfb(url, true);
+            }else if (mfire){
+                mfire(url);
             }else {
                 webView.loadUrl(url);
             }
@@ -217,10 +237,6 @@ public class XGetter {
         return false;
     }
 
-    private boolean isNumber(String str){
-        return str.replaceAll("[0-9]","").length() == 0;
-    }
-
     private String get_drive_id(String string){
         final String regex = "[-\\w]{25,}";
         final Pattern pattern = Pattern.compile(regex);
@@ -229,6 +245,34 @@ public class XGetter {
             return matcher.group();
         }
         return null;
+    }
+
+    private void mfire(String url){
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                final String regex = "aria-label=\"Download file\"\\n.+href=\"(.*)\"";
+                final Pattern pattern = Pattern.compile(regex);
+                final Matcher matcher = pattern.matcher(response);
+                if (matcher.find()) {
+                    onComplete.onTaskCompleted(matcher.group(1));
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onComplete.onError();
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("User-agent", agent);
+                return headers;
+            }
+        };
+        Volley.newRequestQueue(context).add(request);
     }
 
     private void gphotoORfb(String url, final boolean fb){
@@ -270,7 +314,7 @@ public class XGetter {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> headers = new HashMap<>();
-                    headers.put("User-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+                    headers.put("User-agent", agent);
                     return headers;
                 }
             };

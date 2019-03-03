@@ -110,6 +110,10 @@ public class MainActivity extends AppCompatActivity {
         letGo("https://www.facebook.com/KHtetzNaing/videos/925916414463007/");
     }
 
+    public void mediafire(View view) {
+        letGo("http://www.mediafire.com/file/dd00f818ybeu83x/");
+    }
+
     public boolean checkInternet(){
         boolean what = false;
         CheckInternet checkNet = new CheckInternet(this);
