@@ -49,7 +49,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.3'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.4'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
@@ -91,7 +91,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
 ရုပ်ရှင်နဲ့ Video App ဖန်တီးချင်သူတွေအနေနဲ့
 အသုံးဝင်မယ့် Lib လေးတစ်ခုဖန်တီးပေးထားပါတယ်။
-Video တွေကို အကန့်အသတ်မရှိ Free တင်လို့ရပြီး
+Video တွေကို အကန့်အသတ်မရှိ Free တင်လို့ရပြီ
 ကြည့်တဲ့အချိန်မှာကြော်ငြာအရမ်းတက်တဲ့
 Openload, Streamango တို့လိုလင့်တွေကနေ
 ကြော်ငြာကြည့်စရာမလိုပဲ
@@ -133,7 +133,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.3'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.4'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။
