@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     String org;
     EditText edit_query;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,30 +37,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTaskCompleted(final String vidURL) {
                 progressDialog.dismiss();
-                if (vidURL!=null) {
-                    done(vidURL,null,null,false,false);
-                }else done(null,null,null,false,true);
+                if (vidURL != null) {
+                    done(vidURL, null, null, false, false);
+                } else done(null, null, null, false, true);
             }
 
             @Override
             public void onFbTaskCompleted(String sd, String hd) {
                 progressDialog.dismiss();
-                if (sd!=null || hd!=null) {
-                    done(null,sd,hd,true,false);
-                }else done(null,null,null,false,true);
+                if (sd != null || hd != null) {
+                    done(null, sd, hd, true, false);
+                } else done(null, null, null, false, true);
             }
 
             @Override
             public void onError() {
                 progressDialog.dismiss();
-                done(null,null,null,false,true);
+                done(null, null, null, false, true);
             }
         });
 
         edit_query = findViewById(R.id.edit_query);
     }
 
-    private void letGo(String url){
+    private void letGo(String url) {
         org = url;
         if (checkInternet()) {
             progressDialog.show();
@@ -114,12 +112,12 @@ public class MainActivity extends AppCompatActivity {
         letGo("http://www.mediafire.com/file/dd00f818ybeu83x/");
     }
 
-    public boolean checkInternet(){
+    public boolean checkInternet() {
         boolean what = false;
         CheckInternet checkNet = new CheckInternet(this);
-        if (checkNet.isInternetOn()){
+        if (checkNet.isInternetOn()) {
             what = true;
-        }else{
+        } else {
             what = false;
             Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
         }
@@ -127,15 +125,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void done(final String url, final String sd, final String hd, boolean fb, boolean error){
+    public void done(final String url, final String sd, final String hd, boolean fb, boolean error) {
         String message = null;
-        if (!error){
+        if (!error) {
             if (!fb) {
                 message = "Input\n" + org + "\n\nResult\n" + url;
-            }else message = "Input\n" + org + "\n\nHD\n" + hd + "\n\nSD\n" + sd;
-        }else message = "ERROR";
+            } else message = "Input\n" + org + "\n\nHD\n" + hd + "\n\nSD\n" + sd;
+        } else message = "ERROR";
 
-        View view = getLayoutInflater().inflate(R.layout.done,null);
+        View view = getLayoutInflater().inflate(R.layout.done, null);
         TextView textView = view.findViewById(R.id.message);
         textView.setText(message);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
@@ -167,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-        }else builder.setPositiveButton("OK",null);
+        } else builder.setPositiveButton("OK", null);
         builder.show();
     }
 
@@ -176,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("fb://profile/100030031876000"));
             startActivity(intent);
-        }catch (Exception e){
+        } catch (Exception e) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://m.facebook.com/100030031876000"));
             startActivity(intent);
@@ -185,13 +183,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main,menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==R.id.about){
+        if (item.getItemId() == R.id.about) {
             showAbout();
         }
         return super.onOptionsItemSelected(item);
@@ -199,12 +197,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void fetch(View view) {
         String url = edit_query.getText().toString();
-        if (URLUtil.isValidUrl(url)){
+        if (URLUtil.isValidUrl(url)) {
             letGo(url);
-        }else Toast.makeText(this, "Input valid url :)", Toast.LENGTH_SHORT).show();
+        } else Toast.makeText(this, "Input valid url :)", Toast.LENGTH_SHORT).show();
     }
 
-    public void showAbout(){
+    public void showAbout() {
         String message = "Extract stream/download url!\n" +
                 "\n" +
                 "#Supported Sites\n" +
@@ -222,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 "MegaUp\n" +
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter";
-        View view = getLayoutInflater().inflate(R.layout.done,null);
+        View view = getLayoutInflater().inflate(R.layout.done, null);
         TextView textView = view.findViewById(R.id.message);
         textView.setText(message);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
