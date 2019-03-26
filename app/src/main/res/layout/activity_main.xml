@@ -46,8 +46,8 @@
             android:layout_height="match_parent">
 
             <Button
-                android:onClick="mediafire"
-                android:text="Mediafire"
+                android:onClick="vk"
+                android:text="VK"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -93,6 +93,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+
+                    <Button
+                        android:onClick="mediafire"
+                        android:text="Mediafire"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -129,6 +136,12 @@
                     <Button
                         android:onClick="fb"
                         android:text="Facebook"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="okru"
+                        android:text="Ok.ru"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

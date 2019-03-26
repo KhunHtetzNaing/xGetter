@@ -18,6 +18,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -30,7 +35,7 @@ import java.util.regex.Pattern;
  *         By
  *   Khun Htetz Naing
  * Repo => https://github.com/KhunHtetzNaing/xGetter
- * Openload,Google Drive,Google Photos,MediafireStreamango,StreamCherry,Mp4Upload,RapidVideo,SendVid,VidCloud,MegaUp Stream/Download URL Finder!
+ * Openload,Google Drive,Google Photos,MediafireStreamango,StreamCherry,Mp4Upload,RapidVideo,SendVid,VidCloud,MegaUp,VK,Ok.Ru Stream/Download URL Finder!
  *
  */
 
@@ -49,6 +54,8 @@ public class XGetter {
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
     private final String fb = "(?:https?://)?(?:www.|web.|m.)?facebook.com/(?:video.php\\?v=\\d+|photo.php\\?v=\\d+|\\?v=\\d+)|\\S+/videos/((\\S+)/(\\d+)|(\\d+))/?";
     private final String mediafire = "https?:\\/\\/(www\\.)?(mediafire)\\.[^\\/,^\\.]{2,}\\/(file)\\/.+";
+    private final String okru = "https?:\\/\\/(www\\.)?(ok)\\.[^\\/,^\\.]{2,}\\/(video)\\/.+";
+    private final String vk = "https?:\\/\\/(www\\.)?vk\\.[^\\/,^\\.]{2,}\\/video\\-.+";
 
     public XGetter(Context view) {
         this.context = view;
@@ -60,6 +67,7 @@ public class XGetter {
         webView.addJavascriptInterface(new xJavascriptInterface(), "xGetter");
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
+
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -82,7 +90,6 @@ public class XGetter {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                System.out.println(consoleMessage.message());
                 return super.onConsoleMessage(consoleMessage);
             }
         });
@@ -134,10 +141,11 @@ public class XGetter {
                 "YyhkYXRhKSkgIT09IG51bGwpIHsKICAgICAgICAgICAgICAgIHhHZXR0ZXIuZnVjayhtWzFdKTsK\n" +
                 "ICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0pOwp9IGVsc2UgaWYgKHdpbmRvdy5sb2NhdGlv\n" +
                 "bi5ob3N0ID09ICdkcml2ZS5nb29nbGUuY29tJykgewogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5\n" +
-                "SWQoJ3VjLWRvd25sb2FkLWxpbmsnKS5jbGljaygpOwp9CgovKgpTdXBwb3J0ZWQgU2l0ZXMKPT4g\n" +
-                "T3BlbmxvYWQgKEFsbCBkb21haW5zKQo9PiBGcnVpdFN0cmVhbXMgKFN0cmVhbWNoZXJyeSxTdHJl\n" +
-                "YW1hbmdvIGFuZCBldGMuLikKPT4gTXA0VXBsb2FkCj0+IFJhcGlkVmlkZW8KPT4gU2VuZFZpZAo9\n" +
-                "PiBNZWdhVXAKPT4gVmlkQ2xvdWQgKEFsbCBkb21haW5zKQoqLw==";
+                "SWQoJ3VjLWRvd25sb2FkLWxpbmsnKS5jbGljaygpOwp9Ci8qClN1cHBvcnRlZCBTaXRlcwo9PiBP\n" +
+                "cGVubG9hZCAoQWxsIGRvbWFpbnMpCj0+IEZydWl0U3RyZWFtcyAoU3RyZWFtY2hlcnJ5LFN0cmVh\n" +
+                "bWFuZ28gYW5kIGV0Yy4uKQo9PiBNcDRVcGxvYWQKPT4gUmFwaWRWaWRlbwo9PiBTZW5kVmlkCj0+\n" +
+                "IE1lZ2FVcAo9PiBWaWRDbG91ZCAoQWxsIGRvbWFpbnMpCj0+IE1lZGlhZmlyZQo9PiBHb29nbGUg\n" +
+                "UGhvdG9zCj0+IEdvb2dsZSBEcml2ZQo9PiBPay5SdQoqLw==";
         view.loadUrl("javascript:(function() {" +
                 "var parent = document.getElementsByTagName('head').item(0);" +
                 "var script = document.createElement('script');" +
@@ -152,8 +160,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false;
-
+        boolean mfire = false, oload = false,isOkRu = false,isVk=false;
         if (check(openload, url)) {
             //Openload
             run = true;
@@ -193,6 +200,9 @@ public class XGetter {
         } else if (check(rapidvideo, url)) {
             //rapidvideo
             run = true;
+            if (url.contains("/e/")){
+                url = url.replace("/e/","/v/");
+            }
         } else if (check(gphoto, url)) {
             //gphotos
             run = true;
@@ -208,6 +218,12 @@ public class XGetter {
             //mediafire
             run = true;
             mfire = true;
+        } else if (check(okru,url)){
+            run = true;
+            isOkRu = true;
+        } else if (check(vk,url)){
+            run = true;
+            isVk = true;
         }
 
         if (run) {
@@ -219,6 +235,10 @@ public class XGetter {
                 mfire(url);
             } else if (oload) {
                 openload(url);
+            } else if (isOkRu) {
+                okru(url);
+            } else if (isVk){
+                vk(url);
             } else {
                 webView.loadUrl(url);
             }
@@ -368,6 +388,10 @@ public class XGetter {
 
         void onFbTaskCompleted(String sd, String hd);
 
+        void onOkRuTaskCompleted(OkRuLinks okRuLinks);
+
+        void onVkTaskComplete(VkLinks vkLinks);
+
         void onError();
     }
 
@@ -457,6 +481,143 @@ public class XGetter {
         }
     }
 
+    public void okru(String url) {
+        init();
+        if (url != null) {
+            StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                private String getJson(String html){
+                    final String regex = "data-options=\"(.*?)\"";
+                    final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                    final Matcher matcher = pattern.matcher(html);
+                    if (matcher.find()) {
+                        return matcher.group(1);
+                    }
+                    return null;
+                }
+
+                @Override
+                public void onResponse(String response) {
+                    String json = getJson(response);
+                    json = StringEscapeUtils.unescapeHtml4(json);
+                    try {
+                        json = new JSONObject(json).getJSONObject("flashvars").getString("metadata");
+                        JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
+                        OkRuLinks okRuLinks = new OkRuLinks();
+                        for (int i=0;i<jsonArray.length();i++){
+                            String url = jsonArray.getJSONObject(i).getString("url").replace("ct=0", "ct=4") + "&bytes=0-100000000";
+                            String name = jsonArray.getJSONObject(i).getString("name");
+                            if (name.equals("mobile")) {
+                                okRuLinks.setMobile144px(url);
+                            } else if (name.equals("lowest")) {
+                                okRuLinks.setLowest240px(url);
+                            } else if (name.equals("low")) {
+                                okRuLinks.setLow360px(url);
+                            } else if (name.equals("sd")) {
+                                okRuLinks.setSd480px(url);
+                            } else if (name.equals("hd")) {
+                                okRuLinks.setHD(url);
+                            } else if (name.equals("full")) {
+                                okRuLinks.setFullHD(url);
+                            } else if (name.equals("quad")) {
+                                okRuLinks.setQuad2K(url);
+                            } else if (name.equals("ultra")) {
+                                okRuLinks.setUltra4K(url);
+                            } else {
+                                okRuLinks.setUrl(url);
+                            }
+                        }
+                        onComplete.onOkRuTaskCompleted(okRuLinks);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        onComplete.onError();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onComplete.onError();
+                }
+            }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("User-agent", agent);
+                    return headers;
+                }
+            };
+
+            Volley.newRequestQueue(context).add(request);
+        }
+    }
+
+    public void vk(String url) {
+        init();
+        if (url != null) {
+            StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+
+                private String get(String regex,String html){
+                    final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                    final Matcher matcher = pattern.matcher(html);
+                    if (matcher.find()) {
+                        return matcher.group(1);
+                    }
+                    return null;
+                }
+
+                @Override
+                public void onResponse(String response) {
+                    String json = get("al_video.php', ?(\\{.*])",response);
+                    json = get("\\}, ?(.*)",json);
+
+                    try {
+                        VkLinks vkLinks = new VkLinks();
+                        String x240="url240",x360="url360",x480="url480",x720="url720",x1080="url1080";
+                        JSONObject object = new JSONArray(json).getJSONObject(4).getJSONObject("player").getJSONArray("params").getJSONObject(0);
+                        if (object.has(x240)){
+                            vkLinks.setUrl240(object.getString(x240));
+                        }
+
+                        if (object.has(x360)){
+                            vkLinks.setUrl360(object.getString(x360));
+                        }
+
+                        if (object.has(x480)){
+                            vkLinks.setUrl480(object.getString(x480));
+                        }
+
+                        if (object.has(x720)){
+                            vkLinks.setUrl720(object.getString(x720));
+                        }
+
+                        if (object.has(x1080)){
+                            vkLinks.setUrl1080(object.getString(x1080));
+                        }
+
+                        onComplete.onVkTaskComplete(vkLinks);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        onComplete.onError();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onComplete.onError();
+                }
+            }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("User-agent", agent);
+                    return headers;
+                }
+            };
+
+            Volley.newRequestQueue(context).add(request);
+        }
+    }
 
     private String getLongEncrypt(String string) {
         final String regex = "<p id=[^>]*>([^<]*)<\\/p>";

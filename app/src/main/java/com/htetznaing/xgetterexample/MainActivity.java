@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.htetznaing.xgetter.OkRuLinks;
+import com.htetznaing.xgetter.VkLinks;
 import com.htetznaing.xgetter.XGetter;
 import com.htetznaing.xgetterexample.Player.MyExoPlayer;
 
@@ -47,6 +48,22 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if (sd != null || hd != null) {
                     done(null, sd, hd, true, false);
+                } else done(null, null, null, false, true);
+            }
+
+            @Override
+            public void onOkRuTaskCompleted(OkRuLinks okRuLinks) {
+                progressDialog.dismiss();
+                if (okRuLinks.getHD()!=null){
+                    done(okRuLinks.getHD(),null,null,false,false);
+                } else done(null, null, null, false, true);
+            }
+
+            @Override
+            public void onVkTaskComplete(VkLinks vkLinks) {
+                progressDialog.dismiss();
+                if (vkLinks.getUrl720()!=null){
+                    done(vkLinks.getUrl720(),null,null,false,false);
                 } else done(null, null, null, false, true);
             }
 
@@ -93,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void rapidvideo(View view) {
-        letGo("https://www.rapidvideo.com/v/FY1NF585GW");
+        letGo("https://www.rapidvideo.com/v/FW5M4CBTFF");
     }
 
     public void gdrive(View view) {
@@ -110,6 +127,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void mediafire(View view) {
         letGo("http://www.mediafire.com/file/dd00f818ybeu83x/");
+    }
+
+    public void okru(View view) {
+        letGo("https://ok.ru/video/1246547348046");
+    }
+
+    public void vk(View view) {
+        letGo("https://vk.com/video-94920838_456240508");
     }
 
     public boolean checkInternet() {
@@ -218,6 +243,9 @@ public class MainActivity extends AppCompatActivity {
                 "SendVid\n" +
                 "VidCloud\n" +
                 "MegaUp\n" +
+                "Mediafire\n" +
+                "VK\n" +
+                "Ok.Ru" +
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter";
         View view = getLayoutInflater().inflate(R.layout.done, null);
