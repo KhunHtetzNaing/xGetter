@@ -7,7 +7,7 @@
 **#Zawgyi**
 ႐ုပ္ရွင္နဲ႔ Video App ဖန္တီးခ်င္သူေတြအေနနဲ႔
 အသုံးဝင္မယ့္ Lib ေလးတစ္ခုဖန္တီးေပးထားပါတယ္။
-Video ေတြကို အကန္႔အသတ္မရွိ Free တင္လို႔ရၿပီး
+Video ေတြကို အကန္႔အသတ္မရွိ Free တင္လို႔ရၿပီ
 ၾကည့္တဲ့အခ်ိန္မွာေၾကာ္ျငာအရမ္းတက္တဲ့
 Openload, Streamango တို႔လိုလင့္ေတြကေန
 ေၾကာ္ျငာၾကည့္စရာမလိုပဲ
@@ -28,6 +28,8 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 -  **VidCloud**
 -  **SendVid** 
 -  **Mediafire** 
+-  **VK** 
+-  **Ok.Ru** 
 တို႔ပဲျဖစ္ပါတယ္။
 ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
 အျခားအခမဲ့ Video တင္လို႔ရတဲ့ Site ေတြကိုလည္းထပ္ျဖည့္ေပးသြားပါ့မယ္ :)
@@ -49,7 +51,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.4'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.5'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
@@ -63,17 +65,27 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
     
     @Override
     public void onTaskCompleted(String vidURL) {
-    // တိုက္႐ိုက္လင့္က vidURL
+        // တိုက္႐ိုက္လင့္က vidURL
     }
     
     @Override
     public void onFbTaskCompleted(String sd, String hd) {
     //Facebook လင့္ျဖစ္ပါက ဒီထဲမွာ HD, SD ျပန္ရလာမည္
     }
-    
+
+    @Override
+    public void onOkRuTaskCompleted(OkRuLinks okRuLinks) {
+        //okRuLinks ထဲမွာရႏိုင္တဲ့ Quality အားလုံးပါလာပါမယ္။
+    }
+
+    @Override
+    public void onVkTaskComplete(VkLinks vkLinks) {
+        //vkLinks ထဲမွာရႏိုင္တဲ့ Quality အားလုံးပါလာပါမယ္။
+    }
+
     @Override
     public void onError() {
-    // Error
+        // Error
     }
     });
     
@@ -112,6 +124,8 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 -  **VidCloud**
 -  **SendVid** 
 -  **Mediafire** 
+-  **VK** 
+-  **Ok.Ru** 
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
 အခြားအခမဲ့ Video တင်လို့ရတဲ့ Site တွေကိုလည်းထပ်ဖြည့်ပေးသွားပါ့မယ် :)
@@ -133,7 +147,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.4'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.5'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။
@@ -147,17 +161,27 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
     
     @Override
     public void onTaskCompleted(String vidURL) {
-    // တိုက်ရိုက်လင့်က vidURL
+        // တိုက်ရိုက်လင့်က vidURL
     }
     
     @Override
     public void onFbTaskCompleted(String sd, String hd) {
     //Facebook လင့်ဖြစ်ပါက ဒီထဲမှာ HD, SD ပြန်ရလာမည်
     }
-    
+
+    @Override
+    public void onOkRuTaskCompleted(OkRuLinks okRuLinks) {
+        //okRuLinks ထဲမှာရနိုင်တဲ့ Quality အားလုံးပါလာပါမယ်။
+    }
+
+    @Override
+    public void onVkTaskComplete(VkLinks vkLinks) {
+        //vkLinks ထဲမှာရနိုင်တဲ့ Quality အားလုံးပါလာပါမယ်။
+    }
+
     @Override
     public void onError() {
-    // Error
+        // Error
     }
     });
     

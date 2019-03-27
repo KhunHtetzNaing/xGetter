@@ -1,6 +1,7 @@
 package com.htetznaing.xgetter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
@@ -10,6 +11,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -23,7 +25,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +51,7 @@ public class XGetter {
     private WebView webView;
     private Context context;
     private OnTaskCompleted onComplete;
-    private final String agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
+    private final String agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36";
     private final String openload = "https?:\\/\\/(www\\.)?(openload|oload)\\.[^\\/,^\\.]{2,}\\/(embed|f)\\/.+";
     private final String fruits = "https?:\\/\\/(www\\.)?(streamango|fruitstreams|streamcherry|fruitadblock|fruithosts)\\.[^\\/,^\\.]{2,}\\/(f|embed)\\/.+";
     private final String megaup = "https?:\\/\\/(www\\.)?(megaup)\\.[^\\/,^\\.]{2,}\\/.+";
@@ -54,7 +62,7 @@ public class XGetter {
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
     private final String fb = "(?:https?://)?(?:www.|web.|m.)?facebook.com/(?:video.php\\?v=\\d+|photo.php\\?v=\\d+|\\?v=\\d+)|\\S+/videos/((\\S+)/(\\d+)|(\\d+))/?";
     private final String mediafire = "https?:\\/\\/(www\\.)?(mediafire)\\.[^\\/,^\\.]{2,}\\/(file)\\/.+";
-    private final String okru = "https?:\\/\\/(www\\.)?(ok)\\.[^\\/,^\\.]{2,}\\/(video)\\/.+";
+    private final String okru = "https?:\\/\\/(www\\.)?(ok)\\.[^\\/,^\\.]{2,}\\/(video|videoembed)\\/.+";
     private final String vk = "https?:\\/\\/(www\\.)?vk\\.[^\\/,^\\.]{2,}\\/video\\-.+";
 
     public XGetter(Context view) {
@@ -101,7 +109,41 @@ public class XGetter {
         public void fuck(final String url) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
-                    onComplete.onTaskCompleted(url);
+                    if (url.startsWith("okru")){
+                        String json = url;
+                        json = json.replace("okru","");
+                        try {
+                            JSONArray jsonArray = new JSONArray(json);
+                            OkRuLinks okRuLinks = new OkRuLinks();
+                            for (int i=0;i<jsonArray.length();i++){
+                                String url = jsonArray.getJSONObject(i).getString("url");
+                                String name = jsonArray.getJSONObject(i).getString("name");
+                                if (name.equals("mobile")) {
+                                    okRuLinks.setMobile144px(url);
+                                } else if (name.equals("lowest")) {
+                                    okRuLinks.setLowest240px(url);
+                                } else if (name.equals("low")) {
+                                    okRuLinks.setLow360px(url);
+                                } else if (name.equals("sd")) {
+                                    okRuLinks.setSd480px(url);
+                                } else if (name.equals("hd")) {
+                                    okRuLinks.setHD(url);
+                                } else if (name.equals("full")) {
+                                    okRuLinks.setFullHD(url);
+                                } else if (name.equals("quad")) {
+                                    okRuLinks.setQuad2K(url);
+                                } else if (name.equals("ultra")) {
+                                    okRuLinks.setUltra4K(url);
+                                } else {
+                                    okRuLinks.setUrl(url);
+                                }
+                            }
+                            onComplete.onOkRuTaskCompleted(okRuLinks);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            onComplete.onError();
+                        }
+                    }else onComplete.onTaskCompleted(url);
                 }
             });
         }
@@ -119,33 +161,46 @@ public class XGetter {
                 "LisvaSwKICAgIHZpZGNsb3VkID0gL2h0dHBzPzpcL1wvKHd3d1wuKT8odmlkY2xvdWR8dmNzdHJl\n" +
                 "YW18bG9hZHZpZClcLlteXC8sXlwuXXsyLH1cL2VtYmVkXC8oW2EtekEtWjAtOV0qKS9pLAogICAg\n" +
                 "cmFwaWR2aWRlbyA9IC9odHRwcz86XC9cLyh3d3dcLik/cmFwaWR2aWRlb1wuW15cLyxeXC5dezIs\n" +
-                "fVwvKFw/dj1bXiZcP10qfGVcLy4rfHZcLy4rKS9pOwppZiAoc3RyZWFtLnRlc3Qod2luZG93Lmxv\n" +
-                "Y2F0aW9uLmhyZWYpKSB7CiAgICB4R2V0dGVyLmZ1Y2sod2luZG93LmxvY2F0aW9uLnByb3RvY29s\n" +
-                "ICsgc3JjZXNbMF1bInNyYyJdKTsKfSBlbHNlIGlmIChtZWdhdXAudGVzdCh3aW5kb3cubG9jYXRp\n" +
-                "b24uaHJlZikpIHsKICAgIHNlY29uZHMgPSAwOwogICAgZGlzcGxheSgpOwogICAgd2luZG93Lmxv\n" +
-                "Y2F0aW9uLnJlcGxhY2UoZG9jdW1lbnQuZ2V0RWxlbWVudHNCeUNsYXNzTmFtZSgiYnRuIGJ0bi1k\n" +
-                "ZWZhdWx0IikuaXRlbSgwKS5ocmVmKTsKfSBlbHNlIGlmIChtcDR1cGxvYWQudGVzdCh3aW5kb3cu\n" +
-                "bG9jYXRpb24uaHJlZikpIHsKICAgIHhHZXR0ZXIuZnVjayhkb2N1bWVudC5nZXRFbGVtZW50c0J5\n" +
-                "Q2xhc3NOYW1lKCdqdy12aWRlbyBqdy1yZXNldCcpLml0ZW0oMCkuc3JjKTsKfSBlbHNlIGlmIChy\n" +
-                "YXBpZHZpZGVvLnRlc3Qod2luZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICB4R2V0dGVyLmZ1Y2so\n" +
-                "ZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUoJ3NvdXJjZScpLml0ZW0oMCkuc3JjKTsKfSBl\n" +
-                "bHNlIGlmIChzZW5kdmlkLnRlc3Qod2luZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICB4R2V0dGVy\n" +
-                "LmZ1Y2soZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUoJ3NvdXJjZScpLml0ZW0oMCkuc3Jj\n" +
-                "KTsKfSBlbHNlIGlmICh2aWRjbG91ZC50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAg\n" +
-                "JC5hamF4KHsKICAgICAgICB1cmw6ICcvZG93bmxvYWQnLAogICAgICAgIG1ldGhvZDogJ1BPU1Qn\n" +
-                "LAogICAgICAgIGRhdGE6IHsKICAgICAgICAgICAgZmlsZV9pZDogZmlsZUlECiAgICAgICAgfSwK\n" +
-                "ICAgICAgICBkYXRhVHlwZTogJ2pzb24nLAogICAgICAgIHN1Y2Nlc3M6IGZ1bmN0aW9uKHJlcykg\n" +
-                "ewogICAgICAgICAgICAkKCcucXVhbGl0eS1tZW51JykuaHRtbChyZXMuaHRtbCk7CiAgICAgICAg\n" +
-                "ICAgIHZhciBkYXRhID0gcmVzLmh0bWw7CiAgICAgICAgICAgIHZhciByZWdleCA9IC9ocmVmPSIo\n" +
-                "Lio/KSIvOwogICAgICAgICAgICB2YXIgbTsKICAgICAgICAgICAgaWYgKChtID0gcmVnZXguZXhl\n" +
-                "YyhkYXRhKSkgIT09IG51bGwpIHsKICAgICAgICAgICAgICAgIHhHZXR0ZXIuZnVjayhtWzFdKTsK\n" +
-                "ICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0pOwp9IGVsc2UgaWYgKHdpbmRvdy5sb2NhdGlv\n" +
-                "bi5ob3N0ID09ICdkcml2ZS5nb29nbGUuY29tJykgewogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5\n" +
-                "SWQoJ3VjLWRvd25sb2FkLWxpbmsnKS5jbGljaygpOwp9Ci8qClN1cHBvcnRlZCBTaXRlcwo9PiBP\n" +
-                "cGVubG9hZCAoQWxsIGRvbWFpbnMpCj0+IEZydWl0U3RyZWFtcyAoU3RyZWFtY2hlcnJ5LFN0cmVh\n" +
-                "bWFuZ28gYW5kIGV0Yy4uKQo9PiBNcDRVcGxvYWQKPT4gUmFwaWRWaWRlbwo9PiBTZW5kVmlkCj0+\n" +
-                "IE1lZ2FVcAo9PiBWaWRDbG91ZCAoQWxsIGRvbWFpbnMpCj0+IE1lZGlhZmlyZQo9PiBHb29nbGUg\n" +
-                "UGhvdG9zCj0+IEdvb2dsZSBEcml2ZQo9PiBPay5SdQoqLw==";
+                "fVwvKFw/dj1bXiZcP10qfGVcLy4rfHZcLy4rKS9pLAogICAgb2tydSA9IC9odHRwcz86XC9cLyh3\n" +
+                "d3dcLik/KG9rKVwuW15cLyxeXC5dezIsfVwvKHZpZGVvKVwvLisvaTsKaWYgKHN0cmVhbS50ZXN0\n" +
+                "KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdldHRlci5mdWNrKHdpbmRvdy5sb2NhdGlv\n" +
+                "bi5wcm90b2NvbCArIHNyY2VzWzBdWyJzcmMiXSk7Cn0gZWxzZSBpZiAobWVnYXVwLnRlc3Qod2lu\n" +
+                "ZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICBzZWNvbmRzID0gMDsKICAgIGRpc3BsYXkoKTsKICAg\n" +
+                "IHdpbmRvdy5sb2NhdGlvbi5yZXBsYWNlKGRvY3VtZW50LmdldEVsZW1lbnRzQnlDbGFzc05hbWUo\n" +
+                "ImJ0biBidG4tZGVmYXVsdCIpLml0ZW0oMCkuaHJlZik7Cn0gZWxzZSBpZiAobXA0dXBsb2FkLnRl\n" +
+                "c3Qod2luZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICB4R2V0dGVyLmZ1Y2soZG9jdW1lbnQuZ2V0\n" +
+                "RWxlbWVudHNCeUNsYXNzTmFtZSgnanctdmlkZW8ganctcmVzZXQnKS5pdGVtKDApLnNyYyk7Cn0g\n" +
+                "ZWxzZSBpZiAocmFwaWR2aWRlby50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdl\n" +
+                "dHRlci5mdWNrKGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5pdGVtKDAp\n" +
+                "LnNyYyk7Cn0gZWxzZSBpZiAoc2VuZHZpZC50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewog\n" +
+                "ICAgeEdldHRlci5mdWNrKGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5p\n" +
+                "dGVtKDApLnNyYyk7Cn0gZWxzZSBpZiAodmlkY2xvdWQudGVzdCh3aW5kb3cubG9jYXRpb24uaHJl\n" +
+                "ZikpIHsKICAgICQuYWpheCh7CiAgICAgICAgdXJsOiAnL2Rvd25sb2FkJywKICAgICAgICBtZXRo\n" +
+                "b2Q6ICdQT1NUJywKICAgICAgICBkYXRhOiB7CiAgICAgICAgICAgIGZpbGVfaWQ6IGZpbGVJRAog\n" +
+                "ICAgICAgIH0sCiAgICAgICAgZGF0YVR5cGU6ICdqc29uJywKICAgICAgICBzdWNjZXNzOiBmdW5j\n" +
+                "dGlvbihyZXMpIHsKICAgICAgICAgICAgJCgnLnF1YWxpdHktbWVudScpLmh0bWwocmVzLmh0bWwp\n" +
+                "OwogICAgICAgICAgICB2YXIgZGF0YSA9IHJlcy5odG1sOwogICAgICAgICAgICB2YXIgcmVnZXgg\n" +
+                "PSAvaHJlZj0iKC4qPykiLzsKICAgICAgICAgICAgdmFyIG07CiAgICAgICAgICAgIGlmICgobSA9\n" +
+                "IHJlZ2V4LmV4ZWMoZGF0YSkpICE9PSBudWxsKSB7CiAgICAgICAgICAgICAgICB4R2V0dGVyLmZ1\n" +
+                "Y2sobVsxXSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9KTsKfSBlbHNlIGlmICh3aW5k\n" +
+                "b3cubG9jYXRpb24uaG9zdCA9PSAnZHJpdmUuZ29vZ2xlLmNvbScpIHsKICAgIGRvY3VtZW50Lmdl\n" +
+                "dEVsZW1lbnRCeUlkKCd1Yy1kb3dubG9hZC1saW5rJykuY2xpY2soKTsKfSBlbHNlIGlmIChva3J1\n" +
+                "LnRlc3Qod2luZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICB2YXIgdmlkZW8gPSBkb2N1bWVudC5n\n" +
+                "ZXRFbGVtZW50c0J5Q2xhc3NOYW1lKCJ2cF92aWRlbyIpWzBdOwogICAgdmFyIHZtID0gdmlkZW8u\n" +
+                "Z2V0RWxlbWVudHNCeUNsYXNzTmFtZSgidmlkLWNhcmRfY250IGgtbW9kIilbMF07CiAgICB2YXIg\n" +
+                "b3B0aW9ucyA9IHZtLmdldEF0dHJpYnV0ZSgnZGF0YS1vcHRpb25zJyk7CgogICAgdmFyIGRhdGEg\n" +
+                "PSBKU09OLnBhcnNlKG9wdGlvbnMpOwogICAgZGF0YSA9IEpTT04ucGFyc2UoZGF0YS5mbGFzaHZh\n" +
+                "cnMubWV0YWRhdGEpOwogICAgdmFyIHZpZGVvcyA9IGRhdGEudmlkZW9zOwogICAgdmFyIG91dHB1\n" +
+                "dCA9IFtdOwogICAgZm9yICh2YXIgaSA9IDA7IGkgPCB2aWRlb3MubGVuZ3RoOyBpKyspIHsKICAg\n" +
+                "ICAgICB2YXIgdSA9IHZpZGVvc1tpXS51cmwucmVwbGFjZSgvY3Q9MC9naSwgImN0PTQiKSArICcm\n" +
+                "Ynl0ZXM9MC0xMDAwMDAwMDAnOwogICAgICAgIHZhciBxID0gdmlkZW9zW2ldLm5hbWU7CiAgICAg\n" +
+                "ICAgdmFyIG9iaiA9IHsKICAgICAgICAgICAgJ25hbWUnOiBxLAogICAgICAgICAgICAndXJsJzog\n" +
+                "dQogICAgICAgIH0KICAgICAgICBvdXRwdXQucHVzaChvYmopOwogICAgfQogICAgeEdldHRlci5m\n" +
+                "dWNrKCdva3J1JyArIEpTT04uc3RyaW5naWZ5KG91dHB1dCkpOwp9Ci8qClN1cHBvcnRlZCBTaXRl\n" +
+                "cwo9PiBPcGVubG9hZCAoQWxsIGRvbWFpbnMpCj0+IEZydWl0U3RyZWFtcyAoU3RyZWFtY2hlcnJ5\n" +
+                "LFN0cmVhbWFuZ28gYW5kIGV0Yy4uKQo9PiBNcDRVcGxvYWQKPT4gUmFwaWRWaWRlbwo9PiBTZW5k\n" +
+                "VmlkCj0+IE1lZ2FVcAo9PiBWaWRDbG91ZCAoQWxsIGRvbWFpbnMpCj0+IE1lZGlhZmlyZQo9PiBH\n" +
+                "b29nbGUgUGhvdG9zCj0+IEdvb2dsZSBEcml2ZQo9PiBPay5SdQoqLw==";
         view.loadUrl("javascript:(function() {" +
                 "var parent = document.getElementsByTagName('head').item(0);" +
                 "var script = document.createElement('script');" +
@@ -160,7 +215,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false,isOkRu = false,isVk=false;
+        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false;
         if (check(openload, url)) {
             //Openload
             run = true;
@@ -200,6 +255,7 @@ public class XGetter {
         } else if (check(rapidvideo, url)) {
             //rapidvideo
             run = true;
+            isRapidVideo=true;
             if (url.contains("/e/")){
                 url = url.replace("/e/","/v/");
             }
@@ -221,9 +277,24 @@ public class XGetter {
         } else if (check(okru,url)){
             run = true;
             isOkRu = true;
+            if (!url.startsWith("https")){
+                url = url.replace("http","https");
+            }
+
+            if (url.contains("m.")){
+                url = url.replace("m.","");
+            }
+
+            if (url.contains("/videoembed/")){
+                url = url.replace("/videoembed/","/video/");
+            }
+
         } else if (check(vk,url)){
             run = true;
             isVk = true;
+            if (!url.startsWith("https")){
+                url = url.replace("http","https");
+            }
         }
 
         if (run) {
@@ -235,14 +306,16 @@ public class XGetter {
                 mfire(url);
             } else if (oload) {
                 openload(url);
-            } else if (isOkRu) {
+            } else if (isOkRu){
                 okru(url);
-            } else if (isVk){
+            } else if (isVk) {
                 vk(url);
+            } else if (isRapidVideo){
+                rapidVideo(url);
             } else {
                 webView.loadUrl(url);
             }
-        } else onComplete.onError();
+        }else onComplete.onError();
     }
 
     private boolean check_fb_video(String url) {
@@ -400,7 +473,8 @@ public class XGetter {
     }
 
 
-    public void openload(String url) {
+
+    private void openload(String url) {
         init();
         if (url != null) {
             StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -481,8 +555,7 @@ public class XGetter {
         }
     }
 
-    public void okru(String url) {
-        init();
+    private void okru(String url) {
         if (url != null) {
             StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                 private String getJson(String html){
@@ -504,7 +577,7 @@ public class XGetter {
                         JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
                         OkRuLinks okRuLinks = new OkRuLinks();
                         for (int i=0;i<jsonArray.length();i++){
-                            String url = jsonArray.getJSONObject(i).getString("url").replace("ct=0", "ct=4") + "&bytes=0-100000000";
+                            String url = jsonArray.getJSONObject(i).getString("url").replace("ct=0", "ct=4");
                             String name = jsonArray.getJSONObject(i).getString("name");
                             if (name.equals("mobile")) {
                                 okRuLinks.setMobile144px(url);
@@ -551,8 +624,7 @@ public class XGetter {
         }
     }
 
-    public void vk(String url) {
-        init();
+    private void vk(String url) {
         if (url != null) {
             StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
 
@@ -617,6 +689,58 @@ public class XGetter {
 
             Volley.newRequestQueue(context).add(request);
         }
+    }
+
+    private void rapidVideo(final String mUrl){
+        new AsyncTask<Void,Void,String>(){
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                URL url;
+                InputStream is = null;
+                BufferedReader br;
+                String line;
+
+                try {
+                    url = new URL(mUrl);
+                    is = url.openStream();  // throws an IOException
+                    br = new BufferedReader(new InputStreamReader(is));
+                    String result = null;
+                    while ((line = br.readLine()) != null) {
+                        result +=line;
+                    }
+
+                    if (result!=null){
+                        final String regex = "<source src=\"(.*?)\"";
+                        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                        final Matcher matcher = pattern.matcher(result);
+                        if (matcher.find()) {
+                            return matcher.group(1);
+                        }
+                    }
+
+                } catch (MalformedURLException mue) {
+                    mue.printStackTrace();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                } finally {
+                    try {
+                        if (is != null) is.close();
+                    } catch (IOException ioe) {
+                        // nothing to see here
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                if (s!=null){
+                    onComplete.onTaskCompleted(s);
+                }else onComplete.onError();
+            }
+        }.execute();
     }
 
     private String getLongEncrypt(String string) {
