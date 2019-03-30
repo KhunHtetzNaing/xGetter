@@ -24,6 +24,11 @@ import com.htetznaing.xgetter.VkLinks;
 import com.htetznaing.xgetter.XGetter;
 import com.htetznaing.xgetterexample.Player.MyExoPlayer;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     XGetter xGetter;
     ProgressDialog progressDialog;
@@ -58,16 +63,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onOkRuTaskCompleted(OkRuLinks okRuLinks) {
                 progressDialog.dismiss();
-                if (okRuLinks.getHD()!=null){
-                    done(okRuLinks.getHD(),null,null,false,false);
+                if (okRuLinks!=null){
+                    try {
+                        okRuOrVkDialog(okRuLinks,true);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else done(null, null, null, false, true);
             }
 
             @Override
             public void onVkTaskComplete(VkLinks vkLinks) {
                 progressDialog.dismiss();
-                if (vkLinks.getUrl720()!=null){
-                    done(vkLinks.getUrl720(),null,null,false,false);
+                if (vkLinks!=null){
+                    try {
+                        okRuOrVkDialog(vkLinks,false);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else done(null, null, null, false, true);
             }
 
@@ -260,5 +273,127 @@ public class MainActivity extends AppCompatActivity {
                 .setView(view)
                 .setPositiveButton("Stream", null);
         builder.show();
+    }
+
+
+    private void okRuOrVkDialog(Object object,boolean isOK) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        if (isOK){
+            jsonArray = generateOkLinkForDialog((OkRuLinks) object);
+        }else jsonArray = generateVkLinkForDialog((VkLinks) object);
+
+        JSONArray jname = jsonArray.getJSONArray(0);
+        JSONArray jurl = jsonArray.getJSONArray(1);
+
+        CharSequence [] name = new CharSequence[jname.length()];
+        final String [] url = new String[jurl.length()];
+
+        for (int i=0;i<jname.length();i++){
+            name[i] = jname.getString(i);
+            url[i] = jurl.getString(i);
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Quality")
+                .setItems(name, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
+                        intent.putExtra("url", url[which]);
+                        startActivity(intent);
+                    }
+                })
+                .setPositiveButton("OK",null);
+        builder.show();
+    }
+
+    private JSONArray generateOkLinkForDialog(OkRuLinks okRuLinks){
+        JSONArray links = new JSONArray();
+        JSONArray name = new JSONArray();
+
+        if (okRuLinks.getMobile144px()!=null){
+            links.put(okRuLinks.getMobile144px());
+            name.put("144p");
+        }
+
+        if (okRuLinks.getLowest240px()!=null){
+            links.put(okRuLinks.getLowest240px());
+            name.put("240p");
+        }
+
+        if (okRuLinks.getLow360px()!=null){
+            links.put(okRuLinks.getLow360px());
+            name.put("360p");
+        }
+
+        if (okRuLinks.getSd480px()!=null){
+            links.put(okRuLinks.getSd480px());
+            name.put("480p");
+        }
+
+        if (okRuLinks.getHD()!=null){
+            links.put(okRuLinks.getHD());
+            name.put("HD");
+        }
+
+        if (okRuLinks.getFullHD()!=null){
+            links.put(okRuLinks.getFullHD());
+            name.put("Full HD");
+        }
+
+        if (okRuLinks.getQuad2K()!=null){
+            links.put(okRuLinks.getQuad2K());
+            name.put("2K");
+        }
+
+        if (okRuLinks.getUltra4K()!=null){
+            links.put(okRuLinks.getUltra4K());
+            name.put("Ultra4K");
+        }
+
+        if (okRuLinks.getUrl()!=null){
+            links.put(okRuLinks.getUrl());
+            name.put("Default");
+        }
+
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(name);
+        jsonArray.put(links);
+        return jsonArray;
+    }
+
+    private JSONArray generateVkLinkForDialog(VkLinks vkLinks){
+        JSONArray links = new JSONArray();
+        JSONArray name = new JSONArray();
+
+        if (vkLinks.getUrl240()!=null){
+            links.put(vkLinks.getUrl240());
+            name.put("240p");
+        }
+
+        if (vkLinks.getUrl360()!=null){
+            links.put(vkLinks.getUrl360());
+            name.put("360p");
+        }
+
+        if (vkLinks.getUrl480()!=null){
+            links.put(vkLinks.getUrl480());
+            name.put("480p");
+        }
+
+        if (vkLinks.getUrl720()!=null){
+            links.put(vkLinks.getUrl720());
+            name.put("720p");
+        }
+
+        if (vkLinks.getUrl1080()!=null){
+            links.put(vkLinks.getUrl1080());
+            name.put("1080p");
+        }
+
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(name);
+        jsonArray.put(links);
+        return jsonArray;
     }
 }

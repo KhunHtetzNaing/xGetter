@@ -285,8 +285,8 @@ public class XGetter {
                 url = url.replace("m.","");
             }
 
-            if (url.contains("/videoembed/")){
-                url = url.replace("/videoembed/","/video/");
+            if (url.contains("/video/")){
+                url = url.replace("/video/","/videoembed/");
             }
 
         } else if (check(vk,url)){
@@ -472,8 +472,6 @@ public class XGetter {
         this.onComplete = onComplete;
     }
 
-
-
     private void openload(String url) {
         init();
         if (url != null) {
@@ -577,7 +575,7 @@ public class XGetter {
                         JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
                         OkRuLinks okRuLinks = new OkRuLinks();
                         for (int i=0;i<jsonArray.length();i++){
-                            String url = jsonArray.getJSONObject(i).getString("url").replace("ct=0", "ct=4");
+                            String url = jsonArray.getJSONObject(i).getString("url");
                             String name = jsonArray.getJSONObject(i).getString("name");
                             if (name.equals("mobile")) {
                                 okRuLinks.setMobile144px(url);
@@ -615,9 +613,10 @@ public class XGetter {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> headers = new HashMap<>();
-                    headers.put("User-agent", agent);
+                    headers.put("User-agent", "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
                     return headers;
                 }
+
             };
 
             Volley.newRequestQueue(context).add(request);
