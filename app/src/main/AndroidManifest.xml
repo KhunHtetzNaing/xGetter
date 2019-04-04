@@ -3,8 +3,10 @@
     package="com.htetznaing.xgetterexample">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,67 +14,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.htetznaing.xgetterexample.MainActivity" android:windowSoftInputMode="stateHidden">
+
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name=".Player.MyExoPlayer"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:label="My xGetter Player"
-            android:theme="@style/VideoPlayerTheme">
-            <intent-filter>
-                <action android:name="com.google.android.exoplayer.demo.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-                <data android:scheme="content" />
-                <data android:scheme="asset" />
-                <data android:scheme="file" />
-            </intent-filter>
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <data
-                    android:mimeType="video/*"
-                    android:scheme="http" />
-                <data
-                    android:mimeType="audio/*"
-                    android:scheme="http" />
-                <data
-                    android:mimeType="video/*"
-                    android:scheme="https" />
-                <data
-                    android:mimeType="audio/*"
-                    android:scheme="https" />
-                <data
-                    android:mimeType="video/*"
-                    android:scheme="file" />
-                <data
-                    android:mimeType="audio/*"
-                    android:scheme="file" />
-            </intent-filter>
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\.mp4"
-                    android:scheme="http" />
-
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
+            android:name=".Player.XPlayer"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize">
         </activity>
-
     </application>
 
 </manifest>

@@ -88,4 +88,16 @@
         android:src="@drawable/rotate"
         android:id="@+id/rotate"
         android:layout_height="24dp" />
+
+    <ImageButton
+        android:layout_above="@id/rotate"
+        android:background="@null"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
+        android:tint="@android:color/white"
+        android:layout_width="24dp"
+        android:src="@drawable/download"
+        android:id="@+id/download"
+        android:layout_height="24dp" />
+
 </RelativeLayout>

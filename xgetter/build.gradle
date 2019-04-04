@@ -1,17 +1,17 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.htetznaing'
-version='1.6'
+version='1.7'
 
 android {
     compileSdkVersion 26
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 6
-        versionName "1.6"
+        versionCode 7
+        versionName "1.7"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -27,8 +27,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha02'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'org.apache.commons:commons-lang3:3.8.1'
 }

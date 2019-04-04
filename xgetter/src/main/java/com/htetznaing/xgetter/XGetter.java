@@ -60,7 +60,6 @@ public class XGetter {
     private final String vidcloud = "https?:\\/\\/(www\\.)?(vidcloud|vcstream|loadvid)\\.[^\\/,^\\.]{2,}\\/(v|embed)\\/.+";
     private final String rapidvideo = "https?:\\/\\/(www\\.)?rapidvideo\\.[^\\/,^\\.]{2,}\\/(\\?v=[^&\\?]*|e\\/.+|v\\/.+)";
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
-    private final String fb = "(?:https?://)?(?:www.|web.|m.)?facebook.com/(?:video.php\\?v=\\d+|photo.php\\?v=\\d+|\\?v=\\d+)|\\S+/videos/((\\S+)/(\\d+)|(\\d+))/?";
     private final String mediafire = "https?:\\/\\/(www\\.)?(mediafire)\\.[^\\/,^\\.]{2,}\\/(file)\\/.+";
     private final String okru = "https?:\\/\\/(www.|m.)?(ok)\\.[^\\/,^\\.]{2,}\\/(video|videoembed)\\/.+";
     private final String vk = "https?:\\/\\/(www\\.)?vk\\.[^\\/,^\\.]{2,}\\/video\\-.+";
@@ -319,12 +318,7 @@ public class XGetter {
     }
 
     private boolean check_fb_video(String url) {
-        final Pattern pattern = Pattern.compile(fb);
-        final Matcher matcher = pattern.matcher(url);
-        if (matcher.find()) {
-            return true;
-        }
-        return false;
+        return url.matches("-?\\d+(\\.\\d+)?");
     }
 
     private String get_drive_id(String string) {
@@ -395,7 +389,7 @@ public class XGetter {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     if (fb) {
                         Map<String, String> params = new HashMap<>();
-                        params.put("URLz", data);
+                        params.put("URLz", "https://www.facebook.com/video.php?v="+data);
                         return params;
                     }
                     return super.getParams();
@@ -479,6 +473,9 @@ public class XGetter {
                 @Override
                 public void onResponse(String response) {
                     String longString = getLongEncrypt(response);
+                    if (longString==null){
+                        longString = getLongEncrypt2(response);
+                    }
                     String key1 = getKey1(response);
                     String key2 = getKey2(response);
                     String js = "ZnVuY3Rpb24gZ2V0T3BlbmxvYWRVUkwoZW5jcnlwdFN0cmluZywga2V5MSwga2V5MikgewogICAg\n" +
@@ -744,6 +741,16 @@ public class XGetter {
 
     private String getLongEncrypt(String string) {
         final String regex = "<p id=[^>]*>([^<]*)<\\/p>";
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(string);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private String getLongEncrypt2(String string) {
+        final String regex = "<p style=\"\" id=[^>]*>([^<]*)<\\/p>";
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {

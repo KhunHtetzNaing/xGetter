@@ -1,40 +1,61 @@
 package com.htetznaing.xgetterexample;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
+import com.google.android.material.snackbar.Snackbar;
 import com.htetznaing.xgetter.OkRuLinks;
 import com.htetznaing.xgetter.VkLinks;
 import com.htetznaing.xgetter.XGetter;
-import com.htetznaing.xgetterexample.Player.MyExoPlayer;
+import com.htetznaing.xgetterexample.Model.TitleAndUrl;
+import com.htetznaing.xgetterexample.Player.XPlayer;
+import com.htetznaing.xgetterexample.Utils.XDownloader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     XGetter xGetter;
     ProgressDialog progressDialog;
     String org;
     EditText edit_query;
+    XDownloader xDownloader;
 
+    private int AFTER_PERMISSION_GRANTED = 0;
+    private final int PLAY = 1;
+    private final int DOWNLOAD = 2;
+
+    String current_src=null;
+    AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,15 +69,43 @@ public class MainActivity extends AppCompatActivity {
             public void onTaskCompleted(final String vidURL) {
                 progressDialog.dismiss();
                 if (vidURL != null) {
-                    done(vidURL, null, null, false, false);
+                    done(vidURL);
                 } else done(null, null, null, false, true);
             }
 
             @Override
-            public void onFbTaskCompleted(String sd, String hd) {
+            public void onFbTaskCompleted(final String sd, final String hd) {
                 progressDialog.dismiss();
                 if (sd != null || hd != null) {
-                    done(null, sd, hd, true, false);
+                    CharSequence[] text = {"HD","SD"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Quality!")
+                            .setItems(text, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface d, int which) {
+                                    switch (which){
+                                        case 0:
+                                            if (hd!=null){
+                                                done(hd);
+                                            }else {
+//                                                Snackbar.make(getWindow().getDecorView(), "This video not available in HD", Snackbar.LENGTH_SHORT).show();
+                                                dialog.show();
+                                            }
+                                            break;
+                                        case 1:
+                                            if (sd!=null){
+                                                done(sd);
+                                            }else {
+//                                                Snackbar.make(getWindow().getDecorView(), "This video not available in SD", Snackbar.LENGTH_SHORT).show();
+                                                dialog.show();
+                                            }
+                                            break;
+                                    }
+                                }
+                            })
+                            .setPositiveButton("Ok",null);
+                    dialog = builder.create();
+                    dialog.show();
                 } else done(null, null, null, false, true);
             }
 
@@ -88,6 +137,14 @@ public class MainActivity extends AppCompatActivity {
             public void onError() {
                 progressDialog.dismiss();
                 done(null, null, null, false, true);
+            }
+        });
+
+        xDownloader = new XDownloader(this);
+        xDownloader.OnDownloadFinishedListerner(new XDownloader.OnDownloadFinished() {
+            @Override
+            public void onCompleted(String path) {
+
             }
         });
 
@@ -139,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fb(View view) {
-        letGo("https://www.facebook.com/KHtetzNaing/videos/925916414463007/");
+        letGo("925916414463007");
     }
 
     public void mediafire(View view) {
@@ -166,6 +223,49 @@ public class MainActivity extends AppCompatActivity {
         return what;
     }
 
+    private void done(final String url){
+        MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(this)
+                .setTitle("Congratulations!")
+                .setDescription("Now,you can stream or download.")
+                .setStyle(Style.HEADER_WITH_ICON)
+                .setIcon(R.drawable.done)
+                .withDialogAnimation(true)
+                .setPositiveText("Stream")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        startActivity(new Intent(getApplicationContext(),XPlayer.class).putExtra("url",url));
+                    }
+                })
+                .setNegativeText("Download")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        downloadFile(url);
+                    }
+                });
+        MaterialStyledDialog dialog = builder.build();
+        dialog.show();
+    }
+
+
+    private void downloadFile(String url){
+        current_src = url;
+        if (checkPermissions()){
+            xDownloader.download(current_src);
+        }
+    }
+
+    public void open(String url,String title) {
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(URLDecoder.decode(url, "UTF-8")), "video/mp4");
+            startActivity(Intent.createChooser(intent, title));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void done(final String url, final String sd, final String hd, boolean fb, boolean error) {
         String message = null;
@@ -186,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton("Stream", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
+                        Intent intent = new Intent(MainActivity.this, XPlayer.class);
                         intent.putExtra("url", url);
                         startActivity(intent);
                     }
@@ -194,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
             } else builder.setPositiveButton("SD", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
+                    Intent intent = new Intent(MainActivity.this, XPlayer.class);
                     intent.putExtra("url", sd);
                     startActivity(intent);
                 }
@@ -202,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton("HD", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
+                            Intent intent = new Intent(MainActivity.this, XPlayer.class);
                             intent.putExtra("url", hd);
                             startActivity(intent);
                         }
@@ -239,9 +339,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void fetch(View view) {
         String url = edit_query.getText().toString();
-        if (URLUtil.isValidUrl(url)) {
-            letGo(url);
-        } else Toast.makeText(this, "Input valid url :)", Toast.LENGTH_SHORT).show();
+        letGo(url);
     }
 
     public void showAbout() {
@@ -277,123 +375,164 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void okRuOrVkDialog(Object object,boolean isOK) throws JSONException {
-        JSONArray jsonArray = new JSONArray();
+        ArrayList<TitleAndUrl> model = new ArrayList<>();
         if (isOK){
-            jsonArray = generateOkLinkForDialog((OkRuLinks) object);
-        }else jsonArray = generateVkLinkForDialog((VkLinks) object);
+            model = generateOkLinkForDialog((OkRuLinks) object);
+        }else model = generateVkLinkForDialog((VkLinks) object);
 
-        JSONArray jname = jsonArray.getJSONArray(0);
-        JSONArray jurl = jsonArray.getJSONArray(1);
+        CharSequence [] name = new CharSequence[model.size()];
 
-        CharSequence [] name = new CharSequence[jname.length()];
-        final String [] url = new String[jurl.length()];
-
-        for (int i=0;i<jname.length();i++){
-            name[i] = jname.getString(i);
-            url[i] = jurl.getString(i);
+        for (int i=0;i<model.size();i++){
+            name[i] = model.get(i).getTitle();
         }
 
+        final ArrayList<TitleAndUrl> finalModel = model;
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle("Quality")
+                .setTitle("Quality!")
                 .setItems(name, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(MainActivity.this, MyExoPlayer.class);
-                        intent.putExtra("url", url[which]);
-                        startActivity(intent);
+                        done(finalModel.get(which).getUrl());
                     }
                 })
                 .setPositiveButton("OK",null);
         builder.show();
     }
 
-    private JSONArray generateOkLinkForDialog(OkRuLinks okRuLinks){
-        JSONArray links = new JSONArray();
-        JSONArray name = new JSONArray();
+    private ArrayList<TitleAndUrl> generateOkLinkForDialog(OkRuLinks okRuLinks){
+        ArrayList<TitleAndUrl> arrayList = new ArrayList<>();
 
         if (okRuLinks.getMobile144px()!=null){
-            links.put(okRuLinks.getMobile144px());
-            name.put("144p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getMobile144px());
+            titleAndUrl.setTitle("144p");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getLowest240px()!=null){
-            links.put(okRuLinks.getLowest240px());
-            name.put("240p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getLowest240px());
+            titleAndUrl.setTitle("240p");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getLow360px()!=null){
-            links.put(okRuLinks.getLow360px());
-            name.put("360p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getLow360px());
+            titleAndUrl.setTitle("360p");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getSd480px()!=null){
-            links.put(okRuLinks.getSd480px());
-            name.put("480p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getSd480px());
+            titleAndUrl.setTitle("480p");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getHD()!=null){
-            links.put(okRuLinks.getHD());
-            name.put("HD");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getHD());
+            titleAndUrl.setTitle("HD");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getFullHD()!=null){
-            links.put(okRuLinks.getFullHD());
-            name.put("Full HD");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getFullHD());
+            titleAndUrl.setTitle("Full HD");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getQuad2K()!=null){
-            links.put(okRuLinks.getQuad2K());
-            name.put("2K");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getQuad2K());
+            titleAndUrl.setTitle("2K");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getUltra4K()!=null){
-            links.put(okRuLinks.getUltra4K());
-            name.put("Ultra4K");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getUltra4K());
+            titleAndUrl.setTitle("Ultra4K");
+            arrayList.add(titleAndUrl);
         }
 
         if (okRuLinks.getUrl()!=null){
-            links.put(okRuLinks.getUrl());
-            name.put("Default");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(okRuLinks.getUrl());
+            titleAndUrl.setTitle("Default");
+            arrayList.add(titleAndUrl);
         }
 
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.put(name);
-        jsonArray.put(links);
-        return jsonArray;
+        return arrayList;
     }
 
-    private JSONArray generateVkLinkForDialog(VkLinks vkLinks){
-        JSONArray links = new JSONArray();
-        JSONArray name = new JSONArray();
+    private ArrayList<TitleAndUrl> generateVkLinkForDialog(VkLinks vkLinks){
+        ArrayList<TitleAndUrl> arrayList = new ArrayList<>();
 
         if (vkLinks.getUrl240()!=null){
-            links.put(vkLinks.getUrl240());
-            name.put("240p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(vkLinks.getUrl240());
+            titleAndUrl.setTitle("240p");
+            arrayList.add(titleAndUrl);
         }
 
         if (vkLinks.getUrl360()!=null){
-            links.put(vkLinks.getUrl360());
-            name.put("360p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(vkLinks.getUrl360());
+            titleAndUrl.setTitle("360p");
+            arrayList.add(titleAndUrl);
         }
 
         if (vkLinks.getUrl480()!=null){
-            links.put(vkLinks.getUrl480());
-            name.put("480p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(vkLinks.getUrl480());
+            titleAndUrl.setTitle("480p");
+            arrayList.add(titleAndUrl);
         }
 
         if (vkLinks.getUrl720()!=null){
-            links.put(vkLinks.getUrl720());
-            name.put("720p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(vkLinks.getUrl720());
+            titleAndUrl.setTitle("720p");
+            arrayList.add(titleAndUrl);
         }
 
         if (vkLinks.getUrl1080()!=null){
-            links.put(vkLinks.getUrl1080());
-            name.put("1080p");
+            TitleAndUrl titleAndUrl = new TitleAndUrl();
+            titleAndUrl.setUrl(vkLinks.getUrl1080());
+            titleAndUrl.setTitle("1080p");
+            arrayList.add(titleAndUrl);
         }
 
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.put(name);
-        jsonArray.put(links);
-        return jsonArray;
+        return arrayList;
+    }
+
+    private boolean checkPermissions() {
+        int storage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        final List<String> listPermissionsNeeded = new ArrayList<>();
+        if (storage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1000);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode==1000){
+            if (grantResults.length > 0&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                downloadFile(current_src);
+            } else {
+                checkPermissions();
+                Toast.makeText(this, "You need to allow this permission!", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
     }
 }
