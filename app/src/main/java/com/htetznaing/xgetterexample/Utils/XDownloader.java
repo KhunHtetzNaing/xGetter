@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Toast;
+
+import com.htetznaing.xgetter.Model.XModel;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,8 +37,7 @@ public class XDownloader {
         mBaseFolderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/";
     }
 
-    public void download(String url){
-        System.out.println(url);
+    public void download(XModel xModel){
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH);
             Date now = new Date();
@@ -45,9 +47,16 @@ public class XDownloader {
                 new File(mBaseFolderPath).mkdir();
             }
             String mFilePath = "file://" + mBaseFolderPath + fileName;
-            Uri downloadUri = Uri.parse(url);
+            Uri downloadUri = Uri.parse(xModel.getUrl());
             mRequest = new DownloadManager.Request(downloadUri);
             mRequest.setDestinationUri(Uri.parse(mFilePath));
+
+            //If google drive you need to set cookie
+            if (xModel.getCookie()!=null){
+                mRequest.addRequestHeader("cookie", xModel.getCookie());
+            }
+
+            mRequest.setMimeType("video/*");
             mRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             mDownloadedFileID = mDownloadManager.enqueue(mRequest);
             IntentFilter downloaded = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
@@ -57,7 +66,7 @@ public class XDownloader {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
             try {
-                intent.setDataAndType(Uri.parse(URLDecoder.decode(url, "UTF-8")), "video/mp4");
+                intent.setDataAndType(Uri.parse(URLDecoder.decode(xModel.getUrl(), "UTF-8")), "video/mp4");
                 activity.startActivity(Intent.createChooser(intent, "Download with..."));
             } catch (UnsupportedEncodingException e1) {
                 e1.printStackTrace();

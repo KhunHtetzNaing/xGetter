@@ -3,6 +3,7 @@ package com.htetznaing.xgetterexample;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,10 +15,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,21 +27,14 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
-import com.google.android.material.snackbar.Snackbar;
-import com.htetznaing.xgetter.OkRuLinks;
-import com.htetznaing.xgetter.VkLinks;
+import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.XGetter;
-import com.htetznaing.xgetterexample.Model.TitleAndUrl;
 import com.htetznaing.xgetterexample.Player.XPlayer;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,94 +43,36 @@ public class MainActivity extends AppCompatActivity {
     String org;
     EditText edit_query;
     XDownloader xDownloader;
-
-    private int AFTER_PERMISSION_GRANTED = 0;
-    private final int PLAY = 1;
-    private final int DOWNLOAD = 2;
-
-    String current_src=null;
-    AlertDialog dialog;
+    XModel current_Xmodel =null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         xGetter = new XGetter(this);
         xGetter.onFinish(new XGetter.OnTaskCompleted() {
-            @Override
-            public void onTaskCompleted(final String vidURL) {
-                progressDialog.dismiss();
-                if (vidURL != null) {
-                    done(vidURL);
-                } else done(null, null, null, false, true);
-            }
 
             @Override
-            public void onFbTaskCompleted(final String sd, final String hd) {
+            public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {
                 progressDialog.dismiss();
-                if (sd != null || hd != null) {
-                    CharSequence[] text = {"HD","SD"};
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Quality!")
-                            .setItems(text, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface d, int which) {
-                                    switch (which){
-                                        case 0:
-                                            if (hd!=null){
-                                                done(hd);
-                                            }else {
-//                                                Snackbar.make(getWindow().getDecorView(), "This video not available in HD", Snackbar.LENGTH_SHORT).show();
-                                                dialog.show();
-                                            }
-                                            break;
-                                        case 1:
-                                            if (sd!=null){
-                                                done(sd);
-                                            }else {
-//                                                Snackbar.make(getWindow().getDecorView(), "This video not available in SD", Snackbar.LENGTH_SHORT).show();
-                                                dialog.show();
-                                            }
-                                            break;
-                                    }
-                                }
-                            })
-                            .setPositiveButton("Ok",null);
-                    dialog = builder.create();
-                    dialog.show();
-                } else done(null, null, null, false, true);
-            }
-
-            @Override
-            public void onOkRuTaskCompleted(OkRuLinks okRuLinks) {
-                progressDialog.dismiss();
-                if (okRuLinks!=null){
-                    try {
-                        okRuOrVkDialog(okRuLinks,true);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                if (multiple_quality){
+                    //This video you can choose qualities
+                    for (XModel model : vidURL){
+                        String url = model.getUrl();
+                        //If google drive video you need to set cookie for play or download
+                        String cookie = model.getCookie();
                     }
-                } else done(null, null, null, false, true);
-            }
-
-            @Override
-            public void onVkTaskComplete(VkLinks vkLinks) {
-                progressDialog.dismiss();
-                if (vkLinks!=null){
-                    try {
-                        okRuOrVkDialog(vkLinks,false);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else done(null, null, null, false, true);
+                    multipleQualityDialog(vidURL);
+                }else {
+                   done(vidURL.get(0));
+                }
             }
 
             @Override
             public void onError() {
                 progressDialog.dismiss();
-                done(null, null, null, false, true);
+                done(null);
             }
         });
 
@@ -168,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void streamcherry(View view) {
-        letGo("https://streamcherry.com/f/nfbbfdpcqnafkltc/10000000_133548554346206_9058973369364748674_n_mp4\n");
+        letGo("https://streamcherry.com/f/nfbbfdpcqnafkltc/10000000_133548554346206_9058973369364748674_n_mp4");
     }
 
     public void megaup(View view) {
@@ -180,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void vidcloud(View view) {
-        letGo("https://vidcloud.co/v/5c2206a02affa");
+        letGo("https://vidcloud.co/v/5cbb3eeeb8fe4/44974034_123890982029283_3431405518314696625_n.mp4");
     }
 
     public void rapidvideo(View view) {
@@ -188,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void gdrive(View view) {
-        letGo("https://drive.google.com/open?id=1BsXhA3Sw64d2S2ZeGr5qDcPCxMRvK5Ch");
+        letGo("https://drive.google.com/open?id=1jfT3Fpbz2-kXGYqvp7RRHVlgSidJbYti");
     }
 
     public void gphotos(View view) {
@@ -200,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void mediafire(View view) {
-        letGo("http://www.mediafire.com/file/dd00f818ybeu83x/");
+        letGo("https://www.mediafire.com/file/dd00f818ybeu83x/");
     }
 
     public void okru(View view) {
@@ -209,6 +145,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void vk(View view) {
         letGo("https://vk.com/video-94920838_456240508");
+    }
+
+    public void twitter(View view) {
+        letGo("https://twitter.com/i/status/1115097302920847363");
+    }
+
+    public void youtube(View view) {
+        letGo("https://www.youtube.com/watch?v=Q4CSEK663Wc");
+    }
+
+    public void solidfiles(View view) {
+        letGo("http://www.solidfiles.com/v/PAwwxGvgqd5VX");
     }
 
     public boolean checkInternet() {
@@ -223,36 +171,62 @@ public class MainActivity extends AppCompatActivity {
         return what;
     }
 
-    private void done(final String url){
-        MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(this)
-                .setTitle("Congratulations!")
-                .setDescription("Now,you can stream or download.")
-                .setStyle(Style.HEADER_WITH_ICON)
-                .setIcon(R.drawable.done)
-                .withDialogAnimation(true)
-                .setPositiveText("Stream")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        startActivity(new Intent(getApplicationContext(),XPlayer.class).putExtra("url",url));
-                    }
-                })
-                .setNegativeText("Download")
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        downloadFile(url);
-                    }
-                });
+    private void done(XModel xModel){
+        String url = null;
+        if (xModel!=null) {
+            url = xModel.getUrl();
+        }
+        MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(this);
+        if (url!=null) {
+            String finalUrl = url;
+            builder.setTitle("Congratulations!")
+                    .setDescription("Now,you can stream or download.")
+                    .setStyle(Style.HEADER_WITH_ICON)
+                    .setIcon(R.drawable.right)
+                    .withDialogAnimation(true)
+                    .setPositiveText("Stream")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Intent intent = new Intent(getApplicationContext(),XPlayer.class);
+                            intent.putExtra("url",finalUrl);
+                            //If google drive you need to put cookie
+                            if (xModel.getCookie()!=null){
+                                intent.putExtra("cookie",xModel.getCookie());
+                            }
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeText("Download")
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            downloadFile(xModel);
+                        }
+                    });
+        }else {
+            builder.setTitle("Sorry!")
+                    .setDescription("Error")
+                    .setStyle(Style.HEADER_WITH_ICON)
+                    .setIcon(R.drawable.wrong)
+                    .withDialogAnimation(true)
+                    .setPositiveText("OK")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    });
+        }
         MaterialStyledDialog dialog = builder.build();
         dialog.show();
     }
 
 
-    private void downloadFile(String url){
-        current_src = url;
+    private void downloadFile(XModel xModel){
+        current_Xmodel = xModel;
         if (checkPermissions()){
-            xDownloader.download(current_src);
+            xDownloader.download(current_Xmodel);
         }
     }
 
@@ -265,50 +239,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-
-    public void done(final String url, final String sd, final String hd, boolean fb, boolean error) {
-        String message = null;
-        if (!error) {
-            if (!fb) {
-                message = "Input\n" + org + "\n\nResult\n" + url;
-            } else message = "Input\n" + org + "\n\nHD\n" + hd + "\n\nSD\n" + sd;
-        } else message = "ERROR";
-
-        View view = getLayoutInflater().inflate(R.layout.done, null);
-        TextView textView = view.findViewById(R.id.message);
-        textView.setText(message);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle("Done")
-                .setView(view);
-        if (!error) {
-            if (!fb) {
-                builder.setPositiveButton("Stream", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(MainActivity.this, XPlayer.class);
-                        intent.putExtra("url", url);
-                        startActivity(intent);
-                    }
-                });
-            } else builder.setPositiveButton("SD", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(MainActivity.this, XPlayer.class);
-                    intent.putExtra("url", sd);
-                    startActivity(intent);
-                }
-            })
-                    .setNegativeButton("HD", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(MainActivity.this, XPlayer.class);
-                            intent.putExtra("url", hd);
-                            startActivity(intent);
-                        }
-                    });
-        } else builder.setPositiveButton("OK", null);
-        builder.show();
     }
 
     public void dev(View view) {
@@ -347,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                 "\n" +
                 "#Supported Sites\n" +
                 "\n" +
-                "Google Drive\n" +
+                "Google GDrive\n" +
                 "Google Photos\n" +
                 "Facebook\n" +
                 "Openload\n" +
@@ -360,7 +290,10 @@ public class MainActivity extends AppCompatActivity {
                 "MegaUp\n" +
                 "Mediafire\n" +
                 "VK\n" +
-                "Ok.Ru" +
+                "Ok.Ru\n" +
+                "Youtube\n"+
+                "Twitter\n"+
+                "SolidFiles\n"+
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter";
         View view = getLayoutInflater().inflate(R.layout.done, null);
@@ -369,144 +302,28 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("About")
                 .setView(view)
-                .setPositiveButton("Stream", null);
+                .setPositiveButton("Ok", null);
         builder.show();
     }
 
 
-    private void okRuOrVkDialog(Object object,boolean isOK) throws JSONException {
-        ArrayList<TitleAndUrl> model = new ArrayList<>();
-        if (isOK){
-            model = generateOkLinkForDialog((OkRuLinks) object);
-        }else model = generateVkLinkForDialog((VkLinks) object);
-
+    private void multipleQualityDialog(ArrayList<XModel> model){
         CharSequence [] name = new CharSequence[model.size()];
 
         for (int i=0;i<model.size();i++){
-            name[i] = model.get(i).getTitle();
+            name[i] = model.get(i).getQuality();
         }
 
-        final ArrayList<TitleAndUrl> finalModel = model;
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Quality!")
                 .setItems(name, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        done(finalModel.get(which).getUrl());
+                        done(model.get(which));
                     }
                 })
                 .setPositiveButton("OK",null);
         builder.show();
-    }
-
-    private ArrayList<TitleAndUrl> generateOkLinkForDialog(OkRuLinks okRuLinks){
-        ArrayList<TitleAndUrl> arrayList = new ArrayList<>();
-
-        if (okRuLinks.getMobile144px()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getMobile144px());
-            titleAndUrl.setTitle("144p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getLowest240px()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getLowest240px());
-            titleAndUrl.setTitle("240p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getLow360px()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getLow360px());
-            titleAndUrl.setTitle("360p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getSd480px()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getSd480px());
-            titleAndUrl.setTitle("480p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getHD()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getHD());
-            titleAndUrl.setTitle("HD");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getFullHD()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getFullHD());
-            titleAndUrl.setTitle("Full HD");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getQuad2K()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getQuad2K());
-            titleAndUrl.setTitle("2K");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getUltra4K()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getUltra4K());
-            titleAndUrl.setTitle("Ultra4K");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (okRuLinks.getUrl()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(okRuLinks.getUrl());
-            titleAndUrl.setTitle("Default");
-            arrayList.add(titleAndUrl);
-        }
-
-        return arrayList;
-    }
-
-    private ArrayList<TitleAndUrl> generateVkLinkForDialog(VkLinks vkLinks){
-        ArrayList<TitleAndUrl> arrayList = new ArrayList<>();
-
-        if (vkLinks.getUrl240()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(vkLinks.getUrl240());
-            titleAndUrl.setTitle("240p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (vkLinks.getUrl360()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(vkLinks.getUrl360());
-            titleAndUrl.setTitle("360p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (vkLinks.getUrl480()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(vkLinks.getUrl480());
-            titleAndUrl.setTitle("480p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (vkLinks.getUrl720()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(vkLinks.getUrl720());
-            titleAndUrl.setTitle("720p");
-            arrayList.add(titleAndUrl);
-        }
-
-        if (vkLinks.getUrl1080()!=null){
-            TitleAndUrl titleAndUrl = new TitleAndUrl();
-            titleAndUrl.setUrl(vkLinks.getUrl1080());
-            titleAndUrl.setTitle("1080p");
-            arrayList.add(titleAndUrl);
-        }
-
-        return arrayList;
     }
 
     private boolean checkPermissions() {
@@ -527,12 +344,95 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode==1000){
             if (grantResults.length > 0&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadFile(current_src);
+                downloadFile(current_Xmodel);
             } else {
                 checkPermissions();
                 Toast.makeText(this, "You need to allow this permission!", Toast.LENGTH_SHORT).show();
             }
             return;
+        }
+    }
+
+    public boolean appInstalledOrNot(String str) {
+        try {
+            getPackageManager().getPackageInfo(str, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    //Example Download Google Drive Video with ADM
+    public void downloadWithADM(XModel xModel) {
+        boolean appInstalledOrNot = appInstalledOrNot( "com.dv.adm");
+        boolean appInstalledOrNot2 = appInstalledOrNot("com.dv.adm.pay");
+        boolean appInstalledOrNot3 = appInstalledOrNot( "com.dv.adm.old");
+        String str3;
+        if (appInstalledOrNot || appInstalledOrNot2 || appInstalledOrNot3) {
+            if (appInstalledOrNot2) {
+                str3 = "com.dv.adm.pay";
+            } else if (appInstalledOrNot) {
+                str3 = "com.dv.adm";
+            } else {
+                str3 = "com.dv.adm.old";
+            }
+
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(xModel.getUrl()), "application/x-mpegURL");
+                intent.setPackage(str3);
+                if (xModel.getCookie()!=null) {
+                    intent.putExtra("Cookies", xModel.getCookie());
+                }
+                startActivity(intent);
+                return;
+            } catch (Exception e) {
+                return;
+            }
+        }
+        str3 = "com.dv.adm";
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+str3)));
+        } catch (ActivityNotFoundException e2) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id="+str3)));
+        }
+    }
+
+    //Example Open Google Drive Video with MX Player
+    private void openWithMXPlayer(XModel xModel){
+        boolean appInstalledOrNot = appInstalledOrNot("com.mxtech.videoplayer.ad");
+        boolean appInstalledOrNot2 = appInstalledOrNot("com.mxtech.videoplayer.pro");
+        String str2;
+        if (appInstalledOrNot || appInstalledOrNot2) {
+            String str3;
+            if (appInstalledOrNot2) {
+                str2 = "com.mxtech.videoplayer.pro";
+                str3 = "com.mxtech.videoplayer.ActivityScreen";
+            } else {
+                str2 = "com.mxtech.videoplayer.ad";
+                str3 = "com.mxtech.videoplayer.ad.ActivityScreen";
+            }
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(xModel.getUrl()), "application/x-mpegURL");
+                intent.setPackage(str2);
+                intent.setClassName(str2, str3);
+                if (xModel.getCookie()!=null) {
+                    intent.putExtra("headers", new String[]{"cookie", xModel.getCookie()});
+                    intent.putExtra("secure_uri", true);
+                }
+                startActivity(intent);
+                return;
+            } catch (Exception e) {
+                e.fillInStackTrace();
+                Log.d("errorMx", e.getMessage());
+                return;
+            }
+        }
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.mxtech.videoplayer.ad")));
+        } catch (ActivityNotFoundException e2) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad")));
         }
     }
 }

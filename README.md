@@ -29,7 +29,10 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 -  **SendVid** 
 -  **Mediafire** 
 -  **VK** 
--  **Ok.Ru** 
+-  **Ok.Ru**
+-  **Youtube**
+-  **Twitter**
+-  **SolidFiles**
 တို႔ပဲျဖစ္ပါတယ္။
 ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
 အျခားအခမဲ့ Video တင္လို႔ရတဲ့ Site ေတြကိုလည္းထပ္ျဖည့္ေပးသြားပါ့မယ္ :)
@@ -51,43 +54,46 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.7'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.8'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
 **​AIDE** သမားဆိုရင္ေတာ့ **Save** ၿပီး **Download** လုပ္ခိုင္းရင္လုပ္ေပးပါ။
 **မွတ္ခ်က္။ ။အင္တာနက္ဖြင့္ထားဖို႔လိုပါမယ္**
 
+**AndroidManifest.xml ထဲမွာ
+
+    <application
+            .....
+            android:usesCleartextTraffic="true">
+
+ထည့္ပေးဖို့လိုပါမယ္။
+
 ၿပီးရင္ေတာ့ကိုယ္ေခၚခ်င္တဲ့ Activity ကေန
 
-    XGetter xGetter = new XGetter(this);
+
     xGetter.onFinish(new XGetter.OnTaskCompleted() {
-    
-    @Override
-    public void onTaskCompleted(String vidURL) {
-        // တိုက္႐ိုက္လင့္က vidURL
-    }
-    
-    @Override
-    public void onFbTaskCompleted(String sd, String hd) {
-    //Facebook လင့္ျဖစ္ပါက ဒီထဲမွာ HD, SD ျပန္ရလာမည္
-    }
 
-    @Override
-    public void onOkRuTaskCompleted(OkRuLinks okRuLinks) {
-        //okRuLinks ထဲမွာရႏိုင္တဲ့ Quality အားလုံးပါလာပါမယ္။
-    }
+                @Override
+                public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {
+                    if (multiple_quality){
+                        //This video you can choose qualities
+                        for (XModel model : vidURL){
+                           String url = model.getUrl();
+                           //If google drive video you need to set cookie for play or download
+                           String cookie = model.getCookie();
+                        }
+                    }else {
+                        //If single
+                        String url = vidURL.get(0).getUrl();
+                    }
+                }
 
-    @Override
-    public void onVkTaskComplete(VkLinks vkLinks) {
-        //vkLinks ထဲမွာရႏိုင္တဲ့ Quality အားလုံးပါလာပါမယ္။
-    }
-
-    @Override
-    public void onError() {
-        // Error
-    }
-    });
+                @Override
+                public void onError() {
+                    //Error
+                }
+            });
     
     xGetter.find("Video လင့္");
 
@@ -102,13 +108,13 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
 
 ရုပ်ရှင်နဲ့ Video App ဖန်တီးချင်သူတွေအနေနဲ့
-အသုံးဝင်မယ့် Lib လေးတစ်ခုဖန်တီးပေးထားပါတယ်။
-Video တွေကို အကန့်အသတ်မရှိ Free တင်လို့ရပြီ
-ကြည့်တဲ့အချိန်မှာကြော်ငြာအရမ်းတက်တဲ့
-Openload, Streamango တို့လိုလင့်တွေကနေ
-ကြော်ငြာကြည့်စရာမလိုပဲ
-တိုက်ရိုက်ဒေါင်းဖို့လင့်ဆွဲထုတ်ပေးနိုင်တဲ့ကောင်လေးပါ။
-ရလာတဲ့လင့်ကို တိုက်ရိုက်ဒေါင်းမလား
+အသုံးဝင်မယ့် Lib လေးတစ်ခုဖန်တီးပေးထားပါတယ်။
+Video တွေကို အကန့်အသတ်မရှိ Free တင်လို့ရပြီ
+ကြည့်တဲ့အချိန်မှာကြော်ငြာအရမ်းတက်တဲ့
+Openload, Streamango တို့လိုလင့်တွေကနေ
+ကြော်ငြာကြည့်စရာမလိုပဲ
+တိုက်ရိုက်ဒေါင်းဖို့လင့်ဆွဲထုတ်ပေးနိုင်တဲ့ကောင်လေးပါ။
+ရလာတဲ့လင့်ကို တိုက်ရိုက်ဒေါင်းမလား
 ကိုယ်ပိုင် Player နဲ့တိုက်ရိုက်ပြမလား
 အဆင်ပြေသလိုအသုံးချနိုင်ပါတယ်။
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
@@ -122,13 +128,16 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 -  **RapidVideo**
 -  **Mp4Upload**
 -  **VidCloud**
--  **SendVid** 
--  **Mediafire** 
--  **VK** 
--  **Ok.Ru** 
+-  **SendVid**
+-  **Mediafire**
+-  **VK**
+-  **Ok.Ru**
+-  **Youtube**
+-  **Twitter**
+-  **SolidFiles**
 တို့ပဲဖြစ်ပါတယ်။
-ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
-အခြားအခမဲ့ Video တင်လို့ရတဲ့ Site တွေကိုလည်းထပ်ဖြည့်ပေးသွားပါ့မယ် :)
+ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
+အခြားအခမဲ့ Video တင်လို့ရတဲ့ Site တွေကိုလည်းထပ်ဖြည့်ပေးသွားပါ့မယ် :)
 အဲ့တော့ Video Sharing App အတွက် Host ဝယ်စရာမလိုတော့ဘူးလေနော် ;)
 
 အသုံးပြုနည်း
@@ -139,7 +148,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
     allprojects {
     repositories {
     .......
-    maven { url 'https://jitpack.io' } //ဒီကုဒ်လေးထည့်ပေးပါ။
+    maven { url 'https://jitpack.io' } //ဒီကုဒ်လေးထည့်ပေးပါ။
     }
     }
 
@@ -147,45 +156,48 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.7'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.8'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။
-**​AIDE** သမားဆိုရင်တော့ **Save** ပြီး **Download** လုပ်ခိုင်းရင်လုပ်ပေးပါ။
-**မှတ်ချက်။ ။အင်တာနက်ဖွင့်ထားဖို့လိုပါမယ်**
+**AIDE** သမားဆိုရင်တော့ **Save** ပြီး **Download** လုပ်ခိုင်းရင်လုပ်ပေးပါ။
+**မှတ်ချက်။ ။အင်တာနက်ဖွင့်ထားဖို့လိုပါမယ်**
+
+**AndroidManifest.xml ထဲမှာ
+
+    <application
+            .....
+            android:usesCleartextTraffic="true">
+
+ထည့်ပေးဖို့လိုပါမယ်။
 
 ပြီးရင်တော့ကိုယ်ခေါ်ချင်တဲ့ Activity ကနေ
 
-    XGetter xGetter = new XGetter(this);
+
     xGetter.onFinish(new XGetter.OnTaskCompleted() {
-    
-    @Override
-    public void onTaskCompleted(String vidURL) {
-        // တိုက်ရိုက်လင့်က vidURL
-    }
-    
-    @Override
-    public void onFbTaskCompleted(String sd, String hd) {
-    //Facebook လင့်ဖြစ်ပါက ဒီထဲမှာ HD, SD ပြန်ရလာမည်
-    }
 
-    @Override
-    public void onOkRuTaskCompleted(OkRuLinks okRuLinks) {
-        //okRuLinks ထဲမှာရနိုင်တဲ့ Quality အားလုံးပါလာပါမယ်။
-    }
+                @Override
+                public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {
+                    if (multiple_quality){
+                        //This video you can choose qualities
+                        for (XModel model : vidURL){
+                           String url = model.getUrl();
+                           //If google drive video you need to set cookie for play or download
+                           String cookie = model.getCookie();
+                        }
+                    }else {
+                        //If single
+                        String url = vidURL.get(0).getUrl();
+                    }
+                }
 
-    @Override
-    public void onVkTaskComplete(VkLinks vkLinks) {
-        //vkLinks ထဲမှာရနိုင်တဲ့ Quality အားလုံးပါလာပါမယ်။
-    }
+                @Override
+                public void onError() {
+                    //Error
+                }
+            });
 
-    @Override
-    public void onError() {
-        // Error
-    }
-    });
-    
-    xGetter.find("Video လင့်");
+    xGetter.find("Video လင့်");
 
 အသုံးပြုရတာလည်းလွယ်ပါတယ် :)
 - Example APK => http://bit.ly/2TDvLQ2

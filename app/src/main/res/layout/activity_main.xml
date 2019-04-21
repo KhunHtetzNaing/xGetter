@@ -45,12 +45,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:onClick="vk"
-                android:text="VK"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -100,6 +94,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                    <Button
+                        android:onClick="vk"
+                        android:text="VK"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="youtube"
+                        android:text="Youtube"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -142,6 +148,18 @@
                     <Button
                         android:onClick="okru"
                         android:text="Ok.ru"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="twitter"
+                        android:text="Twitter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="solidfiles"
+                        android:text="SolidFiles"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

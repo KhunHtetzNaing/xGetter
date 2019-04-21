@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -24,11 +25,17 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.snackbar.Snackbar;
+import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetterexample.R;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +52,7 @@ public class XPlayer extends AppCompatActivity {
     private boolean doubleBackToExitPressedOnce = false;
     private SimpleExoPlayer player;
     private PlayerView playerView;
-    private String url;
+    private String url,cookie=null;
     private ProgressBar progressBar;
     private XDownloader xDownloader;
 
@@ -70,6 +77,11 @@ public class XPlayer extends AppCompatActivity {
 
         if (intent.getStringExtra("url")!=null){
             url = intent.getStringExtra("url");
+        }
+
+        // get cookie from intent if google drive
+        if (intent.getStringExtra("cookie")!=null){
+            cookie = intent.getStringExtra("cookie");
         }
 
         xDownloader = new XDownloader(this);
@@ -107,6 +119,13 @@ public class XPlayer extends AppCompatActivity {
         return true;
     }
 
+    private void download(){
+        XModel xModel = new XModel();
+        xModel.setUrl(url);
+        xModel.setCookie(cookie);
+        xDownloader.download(xModel);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -115,7 +134,7 @@ public class XPlayer extends AppCompatActivity {
                 if (AFTER_PERMISSION_GRANTED==PLAY) {
                     initApp();
                 }else
-                    xDownloader.download(url);
+                    download();
 
             } else {
                 checkPermissions();
@@ -134,13 +153,17 @@ public class XPlayer extends AppCompatActivity {
         player = ExoPlayerFactory.newSimpleInstance(XPlayer.this, trackSelector);
         playerView.setPlayer(player);
 
-        // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(XPlayer.this,
-                Util.getUserAgent(XPlayer.this, getResources().getString(R.string.app_name)));
-        // This is the MediaSource representing the media to be played.
-        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(Uri.parse(url));
-        // Prepare the player with the source.
+        String userAgent = Util.getUserAgent(XPlayer.this, getResources().getString(R.string.app_name));
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(XPlayer.this, userAgent);
+
+        //If google drive you need to set custom cookie
+        if (cookie!=null) {
+            DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent, null);
+            httpDataSourceFactory.getDefaultRequestProperties().set("Cookie", cookie);
+            dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), null, httpDataSourceFactory);
+        }
+
+        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url));
         player.prepare(videoSource);
         player.setPlayWhenReady(true);
         player.addListener(new Player.DefaultEventListener() {
@@ -184,7 +207,7 @@ public class XPlayer extends AppCompatActivity {
             public void onClick(View view) {
                 if (checkPermissions()) {
                     AFTER_PERMISSION_GRANTED = DOWNLOAD;
-                    xDownloader.download(url);
+                    download();
                 }
             }
         });
