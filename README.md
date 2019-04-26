@@ -71,7 +71,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
 ၿပီးရင္ေတာ့ကိုယ္ေခၚခ်င္တဲ့ Activity ကေန
 
-
+    XGetter xGetter = new XGetter(this);
     xGetter.onFinish(new XGetter.OnTaskCompleted() {
 
                 @Override
@@ -173,7 +173,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
 ပြီးရင်တော့ကိုယ်ခေါ်ချင်တဲ့ Activity ကနေ
 
-
+    XGetter xGetter = new XGetter(this);
     xGetter.onFinish(new XGetter.OnTaskCompleted() {
 
                 @Override
