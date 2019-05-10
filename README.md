@@ -54,7 +54,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.8'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.8.1'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
@@ -156,7 +156,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.8'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.8.1'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။
