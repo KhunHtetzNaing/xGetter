@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void gdrive(View view) {
-        letGo("https://drive.google.com/open?id=1jfT3Fpbz2-kXGYqvp7RRHVlgSidJbYti");
+        letGo("https://drive.google.com/open?id=1nxWszNOJqkx7q0r_lFI_0IfAPiDGCmRJ");
     }
 
     public void gphotos(View view) {
