@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
 import at.huber.youtubeExtractor.VideoMeta;
 import at.huber.youtubeExtractor.YouTubeExtractor;
 import at.huber.youtubeExtractor.YtFile;
@@ -384,7 +383,9 @@ public class XGetter {
             @Override
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
-                onComplete.onTaskCompleted(xModels,true);
+                if (xModels!=null) {
+                    onComplete.onTaskCompleted(xModels, true);
+                }else onComplete.onError();
             }
         }.execute();
     }

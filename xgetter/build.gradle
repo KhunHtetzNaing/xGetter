@@ -1,15 +1,15 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.htetznaing'
-version='1.7'
+version='1.8.1'
 
 android {
     compileSdkVersion 26
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 8
-        versionName "1.8"
+        versionCode 9
+        versionName "1.8.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

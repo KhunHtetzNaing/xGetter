@@ -29,6 +29,8 @@ public class GDrive {
             }
 
             String fmt_stream_map = getQueryVariable(response);
+
+            if (fmt_stream_map!=null){
             String maps []= fmt_stream_map.split("%2C");
             String purl = "";
             String quality = "";
@@ -93,7 +95,11 @@ public class GDrive {
                         break;
                 }
                 putModel(decodeURIComponent(purl),quality,cookie,xModels);
+                }
+            }else {
+                return null;
             }
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
