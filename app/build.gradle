@@ -6,8 +6,8 @@ android {
         applicationId "com.htetznaing.xgetterexample"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 8
-        versionName "1.8"
+        versionCode 10
+        versionName "1.8.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -663,39 +663,45 @@ public class XGetter {
                 @Override
                 public void onResponse(String response) {
                     String json = getJson(response);
-                    json = StringEscapeUtils.unescapeHtml4(json);
-                    try {
-                        json = new JSONObject(json).getJSONObject("flashvars").getString("metadata");
-                        JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
-                        ArrayList<XModel> models = new ArrayList<>();
-                        for (int i=0;i<jsonArray.length();i++){
-                            String url = jsonArray.getJSONObject(i).getString("url");
-                            String name = jsonArray.getJSONObject(i).getString("name");
-                            if (name.equals("mobile")) {
-                                putModel(url,"144p",models);
-                            } else if (name.equals("lowest")) {
-                                putModel(url,"240p",models);
-                            } else if (name.equals("low")) {
-                                putModel(url,"360p",models);
-                            } else if (name.equals("sd")) {
-                                putModel(url,"480p",models);
-                            } else if (name.equals("hd")) {
-                                putModel(url,"HD",models);
-                            } else if (name.equals("full")) {
-                                putModel(url,"Full HD",models);
-                            } else if (name.equals("quad")) {
-                                putModel(url,"2K",models);
-                            } else if (name.equals("ultra")) {
-                                putModel(url,"4K",models);
-                            } else {
-                                putModel(url,"Default",models);
+                    if (json!=null) {
+                        json = StringEscapeUtils.unescapeHtml4(json);
+                        try {
+                            json = new JSONObject(json).getJSONObject("flashvars").getString("metadata");
+                            if (json!=null) {
+                                JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
+                                ArrayList<XModel> models = new ArrayList<>();
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    String url = jsonArray.getJSONObject(i).getString("url");
+                                    String name = jsonArray.getJSONObject(i).getString("name");
+                                    if (name.equals("mobile")) {
+                                        putModel(url, "144p", models);
+                                    } else if (name.equals("lowest")) {
+                                        putModel(url, "240p", models);
+                                    } else if (name.equals("low")) {
+                                        putModel(url, "360p", models);
+                                    } else if (name.equals("sd")) {
+                                        putModel(url, "480p", models);
+                                    } else if (name.equals("hd")) {
+                                        putModel(url, "HD", models);
+                                    } else if (name.equals("full")) {
+                                        putModel(url, "Full HD", models);
+                                    } else if (name.equals("quad")) {
+                                        putModel(url, "2K", models);
+                                    } else if (name.equals("ultra")) {
+                                        putModel(url, "4K", models);
+                                    } else {
+                                        putModel(url, "Default", models);
+                                    }
+                                }
+                                onComplete.onTaskCompleted(models, true);
+                            }else {
+                                onComplete.onError();
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            onComplete.onError();
                         }
-                        onComplete.onTaskCompleted(models,true);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        onComplete.onError();
-                    }
+                    }else onComplete.onError();
                 }
             }, new Response.ErrorListener() {
                 @Override
