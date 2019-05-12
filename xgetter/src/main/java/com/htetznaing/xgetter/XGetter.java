@@ -23,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.htetznaing.xgetter.Core.Fruits;
 import com.htetznaing.xgetter.Core.GDrive;
 import com.htetznaing.xgetter.Core.SolidFiles;
+import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
 
@@ -78,6 +79,7 @@ public class XGetter {
     private final String twitter = "http(?:s)?:\\/\\/(?:www\\.)?twitter\\.com\\/([a-zA-Z0-9_]+)";
     private final String youtube = "^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$";
     private final String solidfiles = "https?:\\/\\/(www\\.)?(solidfiles)\\.[^\\/,^\\.]{2,}\\/(v)\\/.+";
+    private final String vidoza = "https?:\\/\\/(www\\.)?(vidoza)\\.[^\\/,^\\.]{2,}\\/(v)\\/.+";
     public XGetter(Context view) {
         this.context = view;
     }
@@ -198,7 +200,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false;
+        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false;
         if (check(openload, url)) {
             //Openload
             run = true;
@@ -292,6 +294,11 @@ public class XGetter {
         }else if (check(solidfiles,url)){
             run = true;
             solidf = true;
+        } else if (check(vidoza, url)) {
+        //Vidoza
+        isvidoza=true;
+        run = true;
+
         }
 
         if (run) {
@@ -319,11 +326,14 @@ public class XGetter {
                 youtube(url);
             } else if (solidf){
                 solidfiles(url);
+            } else if (isvidoza){
+                vidozafiles(url);
             } else {
                 webView.loadUrl(url);
             }
         }else onComplete.onError();
     }
+
 
     private void solidfiles(final String url){
         new AsyncTask<Void,Void,ArrayList<XModel>>(){
@@ -843,7 +853,28 @@ public class XGetter {
             }
         }.execute();
     }
+    private void vidozafiles(final String url){
+        new AsyncTask<Void,Void,ArrayList<XModel>>(){
+            @Override
+            protected ArrayList<XModel> doInBackground(Void... voids) {
+                XModel model = Vidoza.fetch(url);
+                if (model!=null){
+                    ArrayList<XModel> xModels = new ArrayList<>();
+                    xModels.add(model);
+                    return xModels;
+                }
+                return null;
+            }
 
+            @Override
+            protected void onPostExecute(ArrayList<XModel> xModels) {
+                super.onPostExecute(xModels);
+                if (xModels!=null){
+                    onComplete.onTaskCompleted(xModels,false);
+                }else onComplete.onError();
+            }
+        }.execute();
+    }
     private String getLongEncrypt(String string) {
         final String regex = "<p id=[^>]*>([^<]*)<\\/p>";
         final Pattern pattern = Pattern.compile(regex);
