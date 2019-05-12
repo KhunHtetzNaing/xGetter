@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void vidozafiles(View view) {
-        letGo("https://vidoza.net/4g6i833joos8.html");
+        letGo("https://vidoza.net/lwccr013oskm.html");
     }
 
     public boolean checkInternet() {
