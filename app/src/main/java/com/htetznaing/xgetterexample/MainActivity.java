@@ -159,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
         letGo("http://www.solidfiles.com/v/PAwwxGvgqd5VX");
     }
 
+    public void vidozafiles(View view) {
+        letGo("https://vidoza.net/lwccr013oskm.html");
+    }
+
     public boolean checkInternet() {
         boolean what = false;
         CheckInternet checkNet = new CheckInternet(this);
@@ -294,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
                 "Youtube\n"+
                 "Twitter\n"+
                 "SolidFiles\n"+
+                "Vidoza\n"+
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter";
         View view = getLayoutInflater().inflate(R.layout.done, null);
