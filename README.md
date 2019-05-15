@@ -33,6 +33,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 -  **Youtube**
 -  **Twitter**
 -  **SolidFiles**
+-  **Vidoza**
 တို႔ပဲျဖစ္ပါတယ္။
 ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
 အျခားအခမဲ့ Video တင္လို႔ရတဲ့ Site ေတြကိုလည္းထပ္ျဖည့္ေပးသြားပါ့မယ္ :)
@@ -54,7 +55,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.8.2'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.8.3'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
@@ -135,6 +136,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 -  **Youtube**
 -  **Twitter**
 -  **SolidFiles**
+-  **Vidoza**
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
 အခြားအခမဲ့ Video တင်လို့ရတဲ့ Site တွေကိုလည်းထပ်ဖြည့်ပေးသွားပါ့မယ် :)
@@ -156,7 +158,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.8.2'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.8.3'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။
