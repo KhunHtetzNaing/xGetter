@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         xGetter = new XGetter(this);
+
         xGetter.onFinish(new XGetter.OnTaskCompleted() {
 
             @Override
@@ -176,6 +178,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void done(XModel xModel){
+        System.out.println(xModel.getCookie());
+        System.out.println(xModel.getUrl());
+
         String url = null;
         if (xModel!=null) {
             url = xModel.getUrl();
@@ -205,7 +210,8 @@ public class MainActivity extends AppCompatActivity {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            downloadFile(xModel);
+//                            downloadFile(xModel);
+                            downloadWithADM(xModel);
                         }
                     });
         }else {
@@ -387,8 +393,12 @@ public class MainActivity extends AppCompatActivity {
                 intent.setDataAndType(Uri.parse(xModel.getUrl()), "application/x-mpegURL");
                 intent.setPackage(str3);
                 if (xModel.getCookie()!=null) {
+                    intent.putExtra("Cookie", xModel.getCookie());
                     intent.putExtra("Cookies", xModel.getCookie());
+                    intent.putExtra("cookie", xModel.getCookie());
+                    intent.putExtra("cookies", xModel.getCookie());
                 }
+
                 startActivity(intent);
                 return;
             } catch (Exception e) {
