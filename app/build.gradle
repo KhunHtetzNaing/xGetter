@@ -35,5 +35,4 @@ dependencies {
     implementation 'com.github.javiersantos:MaterialStyledDialogs:2.1'
     implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
     implementation 'org.jsoup:jsoup:1.11.3'
-    implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
 }
