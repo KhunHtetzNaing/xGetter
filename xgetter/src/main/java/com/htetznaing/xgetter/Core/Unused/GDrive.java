@@ -1,4 +1,4 @@
-package com.htetznaing.xgetter.Core;
+package com.htetznaing.xgetter.Core.Unused;
 import com.htetznaing.xgetter.Model.XModel;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Deprecated
-public class GDriveOLD {
+public class GDrive {
     public static ArrayList<XModel> fetch(final String file_id){
         ArrayList<XModel> xModels = new ArrayList<>();
         try {
