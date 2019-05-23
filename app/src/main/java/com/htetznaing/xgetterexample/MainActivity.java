@@ -178,9 +178,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void done(XModel xModel){
-        System.out.println(xModel.getCookie());
-        System.out.println(xModel.getUrl());
-
         String url = null;
         if (xModel!=null) {
             url = xModel.getUrl();

@@ -24,7 +24,6 @@ public class GDrive {
             URLConnection conn = obj.openConnection();
             String header = conn.getHeaderFields().get("Set-Cookie").toString();
             String cookie = getDRIVE_STREAM(header)+getCookie(header);
-            System.out.println(cookie);
 
             InputStream is = conn.getInputStream();
             int ptr = 0;

@@ -31,6 +31,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,6 +44,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,7 +76,7 @@ public class XGetter {
     private final String mp4upload = "https?:\\/\\/(www\\.)?(mp4upload)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String sendvid = "https?:\\/\\/(www\\.)?(sendvid)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String vidcloud = "https?:\\/\\/(www\\.)?(vidcloud|vcstream|loadvid)\\.[^\\/,^\\.]{2,}\\/(v|embed)\\/.+";
-    private final String rapidvideo = "https?:\\/\\/(www\\.)?rapidvideo\\.[^\\/,^\\.]{2,}\\/(\\?v=[^&\\?]*|e\\/.+|v\\/.+)";
+    private final String rapidvideo = "https?:\\/\\/(www\\.)?rapidvideo\\.[^\\/,^\\.]{2,}\\/(\\?v=[^&\\?]*|e\\/.+|v\\/.+|d\\/.+)";
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
     private final String mediafire = "https?:\\/\\/(www\\.)?(mediafire)\\.[^\\/,^\\.]{2,}\\/(file)\\/.+";
     private final String okru = "https?:\\/\\/(www.|m.)?(ok)\\.[^\\/,^\\.]{2,}\\/(video|videoembed)\\/.+";
@@ -242,8 +247,8 @@ public class XGetter {
             //rapidvideo
             run = true;
             isRapidVideo=true;
-            if (url.contains("/e/")){
-                url = url.replace("/e/","/v/");
+            if (url.contains("/e/") || url.contains("/v/")){
+                url = url.replace("/e/","/d/");
             }
         } else if (check(gphoto, url)) {
             //gphotos
@@ -801,54 +806,33 @@ public class XGetter {
     }
 
     private void rapidVideo(final String mUrl){
-        new AsyncTask<Void,Void,String>(){
+        new AsyncTask<Void,Void,ArrayList<XModel>>(){
 
             @Override
-            protected String doInBackground(Void... voids) {
-                URL url;
-                InputStream is = null;
-                BufferedReader br;
-                String line;
-
+            protected ArrayList<XModel> doInBackground(Void... voids) {
+                ArrayList<XModel> xModels = new ArrayList<>();
+                Document document = null;
                 try {
-                    url = new URL(mUrl);
-                    is = url.openStream();  // throws an IOException
-                    br = new BufferedReader(new InputStreamReader(is));
-                    String result = null;
-                    while ((line = br.readLine()) != null) {
-                        result +=line;
-                    }
-
-                    if (result!=null){
-                        final String regex = "<source src=\"(.*?)\"";
-                        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                        final Matcher matcher = pattern.matcher(result);
-                        if (matcher.find()) {
-                            return matcher.group(1);
+                    document = Jsoup.connect("https://www.rapidvideo.com/d/G0DBDKEK2I").get();
+                    Elements element = document.getElementsByClass("button_small tooltip");
+                    for (int i=0;i<element.size();i++){
+                        Element temp = element.get(i);
+                        if (temp.hasAttr("href")) {
+                            String url = temp.attr("href");
+                            putModel(url, temp.text().toLowerCase().replace("download", "").replace(" ", ""), xModels);
                         }
                     }
-
-                } catch (MalformedURLException mue) {
-                    mue.printStackTrace();
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                } finally {
-                    try {
-                        if (is != null) is.close();
-                    } catch (IOException ioe) {
-                        // nothing to see here
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                return null;
+                return xModels;
             }
 
             @Override
-            protected void onPostExecute(String s) {
+            protected void onPostExecute(ArrayList<XModel> s) {
                 super.onPostExecute(s);
-                if (s!=null){
-                    ArrayList<XModel> xModels = new ArrayList<>();
-                    putModel(s,"",xModels);
-                    onComplete.onTaskCompleted(xModels,false);
+                if (s!=null && s.size()!=0){
+                    onComplete.onTaskCompleted(s,true);
                 }else onComplete.onError();
             }
         }.execute();
