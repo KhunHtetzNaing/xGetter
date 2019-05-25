@@ -8,13 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +16,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -165,6 +163,11 @@ public class MainActivity extends AppCompatActivity {
         letGo("https://vidoza.net/lwccr013oskm.html");
     }
 
+    public void uptostreamfiles(View view) {
+        letGo("https://uptostream.com/iframe/eyrasguzy8lk");
+    }
+
+
     public boolean checkInternet() {
         boolean what = false;
         CheckInternet checkNet = new CheckInternet(this);
@@ -302,6 +305,8 @@ public class MainActivity extends AppCompatActivity {
                 "Twitter\n"+
                 "SolidFiles\n"+
                 "Vidoza\n"+
+                "UptoStream\n"+
+                "Uptobox\n"+
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter";
         View view = getLayoutInflater().inflate(R.layout.done, null);
@@ -315,12 +320,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void multipleQualityDialog(ArrayList<XModel> model){
-        CharSequence [] name = new CharSequence[model.size()];
+    private void multipleQualityDialog(ArrayList<XModel> model) {
+        CharSequence[] name = new CharSequence[model.size()];
 
-        for (int i=0;i<model.size();i++){
+        for (int i = 0; i < model.size(); i++) {
             name[i] = model.get(i).getQuality();
+
         }
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Quality!")
@@ -330,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
                         done(model.get(which));
                     }
                 })
-                .setPositiveButton("OK",null);
+                .setPositiveButton("OK", null);
         builder.show();
     }
 

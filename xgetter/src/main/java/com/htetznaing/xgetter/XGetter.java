@@ -23,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.htetznaing.xgetter.Core.Fruits;
 import com.htetznaing.xgetter.Core.GDrive;
 import com.htetznaing.xgetter.Core.SolidFiles;
+import com.htetznaing.xgetter.Core.Uptostream;
 import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
@@ -85,6 +86,13 @@ public class XGetter {
     private final String youtube = "^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$";
     private final String solidfiles = "https?:\\/\\/(www\\.)?(solidfiles)\\.[^\\/,^\\.]{2,}\\/(v)\\/.+";
     private final String vidoza = "https?:\\/\\/(www\\.)?(vidoza)\\.[^\\/,^\\.]{2,}.+";
+    private final String uptostream = "https?:\\/\\/(www\\.)?(uptostream|uptobox)\\.[^\\/,^\\.]{2,}.+";
+
+    //  https://uptobox.com/eyrasguzy8lk
+    //  https://uptostream.com/eyrasguzy8lk
+    //  https://uptostream.com/eyrasguzy8lk
+    //  https://uptostream.com/iframe/eyrasguzy8lk
+
     public XGetter(Context view) {
         this.context = view;
     }
@@ -205,7 +213,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false;
+        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false;
         if (check(openload, url)) {
             //Openload
             run = true;
@@ -304,6 +312,10 @@ public class XGetter {
         isvidoza=true;
         run = true;
 
+        }else if (check(uptostream, url)) {
+            //uptostream, uptobox
+            isuptostream=true;
+            run = true;
         }
 
         if (run) {
@@ -333,6 +345,9 @@ public class XGetter {
                 solidfiles(url);
             } else if (isvidoza){
                 vidozafiles(url);
+            } else if (isuptostream){
+                uptostreamfiles(url);
+
             } else {
                 webView.loadUrl(url);
             }
@@ -859,6 +874,44 @@ public class XGetter {
             }
         }.execute();
     }
+    private void uptostreamfiles(final String url) {
+
+        final String urlprepared=prepareUptoStream(url);
+
+        new AsyncTask<Void,Void,ArrayList<XModel>>(){
+
+            @Override
+            protected ArrayList<XModel> doInBackground(Void... voids) {
+                return Uptostream.fetch(urlprepared);
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<XModel> xModels) {
+                super.onPostExecute(xModels);
+                if (xModels!=null) {
+                    onComplete.onTaskCompleted(xModels, true);
+                }else onComplete.onError();
+            }
+        }.execute();
+    }
+    private String prepareUptoStream(String urlUnpreprared) {
+
+        URL u= null;
+        try {
+            u = new URL(urlUnpreprared);
+            String domain=u.getHost();
+            String path=u.getPath();
+            String[] files= path.split("/");
+            String file=files[files.length-1];
+            return "https://uptostream.com/iframe/" + file;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+       return urlUnpreprared;
+
+    }
+
     private String getLongEncrypt(String string) {
         final String regex = "<p id=[^>]*>([^<]*)<\\/p>";
         final Pattern pattern = Pattern.compile(regex);
