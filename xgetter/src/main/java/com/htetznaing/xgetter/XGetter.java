@@ -70,7 +70,7 @@ public class XGetter {
     private WebView webView;
     private Context context;
     private OnTaskCompleted onComplete;
-    private final String agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36";
+    public static final String agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36";
     private final String openload = "https?:\\/\\/(www\\.)?(openload|oload)\\.[^\\/,^\\.]{2,}\\/(embed|f)\\/.+";
     private final String fruits = "https?:\\/\\/(www\\.)?(streamango|fruitstreams|streamcherry|fruitadblock|fruithosts)\\.[^\\/,^\\.]{2,}\\/(f|embed)\\/.+";
     private final String megaup = "https?:\\/\\/(www\\.)?(megaup)\\.[^\\/,^\\.]{2,}\\/.+";
@@ -875,7 +875,6 @@ public class XGetter {
         }.execute();
     }
     private void uptostreamfiles(final String url) {
-
         final String urlprepared=prepareUptoStream(url);
 
         new AsyncTask<Void,Void,ArrayList<XModel>>(){
@@ -895,7 +894,6 @@ public class XGetter {
         }.execute();
     }
     private String prepareUptoStream(String urlUnpreprared) {
-
         URL u= null;
         try {
             u = new URL(urlUnpreprared);

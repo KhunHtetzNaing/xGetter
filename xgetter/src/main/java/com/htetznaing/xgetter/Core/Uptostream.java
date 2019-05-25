@@ -2,6 +2,7 @@ package com.htetznaing.xgetter.Core;
 
 import com.google.gson.Gson;
 import com.htetznaing.xgetter.Model.XModel;
+import com.htetznaing.xgetter.XGetter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +25,6 @@ public class Uptostream {
         try {
             URL obj = new URL(file_id);
             URLConnection conn = obj.openConnection();
-
             InputStream is = conn.getInputStream();
             int ptr = 0;
             String response = "";
