@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.htetznaing'
-version='1.8.5'
+version='1.8.6'
 
 android {
     compileSdkVersion 26
@@ -9,7 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 12
-        versionName "1.8.5"
+        versionName "1.8.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

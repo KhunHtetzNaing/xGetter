@@ -813,7 +813,7 @@ public class XGetter {
                 ArrayList<XModel> xModels = new ArrayList<>();
                 Document document = null;
                 try {
-                    document = Jsoup.connect("https://www.rapidvideo.com/d/G0DBDKEK2I").get();
+                    document = Jsoup.connect(mUrl).get();
                     Elements element = document.getElementsByClass("button_small tooltip");
                     for (int i=0;i<element.size();i++){
                         Element temp = element.get(i);
