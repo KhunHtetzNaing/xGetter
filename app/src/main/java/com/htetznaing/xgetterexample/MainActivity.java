@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void vidozafiles(View view) {
-        letGo("https://vidoza.net/lwccr013oskm.html");
+        letGo("https://vidoza.net/ptzlgta9cl1q.html");
     }
 
     public void uptostreamfiles(View view) {
@@ -181,9 +181,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void done(XModel xModel){
-        System.out.println(xModel.getCookie());
-        System.out.println(xModel.getUrl());
-
         String url = null;
         if (xModel!=null) {
             url = xModel.getUrl();
