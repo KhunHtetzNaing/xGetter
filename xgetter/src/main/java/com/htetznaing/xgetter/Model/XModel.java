@@ -1,6 +1,6 @@
 package com.htetznaing.xgetter.Model;
 
-public class XModel {
+public class XModel implements Comparable<XModel>{
     String quality,url,cookie;
 
     public String getQuality() {
@@ -25,5 +25,10 @@ public class XModel {
 
     public void setCookie(String cookie) {
         this.cookie = cookie;
+    }
+
+    @Override
+    public int compareTo(XModel xModel) {
+        return this.quality.compareTo(xModel.quality);
     }
 }
