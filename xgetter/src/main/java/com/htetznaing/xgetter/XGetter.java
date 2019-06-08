@@ -12,7 +12,6 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -49,6 +48,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -122,7 +122,7 @@ public class XGetter {
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
                 ArrayList<XModel> xModels = new ArrayList<>();
                 putModel(url,"",xModels);
-                onComplete.onTaskCompleted(xModels,false);
+                onComplete.onTaskCompleted(sortMe(xModels),false);
             }
         });
         webView.setWebChromeClient(new WebChromeClient() {
@@ -141,7 +141,7 @@ public class XGetter {
                 public void run() {
                     ArrayList<XModel> xModels = new ArrayList<>();
                     putModel(url,"",xModels);
-                    onComplete.onTaskCompleted(xModels,false);
+                    onComplete.onTaskCompleted(sortMe(xModels),false);
                 }
             });
         }
@@ -372,7 +372,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null){
-                    onComplete.onTaskCompleted(xModels,false);
+                    onComplete.onTaskCompleted(sortMe(xModels),false);
                 }else onComplete.onError();
             }
         }.execute();
@@ -396,7 +396,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null){
-                    onComplete.onTaskCompleted(xModels,false);
+                    onComplete.onTaskCompleted(sortMe(xModels),false);
                 }else onComplete.onError();
             }
         }.execute();
@@ -414,7 +414,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null) {
-                    onComplete.onTaskCompleted(xModels, true);
+                    onComplete.onTaskCompleted(sortMe(xModels), true);
                 }else onComplete.onError();
             }
         }.execute();
@@ -431,7 +431,7 @@ public class XGetter {
             @Override
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
-                onComplete.onTaskCompleted(xModels,true);
+                onComplete.onTaskCompleted(sortMe(xModels),true);
             }
         }.execute();
     }
@@ -452,7 +452,7 @@ public class XGetter {
                             }
                         }
 
-                        onComplete.onTaskCompleted(xModels, true);
+                        onComplete.onTaskCompleted(sortMe(xModels), true);
                     }else {
                         onComplete.onError();
                     }
@@ -485,7 +485,7 @@ public class XGetter {
                 if (matcher.find()) {
                     ArrayList<XModel> xModels = new ArrayList<>();
                     putModel(matcher.group(1),"",xModels);
-                    onComplete.onTaskCompleted(xModels,false);
+                    onComplete.onTaskCompleted(sortMe(xModels),false);
                 }else onComplete.onError();
             }
         }, new Response.ErrorListener() {
@@ -525,7 +525,7 @@ public class XGetter {
                     } else {
                         xModels = getGPhotoLink(response);
                     }
-                    onComplete.onTaskCompleted(xModels,true);
+                    onComplete.onTaskCompleted(sortMe(xModels),true);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -622,7 +622,6 @@ public class XGetter {
 
     public interface OnTaskCompleted {
         void onTaskCompleted(ArrayList<XModel> vidURL,boolean multiple_quality);
-
         void onError();
     }
 
@@ -723,7 +722,7 @@ public class XGetter {
                                         putModel(url, "Default", models);
                                     }
                                 }
-                                onComplete.onTaskCompleted(models, true);
+                                onComplete.onTaskCompleted(sortMe(models), true);
                             }else {
                                 onComplete.onError();
                             }
@@ -795,7 +794,7 @@ public class XGetter {
                         if (object.has(x1080)){
                             putModel(object.getString(x1080),"1080p",models);
                         }
-                        onComplete.onTaskCompleted(models,true);
+                        onComplete.onTaskCompleted(sortMe(models),true);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         onComplete.onError();
@@ -828,13 +827,14 @@ public class XGetter {
                 ArrayList<XModel> xModels = new ArrayList<>();
                 Document document = null;
                 try {
-                    document = Jsoup.connect(mUrl).get();
-                    Elements element = document.getElementsByClass("button_small tooltip");
+                    document = Jsoup.connect(mUrl).userAgent(agent).get();
+                    Elements element = document.getElementsByTag("source");
+                    System.out.println(element.html());
                     for (int i=0;i<element.size();i++){
                         Element temp = element.get(i);
-                        if (temp.hasAttr("href")) {
-                            String url = temp.attr("href");
-                            putModel(url, temp.text().toLowerCase().replace("download", "").replace(" ", ""), xModels);
+                        if (temp.hasAttr("src")) {
+                            String url = temp.attr("src");
+                            putModel(url, temp.attr("label"), xModels);
                         }
                     }
                 } catch (IOException e) {
@@ -847,11 +847,13 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> s) {
                 super.onPostExecute(s);
                 if (s!=null && s.size()!=0){
-                    onComplete.onTaskCompleted(s,true);
+
+                    onComplete.onTaskCompleted(sortMe(s),true);
                 }else onComplete.onError();
             }
         }.execute();
     }
+
     private void vidozafiles(final String url){
         new AsyncTask<Void,Void,ArrayList<XModel>>(){
             @Override
@@ -869,7 +871,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null){
-                    onComplete.onTaskCompleted(xModels,false);
+                    onComplete.onTaskCompleted(sortMe(xModels),false);
                 }else onComplete.onError();
             }
         }.execute();
@@ -888,7 +890,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null) {
-                    onComplete.onTaskCompleted(xModels, true);
+                    onComplete.onTaskCompleted(sortMe(xModels), true);
                 }else onComplete.onError();
             }
         }.execute();
@@ -989,5 +991,11 @@ public class XGetter {
         xModel.setUrl(url);
         xModel.setQuality(quality);
         model.add(xModel);
+    }
+
+
+    private ArrayList<XModel> sortMe(ArrayList<XModel> x){
+        Collections.sort(x,Collections.reverseOrder());
+        return x;
     }
 }
