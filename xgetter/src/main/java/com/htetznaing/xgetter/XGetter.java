@@ -828,13 +828,25 @@ public class XGetter {
                 Document document = null;
                 try {
                     document = Jsoup.connect(mUrl).userAgent(agent).get();
-                    Elements element = document.getElementsByTag("source");
-                    System.out.println(element.html());
-                    for (int i=0;i<element.size();i++){
-                        Element temp = element.get(i);
-                        if (temp.hasAttr("src")) {
-                            String url = temp.attr("src");
-                            putModel(url, temp.attr("label"), xModels);
+                    if (document.html().contains("<source")){
+                        Elements element = document.getElementsByTag("source");
+                        for (int i=0;i<element.size();i++){
+                            Element temp = element.get(i);
+                            if (temp.hasAttr("src")) {
+                                String url = temp.attr("src");
+                                putModel(url, temp.attr("label"), xModels);
+                            }
+                        }
+                    }else {
+                        Elements element = document.getElementsByTag("a");
+                        for (int i=0;i<element.size();i++){
+                            if (element.get(i).hasAttr("href")) {
+                                String url = element.get(i).attr("href");
+                                if (url.contains(".mp4")) {
+                                    String quality = element.get(i).text().replace("Download","").replace(" ","");;
+                                    putModel(url, quality, xModels);
+                                }
+                            }
                         }
                     }
                 } catch (IOException e) {
@@ -995,7 +1007,20 @@ public class XGetter {
 
 
     private ArrayList<XModel> sortMe(ArrayList<XModel> x){
-        Collections.sort(x,Collections.reverseOrder());
-        return x;
+        ArrayList<XModel> result = new ArrayList<>();
+        for (XModel t:x){
+            if (startWithNumber(t.getQuality())){
+                result.add(t);
+            }
+        }
+        Collections.sort(result,Collections.reverseOrder());
+        return result;
+    }
+
+    private boolean startWithNumber(String string){
+        final String regex = "^[0-9][A-Za-z0-9-]*$";
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(string);
+        return  matcher.find();
     }
 }

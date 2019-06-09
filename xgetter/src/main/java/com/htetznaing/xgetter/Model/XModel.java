@@ -1,5 +1,8 @@
 package com.htetznaing.xgetter.Model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class XModel implements Comparable<XModel>{
     String quality,url,cookie;
 
@@ -27,8 +30,26 @@ public class XModel implements Comparable<XModel>{
         this.cookie = cookie;
     }
 
+
+    @Override
+    public String toString() {
+        return quality;
+    }
+
     @Override
     public int compareTo(XModel xModel) {
-        return this.quality.compareTo(xModel.quality);
+        if (startWithNumber(xModel.quality)){
+            return Integer.valueOf(quality.replaceAll("\\D+", "")) - Integer.valueOf(xModel.quality.replaceAll("\\D+", ""));
+        }
+        return this.quality.length() - xModel.quality.length();
     }
+
+    private boolean startWithNumber(String string){
+        final String regex = "^[0-9][A-Za-z0-9-]*$";
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(string);
+        return  matcher.find();
+    }
+
+
 }
