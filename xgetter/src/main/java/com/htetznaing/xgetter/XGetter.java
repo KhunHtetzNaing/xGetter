@@ -1009,7 +1009,7 @@ public class XGetter {
     private ArrayList<XModel> sortMe(ArrayList<XModel> x){
         ArrayList<XModel> result = new ArrayList<>();
         for (XModel t:x){
-            if (startWithNumber(t.getQuality())){
+            if (startWithNumber(t.getQuality())|| t.getQuality().isEmpty()){  // with this modificaction it is included those with quality field is empty. EX. openload
                 result.add(t);
             }
         }
@@ -1018,7 +1018,8 @@ public class XGetter {
     }
 
     private boolean startWithNumber(String string){
-        final String regex = "^[0-9][A-Za-z0-9-]*$";
+        //final String regex = "^[0-9][A-Za-z0-9-]*$";
+        final String regex ="^[0-9][A-Za-z0-9-\\s,]*$"; // start with number and can contain space or comma ( 480p , ENG)
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(string);
         return  matcher.find();
