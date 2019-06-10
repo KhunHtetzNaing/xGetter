@@ -525,7 +525,7 @@ public class XGetter {
                     } else {
                         xModels = getGPhotoLink(response);
                     }
-                    onComplete.onTaskCompleted(sortMe(xModels),true);
+                    onComplete.onTaskCompleted(xModels,true);
                 }
             }, new Response.ErrorListener() {
                 @Override
