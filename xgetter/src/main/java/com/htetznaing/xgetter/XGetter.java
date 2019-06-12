@@ -120,9 +120,10 @@ public class XGetter {
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                System.out.println(url);
                 ArrayList<XModel> xModels = new ArrayList<>();
                 putModel(url,"",xModels);
-                onComplete.onTaskCompleted(sortMe(xModels),false);
+                onComplete.onTaskCompleted(xModels,false);
             }
         });
         webView.setWebChromeClient(new WebChromeClient() {
@@ -141,7 +142,7 @@ public class XGetter {
                 public void run() {
                     ArrayList<XModel> xModels = new ArrayList<>();
                     putModel(url,"",xModels);
-                    onComplete.onTaskCompleted(sortMe(xModels),false);
+                    onComplete.onTaskCompleted(xModels,false);
                 }
             });
         }
@@ -372,7 +373,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null){
-                    onComplete.onTaskCompleted(sortMe(xModels),false);
+                    onComplete.onTaskCompleted(xModels,false);
                 }else onComplete.onError();
             }
         }.execute();
@@ -396,7 +397,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null){
-                    onComplete.onTaskCompleted(sortMe(xModels),false);
+                    onComplete.onTaskCompleted(xModels,false);
                 }else onComplete.onError();
             }
         }.execute();
@@ -485,7 +486,7 @@ public class XGetter {
                 if (matcher.find()) {
                     ArrayList<XModel> xModels = new ArrayList<>();
                     putModel(matcher.group(1),"",xModels);
-                    onComplete.onTaskCompleted(sortMe(xModels),false);
+                    onComplete.onTaskCompleted(xModels,false);
                 }else onComplete.onError();
             }
         }, new Response.ErrorListener() {
@@ -883,7 +884,7 @@ public class XGetter {
             protected void onPostExecute(ArrayList<XModel> xModels) {
                 super.onPostExecute(xModels);
                 if (xModels!=null){
-                    onComplete.onTaskCompleted(sortMe(xModels),false);
+                    onComplete.onTaskCompleted(xModels,false);
                 }else onComplete.onError();
             }
         }.execute();
