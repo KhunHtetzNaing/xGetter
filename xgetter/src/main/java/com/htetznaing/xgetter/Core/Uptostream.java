@@ -75,7 +75,7 @@ public class Uptostream {
     }
     private static void putModel(XUptoStream videoJson, ArrayList<XModel> model){
         // window.sources = JSON.parse('[{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/1080\/0\/video.mp4","type":"video\/mp4","label":"1080p","res":"1080","lang":"spa","idLang":"0"},{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/720\/0\/video.mp4","type":"video\/mp4","label":"720p","res":"720","lang":"spa","idLang":"0"},{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/480\/0\/video.mp4","type":"video\/mp4","label":"480p","res":"480","lang":"spa","idLang":"0"},{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/360\/0\/video.mp4","type":"video\/mp4","label":"360p","res":"360","lang":"spa","idLang":"0"},{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/1080\/1\/video.mp4","type":"video\/mp4","label":"1080p","res":"1080","lang":"eng","idLang":"1"},{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/720\/1\/video.mp4","type":"video\/mp4","label":"720p","res":"720","lang":"eng","idLang":"1"},{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/480\/1\/video.mp4","type":"video\/mp4","label":"480p","res":"480","lang":"eng","idLang":"1"},{"src":"https:\/\/www78.uptostream.com\/dfhuceeedb\/360\/1\/video.mp4","type":"video\/mp4","label":"360p","res":"360","lang":"eng","idLang":"1"}]');
-        String quality=videoJson.getLang().toUpperCase() + ", " + videoJson.getLabel();
+        String quality=videoJson.getLabel()+","+ videoJson.getLang().toUpperCase() ;
         XModel xModel = new XModel();
         xModel.setUrl(videoJson.getSrc());
         xModel.setQuality(quality);
