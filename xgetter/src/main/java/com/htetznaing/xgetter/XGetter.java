@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Base64;
+import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.ConsoleMessage;
 import android.webkit.DownloadListener;
@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -22,7 +23,6 @@ import com.android.volley.toolbox.Volley;
 import com.htetznaing.xgetter.Core.Fruits;
 import com.htetznaing.xgetter.Core.GDrive;
 import com.htetznaing.xgetter.Core.SolidFiles;
-import com.htetznaing.xgetter.Core.Uptostream;
 import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
@@ -36,19 +36,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,6 +46,23 @@ import java.util.regex.Pattern;
 import at.huber.youtubeExtractor.VideoMeta;
 import at.huber.youtubeExtractor.YouTubeExtractor;
 import at.huber.youtubeExtractor.YtFile;
+
+import static com.htetznaing.xgetter.Utils.FacebookUtils.check_fb_video;
+import static com.htetznaing.xgetter.Utils.FacebookUtils.getFbLink;
+import static com.htetznaing.xgetter.Utils.GDriveUtils.getCookie;
+import static com.htetznaing.xgetter.Utils.GDriveUtils.getDRIVE_STREAM;
+import static com.htetznaing.xgetter.Utils.GDriveUtils.get_drive_id;
+import static com.htetznaing.xgetter.Utils.GPhotosUtils.getGPhotoLink;
+import static com.htetznaing.xgetter.Utils.OpenloadUtils.getKey1;
+import static com.htetznaing.xgetter.Utils.OpenloadUtils.getKey2;
+import static com.htetznaing.xgetter.Utils.OpenloadUtils.getLongEncrypt;
+import static com.htetznaing.xgetter.Utils.OpenloadUtils.getLongEncrypt2;
+import static com.htetznaing.xgetter.Utils.UptoStreamUtils.prepareUptoStream;
+import static com.htetznaing.xgetter.Utils.Utils.base64Decode;
+import static com.htetznaing.xgetter.Utils.Utils.base64Encode;
+import static com.htetznaing.xgetter.Utils.Utils.getDomainFromURL;
+import static com.htetznaing.xgetter.Utils.Utils.putModel;
+import static com.htetznaing.xgetter.Utils.Utils.sortMe;
 
 /*
  *      xGetter
@@ -347,8 +354,7 @@ public class XGetter {
             } else if (isvidoza){
                 vidozafiles(url);
             } else if (isuptostream){
-                uptostreamfiles(url);
-
+                uptoStream(url);
             } else {
                 webView.loadUrl(url);
             }
@@ -462,20 +468,6 @@ public class XGetter {
         }else onComplete.onError();
     }
 
-    private boolean check_fb_video(String url) {
-        return url.matches("-?\\d+(\\.\\d+)?");
-    }
-
-    private String get_drive_id(String string) {
-        final String regex = "[-\\w]{25,}";
-        final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(string);
-        if (matcher.find()) {
-            return matcher.group();
-        }
-        return null;
-    }
-
     private void mfire(String url) {
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -555,64 +547,6 @@ public class XGetter {
 
             Volley.newRequestQueue(context).add(request);
         } else onComplete.onError();
-    }
-
-    private ArrayList<XModel> getGPhotoLink(String string) {
-        string = string.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-        try {
-            string = URLDecoder.decode(string, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        final String regex = "https:\\/\\/(.*?)=m(22|18|37)";
-        final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(string);
-        ArrayList<XModel> xModels = new ArrayList<>();
-        boolean p18=false,p22=false,p37=false;
-        while (matcher.find()) {
-            switch (matcher.group(2)){
-                case "18":
-                    if (!p18) {
-                        putModel(matcher.group(), "360p", xModels);
-                        p18=true;
-                    }
-                    break;
-                case "22":
-                    if (!p22) {
-                        putModel(matcher.group(), "720p", xModels);
-                        p22=true;
-                    }
-                    break;
-                case "37":
-                    if (!p37) {
-                        putModel(matcher.group(), "1080p", xModels);
-                        p37=true;
-                    }
-                    break;
-            }
-        }
-        return xModels;
-    }
-
-    private String getFbLink(String source, boolean hd) {
-        if (source != null) {
-            String end = "download=";
-            String start = (hd ? "id=\"hdlink\"" : "id=\"sdlink\"");
-            int idx = source.indexOf(start);
-            if (idx != -1) {
-                source = source.substring(idx + start.length());
-                String string = source.substring(0, source.indexOf(end));
-                if (string != null) {
-                    final String regex = "href=\"(.*?)\"";
-                    final Pattern pattern = Pattern.compile(regex);
-                    final Matcher matcher = pattern.matcher(string);
-                    if (matcher.find()) {
-                        return matcher.group(1).replace("&amp;", "&");
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     private boolean check(String regex, String string) {
@@ -820,6 +754,76 @@ public class XGetter {
         }
     }
 
+    private void uptoStream(String url) {
+        if (url != null) {
+            StringRequest request = new StringRequest(Request.Method.GET,prepareUptoStream(url) , new Response.Listener<String>() {
+                private String get(String regex,String code){
+                    final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                    final Matcher matcher = pattern.matcher(code);
+                    code = null;
+                    while (matcher.find()) {
+                        for (int i = 1; i <= matcher.groupCount(); i++) {
+                            code = matcher.group(i);
+                        }
+                    }
+
+                    return code;
+                }
+
+                private void putModel(String quality,String src, ArrayList<XModel> model){
+                    XModel xModel = new XModel();
+                    xModel.setUrl(src);
+                    xModel.setQuality(quality);
+                    model.add(xModel);
+                }
+
+                @Override
+                public void onResponse(String response) {
+                    String regex = "sources.*?\\.parse.*'(.*?)'";
+                    String json = get(regex,response);
+
+                    if (json!=null){
+                        try {
+                            JSONArray array = new JSONArray(json);
+                            ArrayList<XModel> xModels = new ArrayList<>();
+                            for (int i=0;i<array.length();i++){
+                                String src = array.getJSONObject(i).getString("src");
+                                String label = array.getJSONObject(i).getString("label");
+                                String lang = array.getJSONObject(i).getString("lang");
+
+                                if (lang!=null && !lang.isEmpty()){
+                                    lang = lang.toUpperCase();
+                                }
+
+                                String quality=label+","+ lang;
+                                putModel(quality,src,xModels);
+                            }
+                            onComplete.onTaskCompleted(sortMe(xModels),true);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            onComplete.onError();
+                        }
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onComplete.onError();
+                }
+            }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("User-agent", agent);
+                    return headers;
+                }
+            };
+
+            Volley.newRequestQueue(context).add(request);
+        }
+    }
+
     private void rapidVideo(final String mUrl){
         new AsyncTask<Void,Void,ArrayList<XModel>>(){
 
@@ -888,141 +892,5 @@ public class XGetter {
                 }else onComplete.onError();
             }
         }.execute();
-    }
-    private void uptostreamfiles(final String url) {
-        final String urlprepared=prepareUptoStream(url);
-
-        new AsyncTask<Void,Void,ArrayList<XModel>>(){
-
-            @Override
-            protected ArrayList<XModel> doInBackground(Void... voids) {
-                return Uptostream.fetch(urlprepared);
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<XModel> xModels) {
-                super.onPostExecute(xModels);
-                if (xModels!=null) {
-                    onComplete.onTaskCompleted(sortMe(xModels), true);
-                }else onComplete.onError();
-            }
-        }.execute();
-    }
-    private String prepareUptoStream(String urlUnpreprared) {
-        URL u= null;
-        try {
-            u = new URL(urlUnpreprared);
-            String domain=u.getHost();
-            String path=u.getPath();
-            String[] files= path.split("/");
-            String file=files[files.length-1];
-            return "https://uptostream.com/iframe/" + file;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-       return urlUnpreprared;
-
-    }
-
-    private String getLongEncrypt(String string) {
-        final String regex = "<p id=[^>]*>([^<]*)<\\/p>";
-        final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(string);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
-    }
-
-    private String getLongEncrypt2(String string) {
-        final String regex = "<p style=\"\" id=[^>]*>([^<]*)<\\/p>";
-        final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(string);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
-    }
-
-    private String getKey1(String string) {
-        final String regex = "\\_0x45ae41\\[\\_0x5949\\('0xf'\\)\\]\\(_0x30725e,(.*)\\),\\_1x4bfb36";
-        final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(string);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
-    }
-
-    private String getKey2(String string) {
-        final String regex = "\\_1x4bfb36=(.*);";
-        final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(string);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
-    }
-
-
-    private String base64Encode(String text) {
-        byte[] data = new byte[0];
-        try {
-            data = text.getBytes("UTF-8");
-            return Base64.encodeToString(data, Base64.DEFAULT);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String base64Decode(String text) {
-        byte[] data = Base64.decode(text, Base64.DEFAULT);
-        try {
-            return new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String getDomainFromURL(String url){
-        String regex = "^(?:https?:\\/\\/)?(?:[^@\\n]+@)?(?:www\\.)?([^:\\/\\n?]+)";
-        String string = "https://oladblock.me/f/ManbcvAX2_M/";
-        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(string);
-
-        if (matcher.find()) {
-            return matcher.group(0);
-        }
-        return null;
-    }
-
-    private void putModel(String url,String quality,ArrayList<XModel> model){
-        XModel xModel = new XModel();
-        xModel.setUrl(url);
-        xModel.setQuality(quality);
-        model.add(xModel);
-    }
-
-
-    private ArrayList<XModel> sortMe(ArrayList<XModel> x){
-        ArrayList<XModel> result = new ArrayList<>();
-        for (XModel t:x){
-            if (startWithNumber(t.getQuality())|| t.getQuality().isEmpty()){  // with this modificaction it is included those with quality field is empty. EX. openload
-                result.add(t);
-            }
-        }
-        Collections.sort(result,Collections.reverseOrder());
-        return result;
-    }
-
-    private boolean startWithNumber(String string){
-        //final String regex = "^[0-9][A-Za-z0-9-]*$";
-        final String regex ="^[0-9][A-Za-z0-9-\\s,]*$"; // start with number and can contain space or comma ( 480p , ENG)
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(string);
-        return  matcher.find();
     }
 }

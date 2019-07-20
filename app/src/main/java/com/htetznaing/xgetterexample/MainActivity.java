@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -325,7 +326,6 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < model.size(); i++) {
             name[i] = model.get(i).getQuality();
-
         }
 
 

@@ -15,6 +15,10 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.htetznaing.xgetter.Utils.GDriveUtils.getCookie;
+import static com.htetznaing.xgetter.Utils.GDriveUtils.getDRIVE_STREAM;
+import static com.htetznaing.xgetter.Utils.GDriveUtils.getTitle;
+
 public class GDrive {
     public static ArrayList<XModel> fetch(final String file_id){
         ArrayList<XModel> xModels = new ArrayList<>();
@@ -24,7 +28,7 @@ public class GDrive {
             URLConnection conn = obj.openConnection();
             String header = conn.getHeaderFields().get("Set-Cookie").toString();
             String cookie = getDRIVE_STREAM(header)+getCookie(header);
-
+            System.out.println(cookie);
             InputStream is = conn.getInputStream();
             int ptr = 0;
             String response = "";
@@ -86,47 +90,7 @@ public class GDrive {
         return xModels;
     }
 
-    private static String getTitle(String string){
-        final String regex = "title=(.*?)&";
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(string);
-        if (matcher.find()) {
-            String a = matcher.group(1);
-            if (a.contains("+")){
-                a = a.replace("+","_");
-            }
-            return a;
-        }
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss", Locale.ENGLISH);
-        Date now = new Date();
-        return formatter.format(now) + "_xStreamPlayer.mp4";
-    }
 
-    private static String getCookie(String string){
-        final String regex = "NID=(.*?);";
-
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(string);
-
-        if (matcher.find()) {
-            return "NID="+matcher.group(1) +";";
-        }
-
-        return null;
-    }
-
-    private static String getDRIVE_STREAM(String string){
-        final String regex = "DRIVE_STREAM=(.*?);";
-
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(string);
-
-        if (matcher.find()) {
-            return "DRIVE_STREAM="+matcher.group(1) +";";
-        }
-
-        return null;
-    }
 
     private static void putModel(String url,String quality,String cookie,ArrayList<XModel> model){
         XModel xModel = new XModel();
