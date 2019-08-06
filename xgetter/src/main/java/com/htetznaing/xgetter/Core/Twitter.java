@@ -13,11 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Twitter {
-    public static ArrayList<XModel> fetch(String input_url){
-        try {
-            Document doc = Jsoup.connect("https://twdown.net/download.php")
-                    .data("URL", input_url)
-                    .post();
+    public static ArrayList<XModel> fetch(String response){
+            Document doc = Jsoup.parse(response);
             try{
                 Elements elements = doc.getElementsByTag("tbody").get(0).getElementsByTag("tr");
                 ArrayList<XModel> models = new ArrayList<>();
@@ -36,10 +33,6 @@ public class Twitter {
             }catch (Exception e){
                 e.printStackTrace();
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return null;
     }
 

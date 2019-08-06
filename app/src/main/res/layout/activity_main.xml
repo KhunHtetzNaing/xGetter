@@ -111,6 +111,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                    <Button
+                        android:onClick="sendvid"
+                        android:text="SendVid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -167,12 +173,18 @@
                         android:text="SolidFiles"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+
                     <Button
                         android:onClick="uptostreamfiles"
                         android:text="UptoStream"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                    <Button
+                        android:onClick="fansubs"
+                        android:text="FanSubs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
             </LinearLayout>

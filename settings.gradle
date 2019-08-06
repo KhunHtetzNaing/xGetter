@@ -1,1 +1,1 @@
-include ':app', ':xgetter'
+include ':app', ':xgetter', ':xplayer'

@@ -19,14 +19,17 @@ public class Utils {
     }
 
     public static ArrayList<XModel> sortMe(ArrayList<XModel> x){
-        ArrayList<XModel> result = new ArrayList<>();
-        for (XModel t:x){
-            if (startWithNumber(t.getQuality())|| t.getQuality().isEmpty()){  // with this modificaction it is included those with quality field is empty. EX. openload
-                result.add(t);
+        if (x!=null) {
+            ArrayList<XModel> result = new ArrayList<>();
+            for (XModel t : x) {
+                if (startWithNumber(t.getQuality()) || t.getQuality().isEmpty()) {  // with this modificaction it is included those with quality field is empty. EX. openload
+                    result.add(t);
+                }
             }
+            Collections.sort(result, Collections.reverseOrder());
+            return result;
         }
-        Collections.sort(result,Collections.reverseOrder());
-        return result;
+        return null;
     }
 
     private static boolean startWithNumber(String string){

@@ -16,24 +16,29 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 ကိုယ္ပိုင္ Player နဲ႔တိုက္႐ိုက္ျပမလား
 အဆင္ေျပသလိုအသုံးခ်ႏိုင္ပါတယ္။
 ေလာလာဆယ္ပါဝင္တဲ့ Site ေတြကေတာ့
--  **Facebook**
--  **Google Drive**
--  **Google Photos**
--  **Openload**
--  **Streamango**
--  **MegaUp**
--  **Streamcherry**
--  **RapidVideo**
--  **Mp4Upload**
--  **VidCloud**
--  **SendVid** 
--  **Mediafire** 
--  **VK** 
--  **Ok.Ru**
--  **Youtube**
--  **Twitter**
--  **SolidFiles**
--  **Vidoza**
+
+**1. Openload**
+**2. VidCloud**
+**3. StreaMango**
+**4. RapidVideo**
+**5. StreamCherry**
+**6. Google Drive**
+**7. MegaUp**
+**8. Google Photos**
+**9. Mp4Upload**
+**10. Facebook**
+**11. Mediafire**
+**12. Ok.Ru**
+**13. VK**
+**14. Twitter**
+**15. Youtube**
+**16. SolidFiles**
+**17. Vidoza**
+**18. UptoStream**
+**19. SendVid**
+**20. FanSubs**
+**21. Uptobox**
+
 တို႔ပဲျဖစ္ပါတယ္။
 ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
 အျခားအခမဲ့ Video တင္လို႔ရတဲ့ Site ေတြကိုလည္းထပ္ျဖည့္ေပးသြားပါ့မယ္ :)
@@ -55,7 +60,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.3'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.4'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
@@ -119,24 +124,29 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 ကိုယ်ပိုင် Player နဲ့တိုက်ရိုက်ပြမလား
 အဆင်ပြေသလိုအသုံးချနိုင်ပါတယ်။
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
--  **Facebook**
--  **Google Drive**
--  **Google Photos**
--  **Openload**
--  **Streamango**
--  **MegaUp**
--  **Streamcherry**
--  **RapidVideo**
--  **Mp4Upload**
--  **VidCloud**
--  **SendVid**
--  **Mediafire**
--  **VK**
--  **Ok.Ru**
--  **Youtube**
--  **Twitter**
--  **SolidFiles**
--  **Vidoza**
+
+**1. Openload**
+**2. VidCloud**
+**3. StreaMango**
+**4. RapidVideo**
+**5. StreamCherry**
+**6. Google Drive**
+**7. MegaUp**
+**8. Google Photos**
+**9. Mp4Upload**
+**10. Facebook**
+**11. Mediafire**
+**12. Ok.Ru**
+**13. VK**
+**14. Twitter**
+**15. Youtube**
+**16. SolidFiles**
+**17. Vidoza**
+**18. UptoStream**
+**19. SendVid**
+**20. FanSubs**
+**21. Uptobox**
+
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
 အခြားအခမဲ့ Video တင်လို့ရတဲ့ Site တွေကိုလည်းထပ်ဖြည့်ပေးသွားပါ့မယ် :)
@@ -158,7 +168,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.3'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.4'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။

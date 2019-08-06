@@ -8,7 +8,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -25,17 +24,12 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.material.snackbar.Snackbar;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetterexample.R;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public class XPlayer extends AppCompatActivity {
+public class SimpleVideoPlayer extends AppCompatActivity {
     private int AFTER_PERMISSION_GRANTED = 0;
     private final int PLAY = 1;
     private final int DOWNLOAD = 2;
@@ -88,7 +82,7 @@ public class XPlayer extends AppCompatActivity {
         xDownloader.OnDownloadFinishedListerner(new XDownloader.OnDownloadFinished() {
             @Override
             public void onCompleted(String path) {
-                Toast.makeText(XPlayer.this, path, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SimpleVideoPlayer.this, path, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -150,11 +144,11 @@ public class XPlayer extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-        player = ExoPlayerFactory.newSimpleInstance(XPlayer.this, trackSelector);
+        player = ExoPlayerFactory.newSimpleInstance(SimpleVideoPlayer.this, trackSelector);
         playerView.setPlayer(player);
 
-        String userAgent = Util.getUserAgent(XPlayer.this, getResources().getString(R.string.app_name));
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(XPlayer.this, userAgent);
+        String userAgent = Util.getUserAgent(SimpleVideoPlayer.this, getResources().getString(R.string.app_name));
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(SimpleVideoPlayer.this, userAgent);
 
         //If google drive you need to set custom cookie
         if (cookie!=null) {
@@ -179,7 +173,7 @@ public class XPlayer extends AppCompatActivity {
             public void onPlayerError(ExoPlaybackException error) {
                 super.onPlayerError(error);
                 finish();
-                Toast.makeText(XPlayer.this, "Can't play this video!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SimpleVideoPlayer.this, "Can't play this video!", Toast.LENGTH_SHORT).show();
             }
         });
 

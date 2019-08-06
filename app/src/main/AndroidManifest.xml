@@ -26,8 +26,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Player.XPlayer"
+            android:name=".Player.SimpleVideoPlayer"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+
+        <activity android:name="com.htetznaing.xplayer.XPlayer"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.FullScreen" />
+
     </application>
 
 </manifest>

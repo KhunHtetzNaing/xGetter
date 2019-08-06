@@ -13,41 +13,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Vidoza {
-    public static XModel fetch(final String file_id) {
-        //https://vidoza.net/4g6i833joos8.html
-        // sourcesCode: [{ src: "https://str20.vidoza.net/x4lfmhuxonzpvjumxamuwssrvfmpztbyalgpbixe6vjfkxsa2yszvqohso4a/v.mp4", type: "video/mp4", label:"SD", res:"720"}],
-
+    public static ArrayList<XModel> fetch(String response){
+        String regex = "src:.+?\"(.*?)\",";
+        String videosUrl= null;
         try {
-            URL obj = new URL(file_id);
-            URLConnection conn = obj.openConnection();
-
-            InputStream is = conn.getInputStream();
-            int ptr = 0;
-            String response = "";
-            while ((ptr = is.read()) != -1) {
-                response+=((char)ptr);
-            }
-            String regex = "src:.+?\"(.*?)\",";
-
-            String videosUrl=scrapergenerico(response,regex);
-
+            videosUrl = scrapergenerico(response,regex);
             if (null!=videosUrl){
                 XModel xModel = new XModel();
                 xModel.setUrl(videosUrl);
                 xModel.setQuality("Normal");
-                return xModel;
-            }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+                ArrayList<XModel> xModels = new ArrayList<>();
+                xModels.add(xModel);
+                return xModels;
+            }return null;
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
-    private static String scrapergenerico(String code, String regex) throws UnsupportedEncodingException {
+    public static String scrapergenerico(String code, String regex) throws UnsupportedEncodingException {
 
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(code);

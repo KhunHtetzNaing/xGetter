@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    tools:context=".Player.SimpleVideoPlayer">
+    android:background="@android:color/black">
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/player_view"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/playerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 
     <ProgressBar
         android:id="@+id/progresbar_video_play"

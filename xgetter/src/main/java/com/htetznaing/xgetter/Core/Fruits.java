@@ -7,36 +7,25 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Fruits {
-    public static XModel fetch(String url){
-        URL obj = null;
-        try {
-            obj = new URL(url);
-            URLConnection conn = obj.openConnection();
-            InputStream is = conn.getInputStream();
-            int ptr = 0;
-            String response = "";
-            while ((ptr = is.read()) != -1) {
-                response+=((char)ptr);
-            }
+    public static ArrayList<XModel> fetch(String response){
+        String start = getStart(response);
+        String end = getEnd(response);
 
-            String start = getStart(response);
-            String end = getEnd(response);
+        if (null!=start && null!=end){
+            XModel xModel = new XModel();
+            xModel.setUrl("https:"+getStreamURL(start,Integer.parseInt(end)));
+            xModel.setQuality("Normal");
 
-            if (null!=start && null!=end){
-                XModel xModel = new XModel();
-                xModel.setUrl("https:"+getStreamURL(start,Integer.parseInt(end)));
-                xModel.setQuality("Normal");
-                return xModel;
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            ArrayList<XModel> xModels = new ArrayList<>();
+            xModels.add(xModel);
+            return xModels;
         }
+
         return null;
     }
 

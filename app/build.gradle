@@ -6,8 +6,8 @@ android {
         applicationId "com.htetznaing.xgetterexample"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 17
-        versionName "1.9.3"
+        versionCode 18
+        versionName "1.9.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -34,7 +34,5 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.github.javiersantos:MaterialStyledDialogs:2.1'
     implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
-    implementation 'org.jsoup:jsoup:1.11.3'
-
-
+    implementation project(path: ':xplayer')
 }

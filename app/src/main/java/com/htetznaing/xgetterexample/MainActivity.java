@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -29,8 +28,9 @@ import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.XGetter;
-import com.htetznaing.xgetterexample.Player.XPlayer;
+import com.htetznaing.xgetterexample.Player.SimpleVideoPlayer;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
+import com.htetznaing.xplayer.XPlayer;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -58,13 +58,15 @@ public class MainActivity extends AppCompatActivity {
             public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {
                 progressDialog.dismiss();
                 if (multiple_quality){
-                    //This video you can choose qualities
-                    for (XModel model : vidURL){
-                        String url = model.getUrl();
-                        //If google drive video you need to set cookie for play or download
-                        String cookie = model.getCookie();
-                    }
-                    multipleQualityDialog(vidURL);
+                    if (vidURL!=null) {
+                        //This video you can choose qualities
+                        for (XModel model : vidURL) {
+                            String url = model.getUrl();
+                            //If google drive video you need to set cookie for play or download
+                            String cookie = model.getCookie();
+                        }
+                        multipleQualityDialog(vidURL);
+                    }else done(null);
                 }else {
                    done(vidURL.get(0));
                 }
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void megaup(View view) {
-        letGo("https://megaup.net/e8ni/Logan_(2017)_720p.MP4");
+        letGo("https://megaup.net/3tD1V?pt=ns7RGzoGCR%2F0dl9WG4J0b8FWzwcixEtyF1yia8JH6zM%3D");
     }
 
     public void mp4upload(View view) {
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void vidcloud(View view) {
-        letGo("https://vidcloud.co/v/5cbb3eeeb8fe4/44974034_123890982029283_3431405518314696625_n.mp4");
+        letGo("https://vcstream.to/embed/5d4685b52d726/34147942_424434834686205_6312223197668311040_n.mp4");
     }
 
     public void rapidvideo(View view) {
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void okru(View view) {
-        letGo("https://ok.ru/video/1246547348046");
+        letGo("https://ok.ru/video/31800494765");
     }
 
     public void vk(View view) {
@@ -168,6 +170,13 @@ public class MainActivity extends AppCompatActivity {
         letGo("https://uptostream.com/iframe/eyrasguzy8lk");
     }
 
+    public void fansubs(View view) {
+        letGo("http://fansubs.tv/v/qLS5z7");
+    }
+
+    public void sendvid(View view) {
+        letGo("http://sendvid.com/3bh9588j");
+    }
 
     public boolean checkInternet() {
         boolean what = false;
@@ -198,13 +207,14 @@ public class MainActivity extends AppCompatActivity {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            Intent intent = new Intent(getApplicationContext(),XPlayer.class);
-                            intent.putExtra("url",finalUrl);
-                            //If google drive you need to put cookie
-                            if (xModel.getCookie()!=null){
-                                intent.putExtra("cookie",xModel.getCookie());
-                            }
-                            startActivity(intent);
+//                            Intent intent = new Intent(getApplicationContext(), SimpleVideoPlayer.class);
+//                            intent.putExtra("url",finalUrl);
+//                            //If google drive you need to put cookie
+//                            if (xModel.getCookie()!=null){
+//                                intent.putExtra("cookie",xModel.getCookie());
+//                            }
+//                            startActivity(intent);
+                            watchVideo(xModel);
                         }
                     })
                     .setNegativeText("Download")
@@ -231,6 +241,16 @@ public class MainActivity extends AppCompatActivity {
         }
         MaterialStyledDialog dialog = builder.build();
         dialog.show();
+    }
+
+    private void watchVideo(XModel xModel){
+        Intent intent = new  Intent(this, XPlayer.class);
+        intent.putExtra(XPlayer.XPLAYER_URL, xModel.getUrl());
+        if (xModel.getCookie()!=null){
+            intent.putExtra(XPlayer.XPLAYER_COOKIE,xModel.getCookie());
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
 
@@ -288,28 +308,31 @@ public class MainActivity extends AppCompatActivity {
                 "\n" +
                 "#Supported Sites\n" +
                 "\n" +
-                "Google GDrive\n" +
-                "Google Photos\n" +
-                "Facebook\n" +
                 "Openload\n" +
-                "Streamango\n" +
-                "StreamCherry\n" +
-                "Mp4Upload\n" +
-                "RapidVideo\n" +
-                "SendVid\n" +
                 "VidCloud\n" +
+                "StreaMango\n" +
+                "RapidVideo\n" +
+                "StreamCherry\n" +
+                "Google Drive\n" +
                 "MegaUp\n" +
+                "Google Photos\n" +
+                "Mp4Upload\n" +
+                "Facebook\n" +
                 "Mediafire\n" +
-                "VK\n" +
                 "Ok.Ru\n" +
-                "Youtube\n"+
-                "Twitter\n"+
-                "SolidFiles\n"+
-                "Vidoza\n"+
-                "UptoStream\n"+
+                "VK\n" +
+                "Twitter\n" +
+                "Youtube\n" +
+                "SolidFiles\n" +
+                "Vidoza\n" +
+                "UptoStream\n" +
+                "SendVid\n" +
+                "FanSubs\n"+
                 "Uptobox\n"+
                 "\n" +
-                "Github Repo => https://github.com/KhunHtetzNaing/xGetter";
+                "Github Repo => https://github.com/KhunHtetzNaing/xGetter" +
+                "\n" +
+                "Developer => https://facebook.com/KhunHtetzNaing0";
         View view = getLayoutInflater().inflate(R.layout.done, null);
         TextView textView = view.findViewById(R.id.message);
         textView.setText(message);
@@ -418,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Example Open Google Drive Video with MX Player
-    private void openWithMXPlayer(XModel xModel){
+    private void openWithMXPlayer(XModel xModel) {
         boolean appInstalledOrNot = appInstalledOrNot("com.mxtech.videoplayer.ad");
         boolean appInstalledOrNot2 = appInstalledOrNot("com.mxtech.videoplayer.pro");
         String str2;
@@ -436,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.setDataAndType(Uri.parse(xModel.getUrl()), "application/x-mpegURL");
                 intent.setPackage(str2);
                 intent.setClassName(str2, str3);
-                if (xModel.getCookie()!=null) {
+                if (xModel.getCookie() != null) {
                     intent.putExtra("headers", new String[]{"cookie", xModel.getCookie()});
                     intent.putExtra("secure_uri", true);
                 }

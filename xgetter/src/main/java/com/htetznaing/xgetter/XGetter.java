@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.ConsoleMessage;
 import android.webkit.DownloadListener;
@@ -13,15 +12,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.StringRequestListener;
 import com.htetznaing.xgetter.Core.Fruits;
 import com.htetznaing.xgetter.Core.GDrive;
+import com.htetznaing.xgetter.Core.MP4Upload;
 import com.htetznaing.xgetter.Core.SolidFiles;
 import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
@@ -36,16 +32,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import at.huber.youtubeExtractor.VideoMeta;
 import at.huber.youtubeExtractor.YouTubeExtractor;
 import at.huber.youtubeExtractor.YtFile;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 
 import static com.htetznaing.xgetter.Utils.FacebookUtils.check_fb_video;
 import static com.htetznaing.xgetter.Utils.FacebookUtils.getFbLink;
@@ -57,7 +56,6 @@ import static com.htetznaing.xgetter.Utils.OpenloadUtils.getKey1;
 import static com.htetznaing.xgetter.Utils.OpenloadUtils.getKey2;
 import static com.htetznaing.xgetter.Utils.OpenloadUtils.getLongEncrypt;
 import static com.htetznaing.xgetter.Utils.OpenloadUtils.getLongEncrypt2;
-import static com.htetznaing.xgetter.Utils.UptoStreamUtils.prepareUptoStream;
 import static com.htetznaing.xgetter.Utils.Utils.base64Decode;
 import static com.htetznaing.xgetter.Utils.Utils.base64Encode;
 import static com.htetznaing.xgetter.Utils.Utils.getDomainFromURL;
@@ -68,12 +66,14 @@ import static com.htetznaing.xgetter.Utils.Utils.sortMe;
  *      xGetter
  *         By
  *   Khun Htetz Naing
+ *   https://facebook.com/KhunHtetzNaing0
  * Repo => https://github.com/KhunHtetzNaing/xGetter
- * Openload,Google GDrive,Google Photos,MediafireStreamango,StreamCherry,Mp4Upload,RapidVideo,SendVid,VidCloud,MegaUp,VK,Ok.Ru,Youtube,Twitter,SolidFils Stream/Download URL Finder!
+ * Openload,VidCloud,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox Stream/Download URL Finder!
  *
  */
 
 public class XGetter {
+    private String cookie = null;
     private WebView webView;
     private Context context;
     private OnTaskCompleted onComplete;
@@ -94,6 +94,7 @@ public class XGetter {
     private final String solidfiles = "https?:\\/\\/(www\\.)?(solidfiles)\\.[^\\/,^\\.]{2,}\\/(v)\\/.+";
     private final String vidoza = "https?:\\/\\/(www\\.)?(vidoza)\\.[^\\/,^\\.]{2,}.+";
     private final String uptostream = "https?:\\/\\/(www\\.)?(uptostream|uptobox)\\.[^\\/,^\\.]{2,}.+";
+    private final String fansubs = "https?:\\/\\/(www\\.)?(fansubs\\.tv)\\/(v|watch)\\/.+";
 
     //  https://uptobox.com/eyrasguzy8lk
     //  https://uptostream.com/eyrasguzy8lk
@@ -110,7 +111,7 @@ public class XGetter {
         webView.addJavascriptInterface(new xJavascriptInterface(), "xGetter");
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
-
+        AndroidNetworking.initialize(context);
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -221,7 +222,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false;
+        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false;
         if (check(openload, url)) {
             //Openload
             run = true;
@@ -235,6 +236,7 @@ public class XGetter {
             run = true;
         } else if (check(mp4upload, url)) {
             run = true;
+            isMP4Uload = true;
             if (!url.contains("embed-")) {
                 final String regex = "com\\/([^']*)";
                 final Pattern pattern = Pattern.compile(regex);
@@ -253,6 +255,7 @@ public class XGetter {
         } else if (check(sendvid, url)) {
             //sendvid
             run = true;
+            isSendVid = true;
         } else if (check(vidcloud, url)) {
             //vidcloud
             run = true;
@@ -319,10 +322,12 @@ public class XGetter {
         //Vidoza
         isvidoza=true;
         run = true;
-
         }else if (check(uptostream, url)) {
             //uptostream, uptobox
             isuptostream=true;
+            run = true;
+        }else if (check(fansubs,url)){
+            isFanSubs = true;
             run = true;
         }
 
@@ -353,94 +358,134 @@ public class XGetter {
                 solidfiles(url);
             } else if (isvidoza){
                 vidozafiles(url);
-            } else if (isuptostream){
+            } else if (isuptostream) {
                 uptoStream(url);
+            } else if (isFanSubs) {
+                fansubs(url);
+            } else if (isMP4Uload) {
+                mp4upload(url);
+            } else if (isSendVid){
+
             } else {
                 webView.loadUrl(url);
             }
         }else onComplete.onError();
     }
 
-
     private void solidfiles(final String url){
-        new AsyncTask<Void,Void,ArrayList<XModel>>(){
-            @Override
-            protected ArrayList<XModel> doInBackground(Void... voids) {
-                XModel model = SolidFiles.fetch(url);
-                if (model!=null){
-                    ArrayList<XModel> xModels = new ArrayList<>();
-                    xModels.add(model);
-                    return xModels;
-                }
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(ArrayList<XModel> xModels) {
-                super.onPostExecute(xModels);
-                if (xModels!=null){
-                    onComplete.onTaskCompleted(xModels,false);
-                }else onComplete.onError();
-            }
-        }.execute();
+        AndroidNetworking.get(url)
+                .addHeaders("User-Agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36")
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = SolidFiles.fetch(response);
+                        if (xModels!=null){
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
     }
 
     private void fruits(final String url){
-        new AsyncTask<Void,Void,ArrayList<XModel>>(){
+        AndroidNetworking.get(url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = Fruits.fetch(response);
+                        if (xModels!=null){
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
 
-            @Override
-            protected ArrayList<XModel> doInBackground(Void... voids) {
-                XModel model = Fruits.fetch(url);
-                if (model!=null){
-                    ArrayList<XModel> xModels = new ArrayList<>();
-                    xModels.add(model);
-                    return xModels;
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<XModel> xModels) {
-                super.onPostExecute(xModels);
-                if (xModels!=null){
-                    onComplete.onTaskCompleted(xModels,false);
-                }else onComplete.onError();
-            }
-        }.execute();
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
     }
 
     private void gdrive(final String url){
-        new AsyncTask<Void,Void,ArrayList<XModel>>(){
+        CookieJar cookieJar = new CookieJar() {
+            private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
 
             @Override
-            protected ArrayList<XModel> doInBackground(Void... voids) {
-                return GDrive.fetch(url);
+            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                cookie = getDRIVE_STREAM(cookies.toString())+getCookie(cookies.toString());
+                cookieStore.put(url.host(), cookies);
             }
 
             @Override
-            protected void onPostExecute(ArrayList<XModel> xModels) {
-                super.onPostExecute(xModels);
-                if (xModels!=null) {
-                    onComplete.onTaskCompleted(sortMe(xModels), true);
-                }else onComplete.onError();
+            public List<Cookie> loadForRequest(HttpUrl url) {
+                List<Cookie> cookies = cookieStore.get(url.host());
+                return cookies != null ? cookies : new ArrayList<Cookie>();
             }
-        }.execute();
+        };
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .cookieJar(cookieJar)
+                .build();
+
+        AndroidNetworking.get("https://drive.google.com/get_video_info?docid="+url)
+                .setOkHttpClient(okHttpClient)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = GDrive.fetch(cookie,response);
+                        if (xModels!=null && cookie!=null && !cookie.contains("null")) {
+                            onComplete.onTaskCompleted(sortMe(xModels), true);
+                        }else onComplete.onError();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
     }
 
     private void twitter(final String url){
-        new AsyncTask<Void,Void,ArrayList<XModel>>(){
+        AndroidNetworking.post("https://twdown.net/download.php")
+                .addBodyParameter("URL", url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        onComplete.onTaskCompleted(sortMe(Twitter.fetch(response)),true);
+                    }
 
-            @Override
-            protected ArrayList<XModel> doInBackground(Void... voids) {
-                return Twitter.fetch(url);
-            }
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
+    }
 
-            @Override
-            protected void onPostExecute(ArrayList<XModel> xModels) {
-                super.onPostExecute(xModels);
-                onComplete.onTaskCompleted(sortMe(xModels),true);
-            }
-        }.execute();
+    private void mp4upload(final String url){
+        AndroidNetworking.get(url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = MP4Upload.fetch(response);
+                        if (xModels!=null){
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
     }
 
     private void youtube(String url){
@@ -469,83 +514,68 @@ public class XGetter {
     }
 
     private void mfire(String url) {
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                final String regex = "aria-label=\"Download file\"\\n.+href=\"(.*)\"";
-                final Pattern pattern = Pattern.compile(regex);
-                final Matcher matcher = pattern.matcher(response);
-                if (matcher.find()) {
-                    ArrayList<XModel> xModels = new ArrayList<>();
-                    putModel(matcher.group(1),"",xModels);
-                    onComplete.onTaskCompleted(xModels,false);
-                }else onComplete.onError();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                onComplete.onError();
-            }
-        }) {
+        AndroidNetworking.get(url)
+                .addHeaders("User-agent", agent)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        final String regex = "aria-label=\"Download file\"\\n.+href=\"(.*)\"";
+                        final Pattern pattern = Pattern.compile(regex);
+                        final Matcher matcher = pattern.matcher(response);
+                        if (matcher.find()) {
+                            ArrayList<XModel> xModels = new ArrayList<>();
+                            putModel(matcher.group(1),"",xModels);
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("User-agent", agent);
-                return headers;
-            }
-        };
-        Volley.newRequestQueue(context).add(request);
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
     }
 
     private void gphotoORfb(String url, final boolean fb) {
-        final String data = url;
         if (url != null) {
-            int method = Request.Method.GET;
+            if (fb){
+                AndroidNetworking.post("https://fbdown.net/download.php")
+                        .addBodyParameter("URLz", "https://www.facebook.com/video.php?v="+ url)
+                        .addHeaders("User-agent", agent)
+                        .build()
+                        .getAsString(new StringRequestListener() {
+                            @Override
+                            public void onResponse(String response) {
+                                ArrayList<XModel> xModels = new ArrayList<>();
+                                putModel(getFbLink(response, false),"SD",xModels);
+                                putModel(getFbLink(response, true),"HD",xModels);
+                                onComplete.onTaskCompleted(xModels,true);
+                            }
 
-            if (fb) {
-                method = Request.Method.POST;
-                url = "https://fbdown.net/download.php";
+                            @Override
+                            public void onError(ANError anError) {
+                                onComplete.onError();
+                            }
+                        });
+            }else {
+                AndroidNetworking.get(url)
+                        .addHeaders("User-agent", agent)
+                        .build()
+                        .getAsString(new StringRequestListener() {
+                            @Override
+                            public void onResponse(String response) {
+                                ArrayList<XModel> xModels = new ArrayList<>();
+                                xModels = getGPhotoLink(response);
+                                onComplete.onTaskCompleted(xModels,true);
+                            }
+
+                            @Override
+                            public void onError(ANError anError) {
+                                onComplete.onError();
+                            }
+                        });
             }
-
-            StringRequest request = new StringRequest(method, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    ArrayList<XModel> xModels = new ArrayList<>();
-                    if (fb) {
-                        putModel(getFbLink(response, false),"SD",xModels);
-                        putModel(getFbLink(response, true),"HD",xModels);
-                    } else {
-                        xModels = getGPhotoLink(response);
-                    }
-                    onComplete.onTaskCompleted(xModels,true);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onComplete.onError();
-                }
-            }) {
-
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    if (fb) {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("URLz", "https://www.facebook.com/video.php?v="+data);
-                        return params;
-                    }
-                    return super.getParams();
-                }
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("User-agent", agent);
-                    return headers;
-                }
-            };
-
-            Volley.newRequestQueue(context).add(request);
         } else onComplete.onError();
     }
 
@@ -566,331 +596,347 @@ public class XGetter {
 
     private void openload(final String url) {
         if (url != null) {
-            StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    String longString = getLongEncrypt(response);
-                    if (longString==null){
-                        longString = getLongEncrypt2(response);
-                    }
-                    String key1 = getKey1(response);
-                    String key2 = getKey2(response);
-                    String js = "ZnVuY3Rpb24gZ2V0T3BlbmxvYWRVUkwoZW5jcnlwdFN0cmluZywga2V5MSwga2V5MikgewogICAgdmFyIHN0cmVhbVVybCA9ICIiOwogICAgdmFyIGhleEJ5dGVBcnIgPSBbXTsKICAgIGZvciAodmFyIGkgPSAwOyBpIDwgOSAqIDg7IGkgKz0gOCkgewogICAgICAgIGhleEJ5dGVBcnIucHVzaChwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpLCBpICsgOCksIDE2KSk7CiAgICB9CiAgICBlbmNyeXB0U3RyaW5nID0gZW5jcnlwdFN0cmluZy5zdWJzdHJpbmcoOSAqIDgpOwogICAgdmFyIGl0ZXJhdG9yID0gMDsKICAgIGZvciAodmFyIGFyckl0ZXJhdG9yID0gMDsgaXRlcmF0b3IgPCBlbmNyeXB0U3RyaW5nLmxlbmd0aDsgYXJySXRlcmF0b3IrKykgewogICAgICAgIHZhciBtYXhIZXggPSA2NDsKICAgICAgICB2YXIgdmFsdWUgPSAwOwogICAgICAgIHZhciBjdXJySGV4ID0gMjU1OwogICAgICAgIGZvciAodmFyIGJ5dGVJdGVyYXRvciA9IDA7IGN1cnJIZXggPj0gbWF4SGV4OyBieXRlSXRlcmF0b3IgKz0gNikgewogICAgICAgICAgICBpZiAoaXRlcmF0b3IgKyAxID49IGVuY3J5cHRTdHJpbmcubGVuZ3RoKSB7CiAgICAgICAgICAgICAgICBtYXhIZXggPSAweDhGOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGN1cnJIZXggPSBwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpdGVyYXRvciwgaXRlcmF0b3IgKyAyKSwgMTYpOwogICAgICAgICAgICB2YWx1ZSArPSAoY3VyckhleCAmIDYzKSA8PCBieXRlSXRlcmF0b3I7CiAgICAgICAgICAgIGl0ZXJhdG9yICs9IDI7CiAgICAgICAgfQogICAgICAgIHZhciBieXRlcyA9IHZhbHVlIF4gaGV4Qnl0ZUFyclthcnJJdGVyYXRvciAlIDldIF4ga2V5MSBeIGtleTI7CiAgICAgICAgdmFyIHVzZWRCeXRlcyA9IG1heEhleCAqIDIgKyAxMjc7CiAgICAgICAgZm9yICh2YXIgaSA9IDA7IGkgPCA0OyBpKyspIHsKICAgICAgICAgICAgdmFyIHVybENoYXIgPSBTdHJpbmcuZnJvbUNoYXJDb2RlKCgoYnl0ZXMgJiB1c2VkQnl0ZXMpID4+IDggKiBpKSAtIDEpOwogICAgICAgICAgICBpZiAodXJsQ2hhciAhPSAiJCIpIHsKICAgICAgICAgICAgICAgIHN0cmVhbVVybCArPSB1cmxDaGFyOwogICAgICAgICAgICB9CiAgICAgICAgICAgIHVzZWRCeXRlcyA9IHVzZWRCeXRlcyA8PCA4OwogICAgICAgIH0KICAgIH0KICAgIC8vY29uc29sZS5sb2coc3RyZWFtVXJsKQogICAgcmV0dXJuIHN0cmVhbVVybDsKfQp2YXIgZW5jcnlwdFN0cmluZyA9ICJIdGV0ekxvbmdTdHJpbmciOwp2YXIga2V5TnVtMSA9ICJIdGV0ektleTEiOwp2YXIga2V5TnVtMiA9ICJIdGV0ektleTIiOwp2YXIga2V5UmVzdWx0MSA9IDA7CnZhciBrZXlSZXN1bHQyID0gMDsKdmFyIG9ob3N0ID0gIkh0ZXR6SG9zdCI7Ci8vY29uc29sZS5sb2coZW5jcnlwdFN0cmluZywga2V5TnVtMSwga2V5TnVtMik7CnRyeSB7CiAgICB2YXIga2V5TnVtMV9PY3QgPSBwYXJzZUludChrZXlOdW0xLm1hdGNoKC9wYXJzZUludFwoJyguKiknLDhcKS8pWzFdLCA4KTsKICAgIHZhciBrZXlOdW0xX1N1YiA9IHBhcnNlSW50KGtleU51bTEubWF0Y2goL1wpXC0oW15cK10qKVwrLylbMV0pOwogICAgdmFyIGtleU51bTFfRGl2ID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXC9cKChbXlwtXSopXC0vKVsxXSk7CiAgICB2YXIga2V5TnVtMV9TdWIyID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXCsweDRcLShbXlwpXSopXCkvKVsxXSk7CiAgICBrZXlSZXN1bHQxID0gKGtleU51bTFfT2N0IC0ga2V5TnVtMV9TdWIgKyA0IC0ga2V5TnVtMV9TdWIyKSAvIChrZXlOdW0xX0RpdiAtIDgpOwogICAgdmFyIGtleU51bTJfT2N0ID0gcGFyc2VJbnQoa2V5TnVtMi5tYXRjaCgvXCgnKFteJ10qKScsLylbMV0sIDgpOwogICAgdmFyIGtleU51bTJfU3ViID0gcGFyc2VJbnQoa2V5TnVtMi5zdWJzdHIoa2V5TnVtMi5pbmRleE9mKCIpLSIpICsgMikpOwogICAga2V5UmVzdWx0MiA9IGtleU51bTJfT2N0IC0ga2V5TnVtMl9TdWI7CiAgICBjb25zb2xlLmxvZyhrZXlOdW0xLCBrZXlOdW0yKTsKfSBjYXRjaCAoZSkgewogICAgLy9jb25zb2xlLmVycm9yKGUuc3RhY2spOwogICAgdGhyb3cgRXJyb3IoIktleSBOdW1iZXJzIG5vdCBwYXJzZWQhIik7Cn0KdmFyIHNyYyA9IG9ob3N0ICsgJy9zdHJlYW0vJyArIGdldE9wZW5sb2FkVVJMKGVuY3J5cHRTdHJpbmcsIGtleVJlc3VsdDEsIGtleVJlc3VsdDIpOwp4R2V0dGVyLmZ1Y2soc3JjKTs=";
-                    js = base64Decode(js);
-                    js = js.replace("HtetzLongString", longString);
-                    js = js.replace("HtetzKey1", key1);
-                    js = js.replace("HtetzKey2", key2);
-                    js = js.replace("HtetzHost",getDomainFromURL(url));
-                    js = base64Encode(js);
-                    webView.loadUrl("javascript:(function() {" +
-                            "var parent = document.getElementsByTagName('head').item(0);" +
-                            "var script = document.createElement('script');" +
-                            "script.type = 'text/javascript';" +
-                            // Tell the browser to BASE64-decode the string into your script !!!
-                            "script.innerHTML = window.atob('" + js + "');" +
-                            "parent.appendChild(script)" +
-                            "})()");
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onComplete.onError();
-                }
-            }) {
+            AndroidNetworking.get(url)
+                    .addHeaders("User-agent", agent)
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            String longString = getLongEncrypt(response);
+                            if (longString==null){
+                                longString = getLongEncrypt2(response);
+                            }
+                            String key1 = getKey1(response);
+                            String key2 = getKey2(response);
+                            String js = "ZnVuY3Rpb24gZ2V0T3BlbmxvYWRVUkwoZW5jcnlwdFN0cmluZywga2V5MSwga2V5MikgewogICAgdmFyIHN0cmVhbVVybCA9ICIiOwogICAgdmFyIGhleEJ5dGVBcnIgPSBbXTsKICAgIGZvciAodmFyIGkgPSAwOyBpIDwgOSAqIDg7IGkgKz0gOCkgewogICAgICAgIGhleEJ5dGVBcnIucHVzaChwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpLCBpICsgOCksIDE2KSk7CiAgICB9CiAgICBlbmNyeXB0U3RyaW5nID0gZW5jcnlwdFN0cmluZy5zdWJzdHJpbmcoOSAqIDgpOwogICAgdmFyIGl0ZXJhdG9yID0gMDsKICAgIGZvciAodmFyIGFyckl0ZXJhdG9yID0gMDsgaXRlcmF0b3IgPCBlbmNyeXB0U3RyaW5nLmxlbmd0aDsgYXJySXRlcmF0b3IrKykgewogICAgICAgIHZhciBtYXhIZXggPSA2NDsKICAgICAgICB2YXIgdmFsdWUgPSAwOwogICAgICAgIHZhciBjdXJySGV4ID0gMjU1OwogICAgICAgIGZvciAodmFyIGJ5dGVJdGVyYXRvciA9IDA7IGN1cnJIZXggPj0gbWF4SGV4OyBieXRlSXRlcmF0b3IgKz0gNikgewogICAgICAgICAgICBpZiAoaXRlcmF0b3IgKyAxID49IGVuY3J5cHRTdHJpbmcubGVuZ3RoKSB7CiAgICAgICAgICAgICAgICBtYXhIZXggPSAweDhGOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGN1cnJIZXggPSBwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpdGVyYXRvciwgaXRlcmF0b3IgKyAyKSwgMTYpOwogICAgICAgICAgICB2YWx1ZSArPSAoY3VyckhleCAmIDYzKSA8PCBieXRlSXRlcmF0b3I7CiAgICAgICAgICAgIGl0ZXJhdG9yICs9IDI7CiAgICAgICAgfQogICAgICAgIHZhciBieXRlcyA9IHZhbHVlIF4gaGV4Qnl0ZUFyclthcnJJdGVyYXRvciAlIDldIF4ga2V5MSBeIGtleTI7CiAgICAgICAgdmFyIHVzZWRCeXRlcyA9IG1heEhleCAqIDIgKyAxMjc7CiAgICAgICAgZm9yICh2YXIgaSA9IDA7IGkgPCA0OyBpKyspIHsKICAgICAgICAgICAgdmFyIHVybENoYXIgPSBTdHJpbmcuZnJvbUNoYXJDb2RlKCgoYnl0ZXMgJiB1c2VkQnl0ZXMpID4+IDggKiBpKSAtIDEpOwogICAgICAgICAgICBpZiAodXJsQ2hhciAhPSAiJCIpIHsKICAgICAgICAgICAgICAgIHN0cmVhbVVybCArPSB1cmxDaGFyOwogICAgICAgICAgICB9CiAgICAgICAgICAgIHVzZWRCeXRlcyA9IHVzZWRCeXRlcyA8PCA4OwogICAgICAgIH0KICAgIH0KICAgIC8vY29uc29sZS5sb2coc3RyZWFtVXJsKQogICAgcmV0dXJuIHN0cmVhbVVybDsKfQp2YXIgZW5jcnlwdFN0cmluZyA9ICJIdGV0ekxvbmdTdHJpbmciOwp2YXIga2V5TnVtMSA9ICJIdGV0ektleTEiOwp2YXIga2V5TnVtMiA9ICJIdGV0ektleTIiOwp2YXIga2V5UmVzdWx0MSA9IDA7CnZhciBrZXlSZXN1bHQyID0gMDsKdmFyIG9ob3N0ID0gIkh0ZXR6SG9zdCI7Ci8vY29uc29sZS5sb2coZW5jcnlwdFN0cmluZywga2V5TnVtMSwga2V5TnVtMik7CnRyeSB7CiAgICB2YXIga2V5TnVtMV9PY3QgPSBwYXJzZUludChrZXlOdW0xLm1hdGNoKC9wYXJzZUludFwoJyguKiknLDhcKS8pWzFdLCA4KTsKICAgIHZhciBrZXlOdW0xX1N1YiA9IHBhcnNlSW50KGtleU51bTEubWF0Y2goL1wpXC0oW15cK10qKVwrLylbMV0pOwogICAgdmFyIGtleU51bTFfRGl2ID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXC9cKChbXlwtXSopXC0vKVsxXSk7CiAgICB2YXIga2V5TnVtMV9TdWIyID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXCsweDRcLShbXlwpXSopXCkvKVsxXSk7CiAgICBrZXlSZXN1bHQxID0gKGtleU51bTFfT2N0IC0ga2V5TnVtMV9TdWIgKyA0IC0ga2V5TnVtMV9TdWIyKSAvIChrZXlOdW0xX0RpdiAtIDgpOwogICAgdmFyIGtleU51bTJfT2N0ID0gcGFyc2VJbnQoa2V5TnVtMi5tYXRjaCgvXCgnKFteJ10qKScsLylbMV0sIDgpOwogICAgdmFyIGtleU51bTJfU3ViID0gcGFyc2VJbnQoa2V5TnVtMi5zdWJzdHIoa2V5TnVtMi5pbmRleE9mKCIpLSIpICsgMikpOwogICAga2V5UmVzdWx0MiA9IGtleU51bTJfT2N0IC0ga2V5TnVtMl9TdWI7CiAgICBjb25zb2xlLmxvZyhrZXlOdW0xLCBrZXlOdW0yKTsKfSBjYXRjaCAoZSkgewogICAgLy9jb25zb2xlLmVycm9yKGUuc3RhY2spOwogICAgdGhyb3cgRXJyb3IoIktleSBOdW1iZXJzIG5vdCBwYXJzZWQhIik7Cn0KdmFyIHNyYyA9IG9ob3N0ICsgJy9zdHJlYW0vJyArIGdldE9wZW5sb2FkVVJMKGVuY3J5cHRTdHJpbmcsIGtleVJlc3VsdDEsIGtleVJlc3VsdDIpOwp4R2V0dGVyLmZ1Y2soc3JjKTs=";
+                            js = base64Decode(js);
+                            js = js.replace("HtetzLongString", longString);
+                            js = js.replace("HtetzKey1", key1);
+                            js = js.replace("HtetzKey2", key2);
+                            js = js.replace("HtetzHost",getDomainFromURL(url));
+                            js = base64Encode(js);
+                            webView.loadUrl("javascript:(function() {" +
+                                    "var parent = document.getElementsByTagName('head').item(0);" +
+                                    "var script = document.createElement('script');" +
+                                    "script.type = 'text/javascript';" +
+                                    // Tell the browser to BASE64-decode the string into your script !!!
+                                    "script.innerHTML = window.atob('" + js + "');" +
+                                    "parent.appendChild(script)" +
+                                    "})()");
+                        }
 
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("User-agent", agent);
-                    return headers;
-                }
-            };
-
-            Volley.newRequestQueue(context).add(request);
+                        @Override
+                        public void onError(ANError anError) {
+                            onComplete.onError();
+                        }
+                    });
         }
     }
 
     private void okru(String url) {
         if (url != null) {
 
-            StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                private String getJson(String html){
-                    final String regex = "data-options=\"(.*?)\"";
-                    final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                    final Matcher matcher = pattern.matcher(html);
-                    if (matcher.find()) {
-                        return matcher.group(1);
-                    }
-                    return null;
-                }
-
-                @Override
-                public void onResponse(String response) {
-                    String json = getJson(response);
-                    if (json!=null) {
-                        json = StringEscapeUtils.unescapeHtml4(json);
-                        try {
-                            json = new JSONObject(json).getJSONObject("flashvars").getString("metadata");
+            AndroidNetworking.get(url)
+                    .addHeaders("User-agent", "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19")
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            String json = getJson(response);
                             if (json!=null) {
-                                JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
-                                ArrayList<XModel> models = new ArrayList<>();
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    String url = jsonArray.getJSONObject(i).getString("url");
-                                    String name = jsonArray.getJSONObject(i).getString("name");
-                                    if (name.equals("mobile")) {
-                                        putModel(url, "144p", models);
-                                    } else if (name.equals("lowest")) {
-                                        putModel(url, "240p", models);
-                                    } else if (name.equals("low")) {
-                                        putModel(url, "360p", models);
-                                    } else if (name.equals("sd")) {
-                                        putModel(url, "480p", models);
-                                    } else if (name.equals("hd")) {
-                                        putModel(url, "HD", models);
-                                    } else if (name.equals("full")) {
-                                        putModel(url, "Full HD", models);
-                                    } else if (name.equals("quad")) {
-                                        putModel(url, "2K", models);
-                                    } else if (name.equals("ultra")) {
-                                        putModel(url, "4K", models);
-                                    } else {
-                                        putModel(url, "Default", models);
+                                json = StringEscapeUtils.unescapeHtml4(json);
+                                try {
+                                    json = new JSONObject(json).getJSONObject("flashvars").getString("metadata");
+                                    if (json!=null) {
+                                        JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
+                                        ArrayList<XModel> models = new ArrayList<>();
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            String url = jsonArray.getJSONObject(i).getString("url");
+                                            String name = jsonArray.getJSONObject(i).getString("name");
+                                            if (name.equals("mobile")) {
+                                                putModel(url, "144p", models);
+                                            } else if (name.equals("lowest")) {
+                                                putModel(url, "240p", models);
+                                            } else if (name.equals("low")) {
+                                                putModel(url, "360p", models);
+                                            } else if (name.equals("sd")) {
+                                                putModel(url, "480p", models);
+                                            } else if (name.equals("hd")) {
+                                                putModel(url, "720p", models);
+                                            } else if (name.equals("full")) {
+                                                putModel(url, "1080p", models);
+                                            } else if (name.equals("quad")) {
+                                                putModel(url, "2000p", models);
+                                            } else if (name.equals("ultra")) {
+                                                putModel(url, "4000p", models);
+                                            } else {
+                                                putModel(url, "Default", models);
+                                            }
+                                        }
+                                        onComplete.onTaskCompleted(sortMe(models), true);
+                                    }else {
+                                        onComplete.onError();
                                     }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    onComplete.onError();
                                 }
-                                onComplete.onTaskCompleted(sortMe(models), true);
-                            }else {
-                                onComplete.onError();
+                            }else onComplete.onError();
+                        }
+
+                        private String getJson(String html){
+                            final String regex = "data-options=\"(.*?)\"";
+                            final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                            final Matcher matcher = pattern.matcher(html);
+                            if (matcher.find()) {
+                                return matcher.group(1);
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            return null;
+                        }
+
+                        @Override
+                        public void onError(ANError anError) {
                             onComplete.onError();
                         }
-                    }else onComplete.onError();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onComplete.onError();
-                }
-            }) {
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("User-agent", "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19");
-                    return headers;
-                }
-
-            };
-
-            Volley.newRequestQueue(context).add(request);
+                    });
         }
+    }
+
+    private void fansubs(final String mUrl){
+        AndroidNetworking.get(mUrl)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> models = new ArrayList<>();
+                        Document document = Jsoup.parse(response);
+                        if (document.html().contains("<source")){
+                            Elements element = document.getElementsByTag("source");
+                            for (int i=0;i<element.size();i++){
+                                Element temp = element.get(i);
+                                if (temp.hasAttr("src")) {
+                                    String url = temp.attr("src");
+                                    putModel(url, temp.attr("label"), models);
+                                }
+                            }
+                        }
+                        if (models.size()!=0){
+                            onComplete.onTaskCompleted(sortMe(models),true);
+                        }else onComplete.onError();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        System.out.println(anError.getErrorBody());
+                        onComplete.onError();
+                    }
+                });
     }
 
     private void vk(String url) {
         if (url != null) {
-            StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            AndroidNetworking.get(url)
+                    .addHeaders("User-agent", agent)
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            String json = get("al_video.php', ?(\\{.*])",response);
+                            json = get("\\}, ?(.*)",json);
 
-                private String get(String regex,String html){
-                    final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                    final Matcher matcher = pattern.matcher(html);
-                    if (matcher.find()) {
-                        return matcher.group(1);
-                    }
-                    return null;
-                }
+                            try {
+                                ArrayList<XModel> models = new ArrayList<>();
+                                String x240="url240",x360="url360",x480="url480",x720="url720",x1080="url1080";
+                                JSONObject object = new JSONArray(json).getJSONObject(4).getJSONObject("player").getJSONArray("params").getJSONObject(0);
 
-                @Override
-                public void onResponse(String response) {
-                    String json = get("al_video.php', ?(\\{.*])",response);
-                    json = get("\\}, ?(.*)",json);
+                                if (object.has(x240)){
+                                    putModel(object.getString(x240),"240p",models);
+                                }
 
-                    try {
-                        ArrayList<XModel> models = new ArrayList<>();
-                        String x240="url240",x360="url360",x480="url480",x720="url720",x1080="url1080";
-                        JSONObject object = new JSONArray(json).getJSONObject(4).getJSONObject("player").getJSONArray("params").getJSONObject(0);
+                                if (object.has(x360)){
+                                    putModel(object.getString(x360),"360p",models);
+                                }
 
-                        if (object.has(x240)){
-                            putModel(object.getString(x240),"240p",models);
+                                if (object.has(x480)){
+                                    putModel(object.getString(x480),"480p",models);
+                                }
+
+                                if (object.has(x720)){
+                                    putModel(object.getString(x720),"720p",models);
+                                }
+
+                                if (object.has(x1080)){
+                                    putModel(object.getString(x1080),"1080p",models);
+                                }
+                                onComplete.onTaskCompleted(sortMe(models),true);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                onComplete.onError();
+                            }
                         }
 
-                        if (object.has(x360)){
-                            putModel(object.getString(x360),"360p",models);
+                        private String get(String regex,String html){
+                            final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                            final Matcher matcher = pattern.matcher(html);
+                            if (matcher.find()) {
+                                return matcher.group(1);
+                            }
+                            return null;
                         }
 
-                        if (object.has(x480)){
-                            putModel(object.getString(x480),"480p",models);
+                        @Override
+                        public void onError(ANError anError) {
+                            onComplete.onError();
                         }
-
-                        if (object.has(x720)){
-                            putModel(object.getString(x720),"720p",models);
-                        }
-
-                        if (object.has(x1080)){
-                            putModel(object.getString(x1080),"1080p",models);
-                        }
-                        onComplete.onTaskCompleted(sortMe(models),true);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        onComplete.onError();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onComplete.onError();
-                }
-            }) {
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("User-agent", agent);
-                    return headers;
-                }
-            };
-
-            Volley.newRequestQueue(context).add(request);
+                    });
         }
     }
 
     private void uptoStream(String url) {
         if (url != null) {
-            StringRequest request = new StringRequest(Request.Method.GET,prepareUptoStream(url) , new Response.Listener<String>() {
-                private String get(String regex,String code){
-                    final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                    final Matcher matcher = pattern.matcher(code);
-                    code = null;
-                    while (matcher.find()) {
-                        for (int i = 1; i <= matcher.groupCount(); i++) {
-                            code = matcher.group(i);
-                        }
-                    }
+            AndroidNetworking.get(url)
+                    .addHeaders("User-agent", agent)
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            String regex = "sources.*?\\.parse.*'(.*?)'";
+                            String json = get(regex,response);
+                            if (json!=null){
+                                try {
+                                    JSONArray array = new JSONArray(json);
+                                    ArrayList<XModel> xModels = new ArrayList<>();
+                                    for (int i=0;i<array.length();i++){
+                                        String src = array.getJSONObject(i).getString("src");
+                                        String label = array.getJSONObject(i).getString("label");
+                                        String lang = array.getJSONObject(i).getString("lang");
 
-                    return code;
-                }
+                                        if (lang!=null && !lang.isEmpty()){
+                                            lang = lang.toUpperCase();
+                                        }
 
-                private void putModel(String quality,String src, ArrayList<XModel> model){
-                    XModel xModel = new XModel();
-                    xModel.setUrl(src);
-                    xModel.setQuality(quality);
-                    model.add(xModel);
-                }
+                                        String quality=label+","+ lang;
+                                        putModel(quality,src,xModels);
+                                        putModel(src,quality,xModels);
+                                    }
 
-                @Override
-                public void onResponse(String response) {
-                    String regex = "sources.*?\\.parse.*'(.*?)'";
-                    String json = get(regex,response);
-
-                    if (json!=null){
-                        try {
-                            JSONArray array = new JSONArray(json);
-                            ArrayList<XModel> xModels = new ArrayList<>();
-                            for (int i=0;i<array.length();i++){
-                                String src = array.getJSONObject(i).getString("src");
-                                String label = array.getJSONObject(i).getString("label");
-                                String lang = array.getJSONObject(i).getString("lang");
-
-                                if (lang!=null && !lang.isEmpty()){
-                                    lang = lang.toUpperCase();
+                                    if (xModels.size()!=0) {
+                                        onComplete.onTaskCompleted(sortMe(xModels), true);
+                                    }else onComplete.onError();
+                                } catch (JSONException e) {
+                                    onComplete.onError();
                                 }
-
-                                String quality=label+","+ lang;
-                                putModel(quality,src,xModels);
                             }
-                            onComplete.onTaskCompleted(sortMe(xModels),true);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        }
+
+                        private String get(String regex,String code){
+                            final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                            final Matcher matcher = pattern.matcher(code);
+                            code = null;
+                            while (matcher.find()) {
+                                for (int i = 1; i <= matcher.groupCount(); i++) {
+                                    code = matcher.group(i);
+                                }
+                            }
+
+                            return code;
+                        }
+
+                        @Override
+                        public void onError(ANError anError) {
                             onComplete.onError();
                         }
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onComplete.onError();
-                }
-            }) {
-
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("User-agent", agent);
-                    return headers;
-                }
-            };
-
-            Volley.newRequestQueue(context).add(request);
+                    });
         }
     }
 
     private void rapidVideo(final String mUrl){
-        new AsyncTask<Void,Void,ArrayList<XModel>>(){
-
-            @Override
-            protected ArrayList<XModel> doInBackground(Void... voids) {
-                ArrayList<XModel> xModels = new ArrayList<>();
-                Document document = null;
-                try {
-                    document = Jsoup.connect(mUrl).userAgent(agent).get();
-                    if (document.html().contains("<source")){
-                        Elements element = document.getElementsByTag("source");
-                        for (int i=0;i<element.size();i++){
-                            Element temp = element.get(i);
-                            if (temp.hasAttr("src")) {
-                                String url = temp.attr("src");
-                                putModel(url, temp.attr("label"), xModels);
+        AndroidNetworking.get(mUrl)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = new ArrayList<>();
+                        Document document = Jsoup.parse(response);
+                        if (document.html().contains("<source")){
+                            Elements element = document.getElementsByTag("source");
+                            for (int i=0;i<element.size();i++){
+                                Element temp = element.get(i);
+                                if (temp.hasAttr("src")) {
+                                    String url = temp.attr("src");
+                                    putModel(url, temp.attr("label"), xModels);
+                                }
                             }
-                        }
-                    }else {
-                        Elements element = document.getElementsByTag("a");
-                        for (int i=0;i<element.size();i++){
-                            if (element.get(i).hasAttr("href")) {
-                                String url = element.get(i).attr("href");
-                                if (url.contains(".mp4")) {
-                                    String quality = element.get(i).text().replace("Download","").replace(" ","");;
-                                    putModel(url, quality, xModels);
+                        }else {
+                            Elements element = document.getElementsByTag("a");
+                            for (int i=0;i<element.size();i++){
+                                if (element.get(i).hasAttr("href")) {
+                                    String url = element.get(i).attr("href");
+                                    if (url.contains(".mp4")) {
+                                        String quality = element.get(i).text().replace("Download","").replace(" ","");;
+                                        putModel(url, quality, xModels);
+                                    }
                                 }
                             }
                         }
+                        if ( xModels.size()!=0){
+                            onComplete.onTaskCompleted(sortMe(xModels),true);
+                        }else onComplete.onError();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return xModels;
-            }
 
-            @Override
-            protected void onPostExecute(ArrayList<XModel> s) {
-                super.onPostExecute(s);
-                if (s!=null && s.size()!=0){
-
-                    onComplete.onTaskCompleted(sortMe(s),true);
-                }else onComplete.onError();
-            }
-        }.execute();
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
     }
 
     private void vidozafiles(final String url){
-        new AsyncTask<Void,Void,ArrayList<XModel>>(){
-            @Override
-            protected ArrayList<XModel> doInBackground(Void... voids) {
-                XModel model = Vidoza.fetch(url);
-                if (model!=null){
-                    ArrayList<XModel> xModels = new ArrayList<>();
-                    xModels.add(model);
-                    return xModels;
-                }
-                return null;
-            }
+        AndroidNetworking.get(url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        onComplete.onTaskCompleted(Vidoza.fetch(response),false);
+                    }
 
-            @Override
-            protected void onPostExecute(ArrayList<XModel> xModels) {
-                super.onPostExecute(xModels);
-                if (xModels!=null){
-                    onComplete.onTaskCompleted(xModels,false);
-                }else onComplete.onError();
-            }
-        }.execute();
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
+    }
+
+
+    private void sendvid(String url){
+        AndroidNetworking.get(url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        String src = getSrc(response);
+                        if (src!=null){
+                            ArrayList<XModel> xModels = new ArrayList<>();
+                            putModel(src,"Normal",xModels);
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
+
+                    private String getSrc(String response){
+                        final String regex = "<source ?src=\"(.*?)\"";
+                        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                        final Matcher matcher = pattern.matcher(response);
+
+                        if (matcher.find()) {
+                            return matcher.group(1);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
     }
 }
