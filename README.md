@@ -103,6 +103,27 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
     
     xGetter.find("Video လင့္");
 
+## IMPORTANT
+Okhttp3 ကိုအသုံးျပုထားသည့္အတြက္
+**proguard-rules.pro** ထည့္ေပးရန္လိုအပ္ပါသည္။
+
+    # JSR 305 annotations are for embedding nullability information.
+    
+    -dontwarn javax.annotation.**
+    
+    # A resource is loaded with a relative path so the package of this class must be preserved.     
+    
+    -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+    
+    # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
+    
+    -dontwarn org.codehaus.mojo.animal_sniffer.*
+    
+    # OkHttp platform used only on JVM and when Conscrypt dependency is available.
+    
+    -dontwarn okhttp3.internal.platform.ConscryptPlatform
+
+
 အသုံးျပဳရတာလည္းလြယ္ပါတယ္ :)
 - Example APK => http://bit.ly/2TDvLQ2
 - Example Project => http://bit.ly/2Sr6Hiw
@@ -210,6 +231,27 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
             });
 
     xGetter.find("Video လင့်");
+
+## IMPORTANT
+Okhttp3 ကိုအသုံးပြုထားသည့်အတွက်
+**proguard-rules.pro** ထည့်ပေးရန်လိုအပ်ပါသည်။
+
+    # JSR 305 annotations are for embedding nullability information.
+    
+    -dontwarn javax.annotation.**
+    
+    # A resource is loaded with a relative path so the package of this class must be preserved.     
+    
+    -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+    
+    # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
+    
+    -dontwarn org.codehaus.mojo.animal_sniffer.*
+    
+    # OkHttp platform used only on JVM and when Conscrypt dependency is available.
+    
+    -dontwarn okhttp3.internal.platform.ConscryptPlatform
+
 
 အသုံးပြုရတာလည်းလွယ်ပါတယ် :)
 - Example APK => http://bit.ly/2TDvLQ2

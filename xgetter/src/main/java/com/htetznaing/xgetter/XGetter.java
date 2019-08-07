@@ -442,6 +442,7 @@ public class XGetter {
                         ArrayList<XModel> xModels = GDrive.fetch(cookie,response);
                         if (xModels!=null && cookie!=null && !cookie.contains("null")) {
                             onComplete.onTaskCompleted(sortMe(xModels), true);
+                            cookie = null;
                         }else onComplete.onError();
                     }
 
