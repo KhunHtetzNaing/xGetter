@@ -17,27 +17,27 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 အဆင္ေျပသလိုအသုံးခ်ႏိုင္ပါတယ္။
 ေလာလာဆယ္ပါဝင္တဲ့ Site ေတြကေတာ့
 
-**1. Openload**
-**2. VidCloud**
-**3. StreaMango**
-**4. RapidVideo**
-**5. StreamCherry**
-**6. Google Drive**
-**7. MegaUp**
-**8. Google Photos**
-**9. Mp4Upload**
-**10. Facebook**
-**11. Mediafire**
-**12. Ok.Ru**
-**13. VK**
-**14. Twitter**
-**15. Youtube**
-**16. SolidFiles**
-**17. Vidoza**
-**18. UptoStream**
-**19. SendVid**
-**20. FanSubs**
-**21. Uptobox**
+ - **1. Openload**
+ - **2. VidCloud**
+ - **3. StreaMango**
+ - **4. RapidVideo**
+ - **5. StreamCherry**
+ - **6. Google Drive**
+ - **7. MegaUp**
+ - **8. Google Photos**
+ - **9. Mp4Upload**
+ - **10. Facebook**
+ - **11. Mediafire**
+ - **12. Ok.Ru**
+ - **13. VK**
+ - **14. Twitter**
+ - **15. Youtube**
+ - **16. SolidFiles**
+ - **17. Vidoza**
+ - **18. UptoStream**
+ - **19. SendVid**
+ - **20. FanSubs**
+ - **21. Uptobox**
 
 တို႔ပဲျဖစ္ပါတယ္။
 ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
@@ -146,27 +146,27 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 အဆင်ပြေသလိုအသုံးချနိုင်ပါတယ်။
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
 
-**1. Openload**
-**2. VidCloud**
-**3. StreaMango**
-**4. RapidVideo**
-**5. StreamCherry**
-**6. Google Drive**
-**7. MegaUp**
-**8. Google Photos**
-**9. Mp4Upload**
-**10. Facebook**
-**11. Mediafire**
-**12. Ok.Ru**
-**13. VK**
-**14. Twitter**
-**15. Youtube**
-**16. SolidFiles**
-**17. Vidoza**
-**18. UptoStream**
-**19. SendVid**
-**20. FanSubs**
-**21. Uptobox**
+ - **1. Openload**
+ - **2. VidCloud**
+ - **3. StreaMango**
+ - **4. RapidVideo**
+ - **5. StreamCherry**
+ - **6. Google Drive**
+ - **7. MegaUp**
+ - **8. Google Photos**
+ - **9. Mp4Upload**
+ - **10. Facebook**
+ - **11. Mediafire**
+ - **12. Ok.Ru**
+ - **13. VK**
+ - **14. Twitter**
+ - **15. Youtube**
+ - **16. SolidFiles**
+ - **17. Vidoza**
+ - **18. UptoStream**
+ - **19. SendVid**
+ - **20. FanSubs**
+ - **21. Uptobox**
 
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
