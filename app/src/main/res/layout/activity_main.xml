@@ -76,12 +76,6 @@
                         android:layout_height="wrap_content" />
 
                     <Button
-                        android:onClick="megaup"
-                        android:text="MegaUp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
                         android:onClick="mp4upload"
                         android:text="Mp4Upload"
                         android:layout_width="match_parent"
@@ -125,12 +119,6 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                    <Button
-                        android:onClick="vidcloud"
-                        android:text="VidCloud"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
 
                     <Button
                         android:onClick="rapidvideo"

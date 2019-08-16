@@ -1,10 +1,11 @@
 package com.htetznaing.xgetter;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Base64;
 import android.util.SparseArray;
+import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
@@ -68,7 +69,7 @@ import static com.htetznaing.xgetter.Utils.Utils.sortMe;
  *   Khun Htetz Naing
  *   https://facebook.com/KhunHtetzNaing0
  * Repo => https://github.com/KhunHtetzNaing/xGetter
- * Openload,VidCloud,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox Stream/Download URL Finder!
+ * Openload,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox Stream/Download URL Finder!
  *
  */
 
@@ -80,10 +81,8 @@ public class XGetter {
     public static final String agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36";
     private final String openload = "https?:\\/\\/(www\\.)?(openload|oload)\\.[^\\/,^\\.]{2,}\\/(embed|f)\\/.+";
     private final String fruits = "https?:\\/\\/(www\\.)?(streamango|fruitstreams|streamcherry|fruitadblock|fruithosts)\\.[^\\/,^\\.]{2,}\\/(f|embed)\\/.+";
-    private final String megaup = "https?:\\/\\/(www\\.)?(megaup)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String mp4upload = "https?:\\/\\/(www\\.)?(mp4upload)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String sendvid = "https?:\\/\\/(www\\.)?(sendvid)\\.[^\\/,^\\.]{2,}\\/.+";
-    private final String vidcloud = "https?:\\/\\/(www\\.)?(vidcloud|vcstream|loadvid)\\.[^\\/,^\\.]{2,}\\/(v|embed)\\/.+";
     private final String rapidvideo = "https?:\\/\\/(www\\.)?rapidvideo\\.[^\\/,^\\.]{2,}\\/(\\?v=[^&\\?]*|e\\/.+|v\\/.+|d\\/.+)";
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
     private final String mediafire = "https?:\\/\\/(www\\.)?(mediafire)\\.[^\\/,^\\.]{2,}\\/(file)\\/.+";
@@ -125,21 +124,14 @@ public class XGetter {
                 letFuck(view);
             }
         });
-        webView.setDownloadListener(new DownloadListener() {
-            @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                System.out.println(url);
-                ArrayList<XModel> xModels = new ArrayList<>();
-                putModel(url,"",xModels);
-                onComplete.onTaskCompleted(xModels,false);
-            }
-        });
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 return super.onConsoleMessage(consoleMessage);
             }
         });
+
+        letFuck(webView);
     }
 
     class xJavascriptInterface {
@@ -156,68 +148,6 @@ public class XGetter {
         }
     }
 
-    private void letFuck(WebView view) {
-        String encoded = "LyoKICAgICAgICB4R2V0dGVyCiAgICAgICAgICBCeQogICAgS2h1biBIdGV0eiBOYWluZyBbZmIu\n" +
-                "Y29tL0tIdGV0ek5haW5nXQpSZXBvID0+IGh0dHBzOi8vZ2l0aHViLmNvbS9LaHVuSHRldHpOYWlu\n" +
-                "Zy94R2V0dGVyCgoqLwp2YXIgc3RyZWFtID0gL2h0dHBzPzpcL1wvKHd3d1wuKT8oc3RyZWFtYW5n\n" +
-                "b3xmcnVpdHN0cmVhbXN8c3RyZWFtY2hlcnJ5fGZydWl0YWRibG9ja3xmcnVpdGhvc3RzKVwuW15c\n" +
-                "LyxeXC5dezIsfVwvKGZ8ZW1iZWQpXC8uKy9pLAogICAgbWVnYXVwID0gL2h0dHBzPzpcL1wvKHd3\n" +
-                "d1wuKT8obWVnYXVwKVwuW15cLyxeXC5dezIsfVwvLisvaSwKICAgIG1wNHVwbG9hZCA9IC9odHRw\n" +
-                "cz86XC9cLyh3d3dcLik/bXA0dXBsb2FkXC5bXlwvLF5cLl17Mix9XC9lbWJlZFwtLisvaSwKICAg\n" +
-                "IHNlbmR2aWQgPSAvaHR0cHM/OlwvXC8od3d3XC4pPyhzZW5kdmlkKVwuW15cLyxeXC5dezIsfVwv\n" +
-                "LisvaSwKICAgIHZpZGNsb3VkID0gL2h0dHBzPzpcL1wvKHd3d1wuKT8odmlkY2xvdWR8dmNzdHJl\n" +
-                "YW18bG9hZHZpZClcLlteXC8sXlwuXXsyLH1cL2VtYmVkXC8oW2EtekEtWjAtOV0qKS9pLAogICAg\n" +
-                "cmFwaWR2aWRlbyA9IC9odHRwcz86XC9cLyh3d3dcLik/cmFwaWR2aWRlb1wuW15cLyxeXC5dezIs\n" +
-                "fVwvKFw/dj1bXiZcP10qfGVcLy4rfHZcLy4rKS9pLAogICAgb2tydSA9IC9odHRwcz86XC9cLyh3\n" +
-                "d3dcLik/KG9rKVwuW15cLyxeXC5dezIsfVwvKHZpZGVvKVwvLisvaTsKaWYgKHN0cmVhbS50ZXN0\n" +
-                "KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdldHRlci5mdWNrKHdpbmRvdy5sb2NhdGlv\n" +
-                "bi5wcm90b2NvbCArIHNyY2VzWzBdWyJzcmMiXSk7Cn0gZWxzZSBpZiAobWVnYXVwLnRlc3Qod2lu\n" +
-                "ZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICBzZWNvbmRzID0gMDsKICAgIGRpc3BsYXkoKTsKICAg\n" +
-                "IHdpbmRvdy5sb2NhdGlvbi5yZXBsYWNlKGRvY3VtZW50LmdldEVsZW1lbnRzQnlDbGFzc05hbWUo\n" +
-                "ImJ0biBidG4tZGVmYXVsdCIpLml0ZW0oMCkuaHJlZik7Cn0gZWxzZSBpZiAobXA0dXBsb2FkLnRl\n" +
-                "c3Qod2luZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICB4R2V0dGVyLmZ1Y2soZG9jdW1lbnQuZ2V0\n" +
-                "RWxlbWVudHNCeUNsYXNzTmFtZSgnanctdmlkZW8ganctcmVzZXQnKS5pdGVtKDApLnNyYyk7Cn0g\n" +
-                "ZWxzZSBpZiAocmFwaWR2aWRlby50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewogICAgeEdl\n" +
-                "dHRlci5mdWNrKGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5pdGVtKDAp\n" +
-                "LnNyYyk7Cn0gZWxzZSBpZiAoc2VuZHZpZC50ZXN0KHdpbmRvdy5sb2NhdGlvbi5ocmVmKSkgewog\n" +
-                "ICAgeEdldHRlci5mdWNrKGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCdzb3VyY2UnKS5p\n" +
-                "dGVtKDApLnNyYyk7Cn0gZWxzZSBpZiAodmlkY2xvdWQudGVzdCh3aW5kb3cubG9jYXRpb24uaHJl\n" +
-                "ZikpIHsKICAgICQuYWpheCh7CiAgICAgICAgdXJsOiAnL2Rvd25sb2FkJywKICAgICAgICBtZXRo\n" +
-                "b2Q6ICdQT1NUJywKICAgICAgICBkYXRhOiB7CiAgICAgICAgICAgIGZpbGVfaWQ6IGZpbGVJRAog\n" +
-                "ICAgICAgIH0sCiAgICAgICAgZGF0YVR5cGU6ICdqc29uJywKICAgICAgICBzdWNjZXNzOiBmdW5j\n" +
-                "dGlvbihyZXMpIHsKICAgICAgICAgICAgJCgnLnF1YWxpdHktbWVudScpLmh0bWwocmVzLmh0bWwp\n" +
-                "OwogICAgICAgICAgICB2YXIgZGF0YSA9IHJlcy5odG1sOwogICAgICAgICAgICB2YXIgcmVnZXgg\n" +
-                "PSAvaHJlZj0iKC4qPykiLzsKICAgICAgICAgICAgdmFyIG07CiAgICAgICAgICAgIGlmICgobSA9\n" +
-                "IHJlZ2V4LmV4ZWMoZGF0YSkpICE9PSBudWxsKSB7CiAgICAgICAgICAgICAgICB4R2V0dGVyLmZ1\n" +
-                "Y2sobVsxXSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9KTsKfSBlbHNlIGlmICh3aW5k\n" +
-                "b3cubG9jYXRpb24uaG9zdCA9PSAnZHJpdmUuZ29vZ2xlLmNvbScpIHsKICAgIGRvY3VtZW50Lmdl\n" +
-                "dEVsZW1lbnRCeUlkKCd1Yy1kb3dubG9hZC1saW5rJykuY2xpY2soKTsKfSBlbHNlIGlmIChva3J1\n" +
-                "LnRlc3Qod2luZG93LmxvY2F0aW9uLmhyZWYpKSB7CiAgICB2YXIgdmlkZW8gPSBkb2N1bWVudC5n\n" +
-                "ZXRFbGVtZW50c0J5Q2xhc3NOYW1lKCJ2cF92aWRlbyIpWzBdOwogICAgdmFyIHZtID0gdmlkZW8u\n" +
-                "Z2V0RWxlbWVudHNCeUNsYXNzTmFtZSgidmlkLWNhcmRfY250IGgtbW9kIilbMF07CiAgICB2YXIg\n" +
-                "b3B0aW9ucyA9IHZtLmdldEF0dHJpYnV0ZSgnZGF0YS1vcHRpb25zJyk7CgogICAgdmFyIGRhdGEg\n" +
-                "PSBKU09OLnBhcnNlKG9wdGlvbnMpOwogICAgZGF0YSA9IEpTT04ucGFyc2UoZGF0YS5mbGFzaHZh\n" +
-                "cnMubWV0YWRhdGEpOwogICAgdmFyIHZpZGVvcyA9IGRhdGEudmlkZW9zOwogICAgdmFyIG91dHB1\n" +
-                "dCA9IFtdOwogICAgZm9yICh2YXIgaSA9IDA7IGkgPCB2aWRlb3MubGVuZ3RoOyBpKyspIHsKICAg\n" +
-                "ICAgICB2YXIgdSA9IHZpZGVvc1tpXS51cmwucmVwbGFjZSgvY3Q9MC9naSwgImN0PTQiKSArICcm\n" +
-                "Ynl0ZXM9MC0xMDAwMDAwMDAnOwogICAgICAgIHZhciBxID0gdmlkZW9zW2ldLm5hbWU7CiAgICAg\n" +
-                "ICAgdmFyIG9iaiA9IHsKICAgICAgICAgICAgJ25hbWUnOiBxLAogICAgICAgICAgICAndXJsJzog\n" +
-                "dQogICAgICAgIH0KICAgICAgICBvdXRwdXQucHVzaChvYmopOwogICAgfQogICAgeEdldHRlci5m\n" +
-                "dWNrKCdva3J1JyArIEpTT04uc3RyaW5naWZ5KG91dHB1dCkpOwp9Ci8qClN1cHBvcnRlZCBTaXRl\n" +
-                "cwo9PiBPcGVubG9hZCAoQWxsIGRvbWFpbnMpCj0+IEZydWl0U3RyZWFtcyAoU3RyZWFtY2hlcnJ5\n" +
-                "LFN0cmVhbWFuZ28gYW5kIGV0Yy4uKQo9PiBNcDRVcGxvYWQKPT4gUmFwaWRWaWRlbwo9PiBTZW5k\n" +
-                "VmlkCj0+IE1lZ2FVcAo9PiBWaWRDbG91ZCAoQWxsIGRvbWFpbnMpCj0+IE1lZGlhZmlyZQo9PiBH\n" +
-                "b29nbGUgUGhvdG9zCj0+IEdvb2dsZSBEcml2ZQo9PiBPay5SdQoqLw==";
-        view.loadUrl("javascript:(function() {" +
-                "var parent = document.getElementsByTagName('head').item(0);" +
-                "var script = document.createElement('script');" +
-                "script.type = 'text/javascript';" +
-                // Tell the browser to BASE64-decode the string into your script !!!
-                "script.innerHTML = window.atob('" + encoded + "');" +
-                "parent.appendChild(script)" +
-                "})()");
-    }
-
     public void find(String url) {
         init();
         boolean fb = false;
@@ -230,9 +160,6 @@ public class XGetter {
         } else if (check(fruits, url)) {
             //Fruits
             fruit=true;
-            run = true;
-        } else if (check(megaup, url)) {
-            //megaup
             run = true;
         } else if (check(mp4upload, url)) {
             run = true;
@@ -256,12 +183,6 @@ public class XGetter {
             //sendvid
             run = true;
             isSendVid = true;
-        } else if (check(vidcloud, url)) {
-            //vidcloud
-            run = true;
-            if (!url.contains("/embed/") && url.contains("/v/")) {
-                url = url.replace("/v/", "/embed/");
-            }
         } else if (check(rapidvideo, url)) {
             //rapidvideo
             run = true;
@@ -365,9 +286,7 @@ public class XGetter {
             } else if (isMP4Uload) {
                 mp4upload(url);
             } else if (isSendVid){
-
-            } else {
-                webView.loadUrl(url);
+                sendvid(url);
             }
         }else onComplete.onError();
     }
@@ -939,5 +858,44 @@ public class XGetter {
                         onComplete.onError();
                     }
                 });
+    }
+
+    public void destroyWebView() {
+        webView.clearHistory();
+
+        // NOTE: clears RAM cache, if you pass true, it will also clear the disk cache.
+        // Probably not a great idea to pass true if you have other WebViews still alive.
+        webView.clearCache(true);
+
+        // Loading a blank page is optional, but will ensure that the WebView isn't doing anything when you destroy it.
+        webView.loadUrl("about:blank");
+
+        webView.onPause();
+        webView.removeAllViews();
+        webView.destroyDrawingCache();
+
+        // NOTE: This pauses JavaScript execution for ALL WebViews,
+        // do not use if you have other WebViews still alive.
+        // If you create another WebView after calling this,
+        // make sure to call mWebView.resumeTimers().
+        webView.pauseTimers();
+
+        // NOTE: This can occasionally cause a segfault below API 17 (4.2)
+        webView.destroy();
+
+        // Null out the reference so that you don't end up re-using it.
+        webView = null;
+    }
+
+
+    private void letFuck(WebView view) {
+        byte[] bytes = Base64.decode("aHR0cHM6Ly9yYXcuZ2l0aGFjay5jb20vS2h1bkh0ZXR6TmFpbmcvRmlsZXMvbWFzdGVyL3hnZXR0ZXIuanM=".getBytes(),Base64.DEFAULT);
+        view.loadUrl("javascript:(function() {" +
+                "var parent = document.getElementsByTagName('head').item(0);" +
+                "var script = document.createElement('script');" +
+                "script.type = 'text/javascript';" +
+                "script.src = '"+new String(bytes)+"';"+
+                "parent.appendChild(script)" +
+                "})()");
     }
 }

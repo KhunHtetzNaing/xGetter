@@ -309,12 +309,10 @@ public class MainActivity extends AppCompatActivity {
                 "#Supported Sites\n" +
                 "\n" +
                 "Openload\n" +
-                "VidCloud\n" +
                 "StreaMango\n" +
                 "RapidVideo\n" +
                 "StreamCherry\n" +
                 "Google Drive\n" +
-                "MegaUp\n" +
                 "Google Photos\n" +
                 "Mp4Upload\n" +
                 "Facebook\n" +
