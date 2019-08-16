@@ -18,12 +18,12 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 ေလာလာဆယ္ပါဝင္တဲ့ Site ေတြကေတာ့
 
  - **1. Openload**
- - **2. VidCloud**
+ - **2. FanSubs**
  - **3. StreaMango**
  - **4. RapidVideo**
  - **5. StreamCherry**
  - **6. Google Drive**
- - **7. MegaUp**
+ - **7. Uptobox**
  - **8. Google Photos**
  - **9. Mp4Upload**
  - **10. Facebook**
@@ -36,8 +36,6 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
  - **17. Vidoza**
  - **18. UptoStream**
  - **19. SendVid**
- - **20. FanSubs**
- - **21. Uptobox**
 
 တို႔ပဲျဖစ္ပါတယ္။
 ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
@@ -60,7 +58,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.4'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.5'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
@@ -147,12 +145,12 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
 
  - **1. Openload**
- - **2. VidCloud**
+ - **2. FanSubs**
  - **3. StreaMango**
  - **4. RapidVideo**
  - **5. StreamCherry**
  - **6. Google Drive**
- - **7. MegaUp**
+ - **7. Uptobox**
  - **8. Google Photos**
  - **9. Mp4Upload**
  - **10. Facebook**
@@ -165,8 +163,6 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
  - **17. Vidoza**
  - **18. UptoStream**
  - **19. SendVid**
- - **20. FanSubs**
- - **21. Uptobox**
 
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
@@ -189,7 +185,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.4'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.5'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။
