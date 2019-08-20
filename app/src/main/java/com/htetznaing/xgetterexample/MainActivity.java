@@ -178,6 +178,18 @@ public class MainActivity extends AppCompatActivity {
         letGo("http://sendvid.com/3bh9588j");
     }
 
+    public void fEmbed(View view) {
+        letGo("https://www.fembed.com/v/53k5qudgx48m08g");
+    }
+
+    public void verystream(View view) {
+        letGo("https://verystream.com/stream/gLjiUKSiBp4");
+    }
+
+    public void filerio(View view){
+        letGo("https://filerio.in/lgdgftj4vpfn");
+    }
+
     public boolean checkInternet() {
         boolean what = false;
         CheckInternet checkNet = new CheckInternet(this);
@@ -308,25 +320,29 @@ public class MainActivity extends AppCompatActivity {
                 "\n" +
                 "#Supported Sites\n" +
                 "\n" +
-                "Openload\n" +
-                "StreaMango\n" +
-                "RapidVideo\n" +
-                "StreamCherry\n" +
-                "Google Drive\n" +
-                "Google Photos\n" +
-                "Mp4Upload\n" +
-                "Facebook\n" +
-                "Mediafire\n" +
-                "Ok.Ru\n" +
-                "VK\n" +
-                "Twitter\n" +
-                "Youtube\n" +
-                "SolidFiles\n" +
-                "Vidoza\n" +
-                "UptoStream\n" +
-                "SendVid\n" +
-                "FanSubs\n"+
-                "Uptobox\n"+
+                "1. Openload\n" +
+                "2. StreaMango\n" +
+                "3. RapidVideo\n" +
+                "4. StreamCherry\n" +
+                "5. Google Drive\n" +
+                "6. MegaUp\n" +
+                "7. Google Photos\n" +
+                "8. Mp4Upload\n" +
+                "9. Facebook\n" +
+                "10. Mediafire\n" +
+                "11. Ok.Ru\n" +
+                "12. VK\n" +
+                "13. Twitter\n" +
+                "14. Youtube\n" +
+                "15. SolidFiles\n" +
+                "16. Vidoza\n" +
+                "17. UptoStream\n" +
+                "18. SendVid\n" +
+                "19. FanSubs\n" +
+                "20. Uptobox\n" +
+                "21. FEmbed\n" +
+                "22. VeryStream\n" +
+                "23. FileRio\n"+
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter" +
                 "\n" +

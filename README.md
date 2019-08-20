@@ -18,24 +18,28 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 ေလာလာဆယ္ပါဝင္တဲ့ Site ေတြကေတာ့
 
  - **1. Openload**
- - **2. FanSubs**
- - **3. StreaMango**
- - **4. RapidVideo**
- - **5. StreamCherry**
- - **6. Google Drive**
- - **7. Uptobox**
- - **8. Google Photos**
- - **9. Mp4Upload**
- - **10. Facebook**
- - **11. Mediafire**
- - **12. Ok.Ru**
- - **13. VK**
- - **14. Twitter**
- - **15. Youtube**
- - **16. SolidFiles**
- - **17. Vidoza**
- - **18. UptoStream**
- - **19. SendVid**
+ - **2. StreaMango**
+ - **3. RapidVideo**
+ - **4. StreamCherry**
+ - **5. Google Drive**
+ - **6. MegaUp**
+ - **7. Google Photos**
+ - **8. Mp4Upload**
+ - **9. Facebook**
+ - **10. Mediafire**
+ - **11. Ok.Ru**
+ - **12. VK**
+ - **13. Twitter**
+ - **14. Youtube**
+ - **15. SolidFiles**
+ - **16. Vidoza**
+ - **17. UptoStream**
+ - **18. SendVid**
+ - **19. FanSubs**
+ - **20. Uptobox**
+ - **21. FEmbed**
+ - **22. VeryStream**
+ - **23. FileRio**
 
 တို႔ပဲျဖစ္ပါတယ္။
 ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
@@ -58,7 +62,7 @@ Openload, Streamango တို႔လိုလင့္ေတြကေန
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.5'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.6'
     }
 
 **Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
@@ -145,24 +149,28 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
 
  - **1. Openload**
- - **2. FanSubs**
- - **3. StreaMango**
- - **4. RapidVideo**
- - **5. StreamCherry**
- - **6. Google Drive**
- - **7. Uptobox**
- - **8. Google Photos**
- - **9. Mp4Upload**
- - **10. Facebook**
- - **11. Mediafire**
- - **12. Ok.Ru**
- - **13. VK**
- - **14. Twitter**
- - **15. Youtube**
- - **16. SolidFiles**
- - **17. Vidoza**
- - **18. UptoStream**
- - **19. SendVid**
+ - **2. StreaMango**
+ - **3. RapidVideo**
+ - **4. StreamCherry**
+ - **5. Google Drive**
+ - **6. MegaUp**
+ - **7. Google Photos**
+ - **8. Mp4Upload**
+ - **9. Facebook**
+ - **10. Mediafire**
+ - **11. Ok.Ru**
+ - **12. VK**
+ - **13. Twitter**
+ - **14. Youtube**
+ - **15. SolidFiles**
+ - **16. Vidoza**
+ - **17. UptoStream**
+ - **18. SendVid**
+ - **19. FanSubs**
+ - **20. Uptobox**
+ - **21. FEmbed**
+ - **22. VeryStream**
+ - **23. FileRio**
 
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
@@ -185,7 +193,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.5'
+    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.6'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။

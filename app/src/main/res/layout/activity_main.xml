@@ -111,6 +111,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                    <Button
+                        android:onClick="verystream"
+                        android:text="VeryStream"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -173,11 +179,22 @@
                         android:text="FanSubs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="fEmbed"
+                        android:text="FEmbed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
             </LinearLayout>
 
 
+            <Button
+                android:onClick="filerio"
+                android:text="FileRio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 

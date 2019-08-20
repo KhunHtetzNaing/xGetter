@@ -16,10 +16,12 @@ import android.webkit.WebViewClient;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.htetznaing.xgetter.Core.Fembed;
 import com.htetznaing.xgetter.Core.Fruits;
 import com.htetznaing.xgetter.Core.GDrive;
 import com.htetznaing.xgetter.Core.MP4Upload;
 import com.htetznaing.xgetter.Core.SolidFiles;
+import com.htetznaing.xgetter.Core.VeryStream;
 import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
@@ -69,7 +71,7 @@ import static com.htetznaing.xgetter.Utils.Utils.sortMe;
  *   Khun Htetz Naing
  *   https://facebook.com/KhunHtetzNaing0
  * Repo => https://github.com/KhunHtetzNaing/xGetter
- * Openload,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox Stream/Download URL Finder!
+ * Openload,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox,FEmbed,VeryStream,FileRio Stream/Download URL Finder!
  *
  */
 
@@ -82,6 +84,7 @@ public class XGetter {
     private final String openload = "https?:\\/\\/(www\\.)?(openload|oload)\\.[^\\/,^\\.]{2,}\\/(embed|f)\\/.+";
     private final String fruits = "https?:\\/\\/(www\\.)?(streamango|fruitstreams|streamcherry|fruitadblock|fruithosts)\\.[^\\/,^\\.]{2,}\\/(f|embed)\\/.+";
     private final String mp4upload = "https?:\\/\\/(www\\.)?(mp4upload)\\.[^\\/,^\\.]{2,}\\/.+";
+    private final String filerio = "https?:\\/\\/(www\\.)?(filerio)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String sendvid = "https?:\\/\\/(www\\.)?(sendvid)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String rapidvideo = "https?:\\/\\/(www\\.)?rapidvideo\\.[^\\/,^\\.]{2,}\\/(\\?v=[^&\\?]*|e\\/.+|v\\/.+|d\\/.+)";
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
@@ -94,6 +97,8 @@ public class XGetter {
     private final String vidoza = "https?:\\/\\/(www\\.)?(vidoza)\\.[^\\/,^\\.]{2,}.+";
     private final String uptostream = "https?:\\/\\/(www\\.)?(uptostream|uptobox)\\.[^\\/,^\\.]{2,}.+";
     private final String fansubs = "https?:\\/\\/(www\\.)?(fansubs\\.tv)\\/(v|watch)\\/.+";
+    private final String fembed = "https?:\\/\\/(www\\.)?(fembed)\\.[^\\/,^\\.]{2,}\\/(v|f)\\/.+";
+    private final String verystream = "https?:\\/\\/(www\\.)?(woof|verystream)\\.[^\\/,^\\.]{2,}\\/(e|stream)\\/.+";
 
     //  https://uptobox.com/eyrasguzy8lk
     //  https://uptostream.com/eyrasguzy8lk
@@ -152,7 +157,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false;
+        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false;
         if (check(openload, url)) {
             //Openload
             run = true;
@@ -250,6 +255,29 @@ public class XGetter {
         }else if (check(fansubs,url)){
             isFanSubs = true;
             run = true;
+        }else if (check(fembed,url)){
+            isFembed = true;
+            run = true;
+        }else if (check(verystream,url)){
+            isVeryStream = true;
+            run = true;
+        }else if (check(filerio,url)){
+            isFileRio = true;
+            run = true;
+            if (!url.contains("embed-")) {
+                final String regex = "in\\/([^']*)";
+                final Pattern pattern = Pattern.compile(regex);
+                final Matcher matcher = pattern.matcher(url);
+                if (matcher.find()) {
+                    String id = matcher.group(1);
+                    if (id.contains("/")) {
+                        id = id.substring(0, id.lastIndexOf("/"));
+                    }
+                    url = "https://filerio.in/embed-" + id + ".html";
+                } else {
+                    run = false;
+                }
+            }
         }
 
         if (run) {
@@ -286,6 +314,12 @@ public class XGetter {
             } else if (isMP4Uload) {
                 mp4upload(url);
             } else if (isSendVid){
+                sendvid(url);
+            } else if (isFembed){
+                fEmbed(url);
+            } else if (isVeryStream){
+                verystream(url);
+            } else if (isFileRio){
                 sendvid(url);
             }
         }else onComplete.onError();
@@ -395,6 +429,7 @@ public class XGetter {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
+                        System.out.println(url+"\n\n"+response);
                         ArrayList<XModel> xModels = MP4Upload.fetch(response);
                         if (xModels!=null){
                             onComplete.onTaskCompleted(xModels,false);
@@ -851,6 +886,47 @@ public class XGetter {
                             return matcher.group(1);
                         }
                         return null;
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
+    }
+
+    private void fEmbed(String url){
+        String id = Fembed.get_fEmbed_video_ID(url);
+        if (id!=null){
+            AndroidNetworking.post("https://www.fembed.com/api/source/"+id)
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            ArrayList<XModel> xModels = Fembed.fetch(response);
+                            if (xModels!=null){
+                                onComplete.onTaskCompleted(sortMe(xModels),true);
+                            }else onComplete.onError();
+                        }
+
+                        @Override
+                        public void onError(ANError anError) {
+                            onComplete.onError();
+                        }
+                    });
+        }else onComplete.onError();
+    }
+
+    private void verystream(String url){
+        AndroidNetworking.get(url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = VeryStream.fetch(response);
+                        if (xModels!=null){
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
                     }
 
                     @Override
