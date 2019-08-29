@@ -5,9 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.SparseArray;
-import android.view.View;
 import android.webkit.ConsoleMessage;
-import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -25,6 +23,7 @@ import com.htetznaing.xgetter.Core.VeryStream;
 import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
+import com.htetznaing.xgetter.Core.DailyMotion;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
@@ -71,7 +70,7 @@ import static com.htetznaing.xgetter.Utils.Utils.sortMe;
  *   Khun Htetz Naing
  *   https://facebook.com/KhunHtetzNaing0
  * Repo => https://github.com/KhunHtetzNaing/xGetter
- * Openload,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox,FEmbed,VeryStream,FileRio Stream/Download URL Finder!
+ * Openload,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox,FEmbed,VeryStream,FileRio,DailyMotion Stream/Download URL Finder!
  *
  */
 
@@ -97,7 +96,7 @@ public class XGetter {
     private final String vidoza = "https?:\\/\\/(www\\.)?(vidoza)\\.[^\\/,^\\.]{2,}.+";
     private final String uptostream = "https?:\\/\\/(www\\.)?(uptostream|uptobox)\\.[^\\/,^\\.]{2,}.+";
     private final String fansubs = "https?:\\/\\/(www\\.)?(fansubs\\.tv)\\/(v|watch)\\/.+";
-    private final String fembed = "https?:\\/\\/(www\\.)?(fembed)\\.[^\\/,^\\.]{2,}\\/(v|f)\\/.+";
+    private final String fembed = "https?:\\/\\/(www\\.)?(fembed|vcdn)\\.[^\\/,^\\.]{2,}\\/(v|f)\\/.+";
     private final String verystream = "https?:\\/\\/(www\\.)?(woof|verystream)\\.[^\\/,^\\.]{2,}\\/(e|stream)\\/.+";
 
     //  https://uptobox.com/eyrasguzy8lk
@@ -157,7 +156,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false;
+        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false,isDailyMotion=false;
         if (check(openload, url)) {
             //Openload
             run = true;
@@ -278,6 +277,9 @@ public class XGetter {
                     run = false;
                 }
             }
+        }else if (DailyMotion.getDailyMotionID(url)!=null){
+            isDailyMotion = true;
+            run = true;
         }
 
         if (run) {
@@ -321,6 +323,8 @@ public class XGetter {
                 verystream(url);
             } else if (isFileRio){
                 sendvid(url);
+            } else if (isDailyMotion){
+                dailyMotion(url);
             }
         }else onComplete.onError();
     }
@@ -926,6 +930,25 @@ public class XGetter {
                         ArrayList<XModel> xModels = VeryStream.fetch(response);
                         if (xModels!=null){
                             onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
+    }
+
+    private void dailyMotion(String url){
+        AndroidNetworking.get("https://www.dailymotion.com/embed/video/"+DailyMotion.getDailyMotionID(url))
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = DailyMotion.fetch(response);
+                        if (xModels!=null){
+                            onComplete.onTaskCompleted(sortMe(xModels),true);
                         }else onComplete.onError();
                     }
 

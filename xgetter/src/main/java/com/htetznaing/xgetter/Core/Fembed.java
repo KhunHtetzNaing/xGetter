@@ -32,11 +32,15 @@ public class Fembed {
 
 
     public static String get_fEmbed_video_ID(String string){
-        final String regex = "(v|f)(\\/|=)(\\w+)(\\/|&)?";
+        final String regex = "(v|f)(\\/|=)(.+)(\\/|&)?";
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
-            return matcher.group(3);
+            String id = matcher.group(3);
+            if (id.contains("/")){
+                id = id.replace("/","");
+            }
+            return id;
         }
         return null;
     }
