@@ -38,6 +38,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+
+
 public class SimpleVideoPlayer extends AppCompatActivity {
     private int AFTER_PERMISSION_GRANTED = 0;
     private final int PLAY = 1;
@@ -173,38 +175,44 @@ public class SimpleVideoPlayer extends AppCompatActivity {
             public void onPlayerError(ExoPlaybackException error) {
                 super.onPlayerError(error);
                 finish();
-                Toast.makeText(SimpleVideoPlayer.this, "Can't play this video!", Toast.LENGTH_SHORT).show();
+                System.out.println(error.getMessage());
+                Toast.makeText(SimpleVideoPlayer.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
         ImageButton rotate = findViewById(R.id.rotate);
-        rotate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int rotation = getWindowManager().getDefaultDisplay().getRotation();
-                if (rotation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                }else{
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        if (rotate!=null) {
+            rotate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int rotation = getWindowManager().getDefaultDisplay().getRotation();
+                    if (rotation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    } else {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    }
                 }
-            }
-        });
+            });
+        }
 
 
         ImageButton download = findViewById(R.id.download);
-        if (!url.startsWith("http")){
-            download.setVisibility(View.GONE);
-            download.setEnabled(false);
-        }
-        download.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (checkPermissions()) {
-                    AFTER_PERMISSION_GRANTED = DOWNLOAD;
-                    download();
-                }
+        if (download!=null) {
+            if (!url.startsWith("http")) {
+                download.setVisibility(View.GONE);
+                download.setEnabled(false);
             }
-        });
+            download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (checkPermissions()) {
+                        AFTER_PERMISSION_GRANTED = DOWNLOAD;
+                        download();
+                    }
+                }
+            });
+        }
     }
 
     @Override

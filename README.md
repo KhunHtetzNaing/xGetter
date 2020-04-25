@@ -4,138 +4,6 @@
 # xGetter Library for Android!
 [![](https://jitpack.io/v/KhunHtetzNaing/XGetter.svg)](https://jitpack.io/#KhunHtetzNaing/XGetter)
 
-**#Zawgyi**
-႐ုပ္ရွင္နဲ႔ Video App ဖန္တီးခ်င္သူေတြအေနနဲ႔
-အသုံးဝင္မယ့္ Lib ေလးတစ္ခုဖန္တီးေပးထားပါတယ္။
-Video ေတြကို အကန္႔အသတ္မရွိ Free တင္လို႔ရၿပီ
-ၾကည့္တဲ့အခ်ိန္မွာေၾကာ္ျငာအရမ္းတက္တဲ့
-Openload, Streamango တို႔လိုလင့္ေတြကေန
-ေၾကာ္ျငာၾကည့္စရာမလိုပဲ
-တိုက္႐ိုက္ေဒါင္းဖို႔လင့္ဆြဲထုတ္ေပးႏိုင္တဲ့ေကာင္ေလးပါ။
-ရလာတဲ့လင့္ကို တိုက္႐ိုက္ေဒါင္းမလား
-ကိုယ္ပိုင္ Player နဲ႔တိုက္႐ိုက္ျပမလား
-အဆင္ေျပသလိုအသုံးခ်ႏိုင္ပါတယ္။
-ေလာလာဆယ္ပါဝင္တဲ့ Site ေတြကေတာ့
-
- - **1. Openload**
- - **2. StreaMango**
- - **3. RapidVideo**
- - **4. StreamCherry**
- - **5. Google Drive**
- - **6. DailyMotion**
- - **7. Google Photos**
- - **8. Mp4Upload**
- - **9. Facebook**
- - **10. Mediafire**
- - **11. Ok.Ru**
- - **12. VK**
- - **13. Twitter**
- - **14. Youtube**
- - **15. SolidFiles**
- - **16. Vidoza**
- - **17. UptoStream**
- - **18. SendVid**
- - **19. FanSubs**
- - **20. Uptobox**
- - **21. FEmbed**
- - **22. VeryStream**
- - **23. FileRio**
-
-တို႔ပဲျဖစ္ပါတယ္။
-ဒီဆိုဒ္ေတြအားလုံးကေန ေၾကာ္ျငာၾကည့္စရာမလိုပဲတိုက္႐ိုက္လင့္ထုတ္ေပးမွာပါ။
-အျခားအခမဲ့ Video တင္လို႔ရတဲ့ Site ေတြကိုလည္းထပ္ျဖည့္ေပးသြားပါ့မယ္ :)
-အဲ့ေတာ့ Video Sharing App အတြက္ Host ဝယ္စရာမလိုေတာ့ဘူးေလေနာ္ ;)
-
-အသုံးျပဳနည္း
-===========
-
-ပထမဦးဆုံး **build.gradle(project)** ထဲက
-
-    allprojects {
-    repositories {
-    .......
-    maven { url 'https://jitpack.io' } //ဒီကုဒ္ေလးထည့္ေပးပါ။
-    }
-    }
-
-ၿပီးရင္ **build.gradle(app)** ထဲက
-
-    dependencies {
-    ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.7'
-    }
-
-**Android Studio** သမားေတြဆိုရင္ေတာ့ **Sync Now** လုပ္ေပးပါ။
-**​AIDE** သမားဆိုရင္ေတာ့ **Save** ၿပီး **Download** လုပ္ခိုင္းရင္လုပ္ေပးပါ။
-**မွတ္ခ်က္။ ။အင္တာနက္ဖြင့္ထားဖို႔လိုပါမယ္**
-
-**AndroidManifest.xml ထဲမွာ
-
-    <application
-            .....
-            android:usesCleartextTraffic="true">
-
-ထည့္ပေးဖို့လိုပါမယ္။
-
-ၿပီးရင္ေတာ့ကိုယ္ေခၚခ်င္တဲ့ Activity ကေန
-
-    XGetter xGetter = new XGetter(this);
-    xGetter.onFinish(new XGetter.OnTaskCompleted() {
-
-                @Override
-                public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {
-                    if (multiple_quality){
-                        //This video you can choose qualities
-                        for (XModel model : vidURL){
-                           String url = model.getUrl();
-                           //If google drive video you need to set cookie for play or download
-                           String cookie = model.getCookie();
-                        }
-                    }else {
-                        //If single
-                        String url = vidURL.get(0).getUrl();
-                    }
-                }
-
-                @Override
-                public void onError() {
-                    //Error
-                }
-            });
-    
-    xGetter.find("Video လင့္");
-
-## IMPORTANT
-Okhttp3 ကိုအသုံးျပုထားသည့္အတြက္
-**proguard-rules.pro** ထည့္ေပးရန္လိုအပ္ပါသည္။
-
-    # JSR 305 annotations are for embedding nullability information.
-    
-    -dontwarn javax.annotation.**
-    
-    # A resource is loaded with a relative path so the package of this class must be preserved.     
-    
-    -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
-    
-    # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
-    
-    -dontwarn org.codehaus.mojo.animal_sniffer.*
-    
-    # OkHttp platform used only on JVM and when Conscrypt dependency is available.
-    
-    -dontwarn okhttp3.internal.platform.ConscryptPlatform
-
-
-အသုံးျပဳရတာလည္းလြယ္ပါတယ္ :)
-- Example APK => http://bit.ly/2TDvLQ2
-- Example Project => http://bit.ly/2Sr6Hiw
-- Repo => https://github.com/KhunHtetzNaing/xGetter
-#HtetzNaing #XGetter #2019
-##
-
-**#Unicode**
-
-
 ရုပ်ရှင်နဲ့ Video App ဖန်တီးချင်သူတွေအနေနဲ့
 အသုံးဝင်မယ့် Lib လေးတစ်ခုဖန်တီးပေးထားပါတယ်။
 Video တွေကို အကန့်အသတ်မရှိ Free တင်လို့ရပြီ
@@ -148,29 +16,24 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 အဆင်ပြေသလိုအသုံးချနိုင်ပါတယ်။
 လောလာဆယ်ပါဝင်တဲ့ Site တွေကတော့
 
- - **1. Openload**
- - **2. StreaMango**
- - **3. RapidVideo**
- - **4. StreamCherry**
- - **5. Google Drive**
- - **6. DailyMotion**
- - **7. Google Photos**
- - **8. Mp4Upload**
- - **9. Facebook**
- - **10. Mediafire**
- - **11. Ok.Ru**
- - **12. VK**
- - **13. Twitter**
- - **14. Youtube**
- - **15. SolidFiles**
- - **16. Vidoza**
- - **17. UptoStream**
- - **18. SendVid**
- - **19. FanSubs**
- - **20. Uptobox**
- - **21. FEmbed**
- - **22. VeryStream**
- - **23. FileRio**
+ - **1. Google Drive**
+ - **2. DailyMotion**
+ - **3. Google Photos**
+ - **4. Mp4Upload**
+ - **5. Facebook**
+ - **6. Mediafire**
+ - **7. Ok.Ru**
+ - **8. VK**
+ - **9. Twitter**
+ - **10. Youtube**
+ - **11. SolidFiles**
+ - **12. Vidoza**
+ - **13. UptoStream**
+ - **14. SendVid**
+ - **15. FanSubs**
+ - **16. Uptobox**
+ - **17. FEmbed**
+ - **18. FileRio**
 
 တို့ပဲဖြစ်ပါတယ်။
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။
@@ -193,7 +56,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 
     dependencies {
     ...............
-    implementation 'com.github.KhunHtetzNaing:xGetter:1.9.7'
+    implementation 'com.github.KhunHtetzNaing:xGetter:2.0.0'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။

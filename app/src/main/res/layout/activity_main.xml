@@ -58,24 +58,6 @@
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:onClick="openload"
-                        android:text="Openload"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:onClick="streamango"
-                        android:text="Streamango"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:onClick="streamcherry"
-                        android:text="Streamcherry"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
                         android:onClick="mp4upload"
                         android:text="Mp4Upload"
                         android:layout_width="match_parent"
@@ -112,14 +94,14 @@
                         android:layout_height="wrap_content" />
 
                     <Button
-                        android:onClick="verystream"
-                        android:text="VeryStream"
+                        android:onClick="filerio"
+                        android:text="FileRio"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                     <Button
-                        android:onClick="filerio"
-                        android:text="FileRio"
+                        android:onClick="fansubs"
+                        android:text="FanSubs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -130,12 +112,6 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                    <Button
-                        android:onClick="rapidvideo"
-                        android:text="RapidVideo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
 
                     <Button
                         android:onClick="gdrive"
@@ -176,12 +152,6 @@
                     <Button
                         android:onClick="uptostreamfiles"
                         android:text="UptoStream"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:onClick="fansubs"
-                        android:text="FanSubs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

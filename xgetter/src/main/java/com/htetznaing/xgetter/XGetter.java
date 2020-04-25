@@ -15,15 +15,15 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.htetznaing.xgetter.Core.Fembed;
-import com.htetznaing.xgetter.Core.Fruits;
 import com.htetznaing.xgetter.Core.GDrive;
 import com.htetznaing.xgetter.Core.MP4Upload;
 import com.htetznaing.xgetter.Core.SolidFiles;
-import com.htetznaing.xgetter.Core.VeryStream;
+import com.htetznaing.xgetter.Core.UpToStream;
 import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
 import com.htetznaing.xgetter.Core.DailyMotion;
+import com.htetznaing.xgetter.Utils.GPhotosUtils;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
@@ -53,13 +53,6 @@ import static com.htetznaing.xgetter.Utils.FacebookUtils.getFbLink;
 import static com.htetznaing.xgetter.Utils.GDriveUtils.getCookie;
 import static com.htetznaing.xgetter.Utils.GDriveUtils.getDRIVE_STREAM;
 import static com.htetznaing.xgetter.Utils.GDriveUtils.get_drive_id;
-import static com.htetznaing.xgetter.Utils.GPhotosUtils.getGPhotoLink;
-import static com.htetznaing.xgetter.Utils.OpenloadUtils.getKey1;
-import static com.htetznaing.xgetter.Utils.OpenloadUtils.getKey2;
-import static com.htetznaing.xgetter.Utils.OpenloadUtils.getLongEncrypt;
-import static com.htetznaing.xgetter.Utils.OpenloadUtils.getLongEncrypt2;
-import static com.htetznaing.xgetter.Utils.Utils.base64Decode;
-import static com.htetznaing.xgetter.Utils.Utils.base64Encode;
 import static com.htetznaing.xgetter.Utils.Utils.getDomainFromURL;
 import static com.htetznaing.xgetter.Utils.Utils.putModel;
 import static com.htetznaing.xgetter.Utils.Utils.sortMe;
@@ -70,7 +63,7 @@ import static com.htetznaing.xgetter.Utils.Utils.sortMe;
  *   Khun Htetz Naing
  *   https://facebook.com/KhunHtetzNaing0
  * Repo => https://github.com/KhunHtetzNaing/xGetter
- * Openload,StreaMango,RapidVideo,StreamCherry,Google Drive,MegaUp,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox,FEmbed,VeryStream,FileRio,DailyMotion Stream/Download URL Finder!
+ * Google Drive,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox,FEmbed,FileRio,DailyMotion Stream/Download URL Finder!
  *
  */
 
@@ -80,12 +73,9 @@ public class XGetter {
     private Context context;
     private OnTaskCompleted onComplete;
     public static final String agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36";
-    private final String openload = "https?:\\/\\/(www\\.)?(openload|oload)\\.[^\\/,^\\.]{2,}\\/(embed|f)\\/.+";
-    private final String fruits = "https?:\\/\\/(www\\.)?(streamango|fruitstreams|streamcherry|fruitadblock|fruithosts)\\.[^\\/,^\\.]{2,}\\/(f|embed)\\/.+";
     private final String mp4upload = "https?:\\/\\/(www\\.)?(mp4upload)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String filerio = "https?:\\/\\/(www\\.)?(filerio)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String sendvid = "https?:\\/\\/(www\\.)?(sendvid)\\.[^\\/,^\\.]{2,}\\/.+";
-    private final String rapidvideo = "https?:\\/\\/(www\\.)?rapidvideo\\.[^\\/,^\\.]{2,}\\/(\\?v=[^&\\?]*|e\\/.+|v\\/.+|d\\/.+)";
     private final String gphoto = "https?:\\/\\/(photos.google.com)\\/(u)?\\/?(\\d)?\\/?(share)\\/.+(key=).+";
     private final String mediafire = "https?:\\/\\/(www\\.)?(mediafire)\\.[^\\/,^\\.]{2,}\\/(file)\\/.+";
     private final String okru = "https?:\\/\\/(www.|m.)?(ok)\\.[^\\/,^\\.]{2,}\\/(video|videoembed)\\/.+";
@@ -97,12 +87,6 @@ public class XGetter {
     private final String uptostream = "https?:\\/\\/(www\\.)?(uptostream|uptobox)\\.[^\\/,^\\.]{2,}.+";
     private final String fansubs = "https?:\\/\\/(www\\.)?(fansubs\\.tv)\\/(v|watch)\\/.+";
     private final String fembed = "https?:\\/\\/(www\\.)?(fembed|vcdn)\\.[^\\/,^\\.]{2,}\\/(v|f)\\/.+";
-    private final String verystream = "https?:\\/\\/(www\\.)?(woof|verystream)\\.[^\\/,^\\.]{2,}\\/(e|stream)\\/.+";
-
-    //  https://uptobox.com/eyrasguzy8lk
-    //  https://uptostream.com/eyrasguzy8lk
-    //  https://uptostream.com/eyrasguzy8lk
-    //  https://uptostream.com/iframe/eyrasguzy8lk
 
     public XGetter(Context view) {
         this.context = view;
@@ -156,16 +140,8 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, oload = false,isOkRu = false,isVk=false,isRapidVideo=false,tw=false,gdrive=false,fruit=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false,isDailyMotion=false;
-        if (check(openload, url)) {
-            //Openload
-            run = true;
-            oload = true;
-        } else if (check(fruits, url)) {
-            //Fruits
-            fruit=true;
-            run = true;
-        } else if (check(mp4upload, url)) {
+        boolean mfire = false, isOkRu = false,isVk=false,tw=false,gdrive=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false,isDailyMotion=false;
+       if (check(mp4upload, url)) {
             run = true;
             isMP4Uload = true;
             if (!url.contains("embed-")) {
@@ -187,13 +163,6 @@ public class XGetter {
             //sendvid
             run = true;
             isSendVid = true;
-        } else if (check(rapidvideo, url)) {
-            //rapidvideo
-            run = true;
-            isRapidVideo=true;
-            if (url.contains("/e/") || url.contains("/v/")){
-                url = url.replace("/e/","/d/");
-            }
         } else if (check(gphoto, url)) {
             //gphotos
             run = true;
@@ -245,8 +214,23 @@ public class XGetter {
             solidf = true;
         } else if (check(vidoza, url)) {
         //Vidoza
-        isvidoza=true;
-        run = true;
+
+            isvidoza=true;
+            run = true;
+            if (!url.contains("embed-")) {
+                final String regex = "net\\/([^']*)";
+                final Pattern pattern = Pattern.compile(regex);
+                final Matcher matcher = pattern.matcher(url);
+                if (matcher.find()) {
+                    String id = matcher.group(1);
+                    if (id.contains("/")) {
+                        id = id.substring(0, id.lastIndexOf("/"));
+                    }
+                    url = getDomainFromURL(url)+"/embed-" + id;
+                } else {
+                    run = false;
+                }
+            }
         }else if (check(uptostream, url)) {
             //uptostream, uptobox
             isuptostream=true;
@@ -256,9 +240,6 @@ public class XGetter {
             run = true;
         }else if (check(fembed,url)){
             isFembed = true;
-            run = true;
-        }else if (check(verystream,url)){
-            isVeryStream = true;
             run = true;
         }else if (check(filerio,url)){
             isFileRio = true;
@@ -272,7 +253,7 @@ public class XGetter {
                     if (id.contains("/")) {
                         id = id.substring(0, id.lastIndexOf("/"));
                     }
-                    url = "https://filerio.in/embed-" + id + ".html";
+                    url = getDomainFromURL(url)+"/embed-" + id + ".html";
                 } else {
                     run = false;
                 }
@@ -289,20 +270,14 @@ public class XGetter {
                 gphotoORfb(url, true);
             } else if (mfire) {
                 mfire(url);
-            } else if (oload) {
-                openload(url);
             } else if (isOkRu){
                 okru(url);
             } else if (isVk) {
                 vk(url);
-            } else if (isRapidVideo) {
-                rapidVideo(url);
             } else if (tw) {
                 twitter(url);
             } else if (gdrive) {
                 gdrive(url);
-            } else if (fruit) {
-                fruits(url);
             } else if (yt) {
                 youtube(url);
             } else if (solidf){
@@ -319,8 +294,6 @@ public class XGetter {
                 sendvid(url);
             } else if (isFembed){
                 fEmbed(url);
-            } else if (isVeryStream){
-                verystream(url);
             } else if (isFileRio){
                 sendvid(url);
             } else if (isDailyMotion){
@@ -350,24 +323,24 @@ public class XGetter {
                 });
     }
 
-    private void fruits(final String url){
-        AndroidNetworking.get(url)
-                .build()
-                .getAsString(new StringRequestListener() {
-                    @Override
-                    public void onResponse(String response) {
-                        ArrayList<XModel> xModels = Fruits.fetch(response);
-                        if (xModels!=null){
-                            onComplete.onTaskCompleted(xModels,false);
-                        }else onComplete.onError();
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        onComplete.onError();
-                    }
-                });
-    }
+//    private void fruits(final String url){
+//        AndroidNetworking.get(url)
+//                .build()
+//                .getAsString(new StringRequestListener() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        ArrayList<XModel> xModels = Fruits.fetch(response);
+//                        if (xModels!=null){
+//                            onComplete.onTaskCompleted(xModels,false);
+//                        }else onComplete.onError();
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError anError) {
+//                        onComplete.onError();
+//                    }
+//                });
+//    }
 
     private void gdrive(final String url){
         CookieJar cookieJar = new CookieJar() {
@@ -375,6 +348,7 @@ public class XGetter {
 
             @Override
             public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                System.out.println("saveFromResponse: "+cookies);
                 cookie = getDRIVE_STREAM(cookies.toString())+getCookie(cookies.toString());
                 cookieStore.put(url.host(), cookies);
             }
@@ -468,7 +442,7 @@ public class XGetter {
                         onComplete.onError();
                     }
                 }
-            }.extract(url, true, false);
+            }.extract(url, false, false);
         }else onComplete.onError();
     }
 
@@ -524,8 +498,7 @@ public class XGetter {
                         .getAsString(new StringRequestListener() {
                             @Override
                             public void onResponse(String response) {
-                                ArrayList<XModel> xModels = new ArrayList<>();
-                                xModels = getGPhotoLink(response);
+                                ArrayList<XModel> xModels = GPhotosUtils.getGPhotoLink(response);
                                 onComplete.onTaskCompleted(xModels,true);
                             }
 
@@ -553,44 +526,44 @@ public class XGetter {
         this.onComplete = onComplete;
     }
 
-    private void openload(final String url) {
-        if (url != null) {
-            AndroidNetworking.get(url)
-                    .addHeaders("User-agent", agent)
-                    .build()
-                    .getAsString(new StringRequestListener() {
-                        @Override
-                        public void onResponse(String response) {
-                            String longString = getLongEncrypt(response);
-                            if (longString==null){
-                                longString = getLongEncrypt2(response);
-                            }
-                            String key1 = getKey1(response);
-                            String key2 = getKey2(response);
-                            String js = "ZnVuY3Rpb24gZ2V0T3BlbmxvYWRVUkwoZW5jcnlwdFN0cmluZywga2V5MSwga2V5MikgewogICAgdmFyIHN0cmVhbVVybCA9ICIiOwogICAgdmFyIGhleEJ5dGVBcnIgPSBbXTsKICAgIGZvciAodmFyIGkgPSAwOyBpIDwgOSAqIDg7IGkgKz0gOCkgewogICAgICAgIGhleEJ5dGVBcnIucHVzaChwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpLCBpICsgOCksIDE2KSk7CiAgICB9CiAgICBlbmNyeXB0U3RyaW5nID0gZW5jcnlwdFN0cmluZy5zdWJzdHJpbmcoOSAqIDgpOwogICAgdmFyIGl0ZXJhdG9yID0gMDsKICAgIGZvciAodmFyIGFyckl0ZXJhdG9yID0gMDsgaXRlcmF0b3IgPCBlbmNyeXB0U3RyaW5nLmxlbmd0aDsgYXJySXRlcmF0b3IrKykgewogICAgICAgIHZhciBtYXhIZXggPSA2NDsKICAgICAgICB2YXIgdmFsdWUgPSAwOwogICAgICAgIHZhciBjdXJySGV4ID0gMjU1OwogICAgICAgIGZvciAodmFyIGJ5dGVJdGVyYXRvciA9IDA7IGN1cnJIZXggPj0gbWF4SGV4OyBieXRlSXRlcmF0b3IgKz0gNikgewogICAgICAgICAgICBpZiAoaXRlcmF0b3IgKyAxID49IGVuY3J5cHRTdHJpbmcubGVuZ3RoKSB7CiAgICAgICAgICAgICAgICBtYXhIZXggPSAweDhGOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGN1cnJIZXggPSBwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpdGVyYXRvciwgaXRlcmF0b3IgKyAyKSwgMTYpOwogICAgICAgICAgICB2YWx1ZSArPSAoY3VyckhleCAmIDYzKSA8PCBieXRlSXRlcmF0b3I7CiAgICAgICAgICAgIGl0ZXJhdG9yICs9IDI7CiAgICAgICAgfQogICAgICAgIHZhciBieXRlcyA9IHZhbHVlIF4gaGV4Qnl0ZUFyclthcnJJdGVyYXRvciAlIDldIF4ga2V5MSBeIGtleTI7CiAgICAgICAgdmFyIHVzZWRCeXRlcyA9IG1heEhleCAqIDIgKyAxMjc7CiAgICAgICAgZm9yICh2YXIgaSA9IDA7IGkgPCA0OyBpKyspIHsKICAgICAgICAgICAgdmFyIHVybENoYXIgPSBTdHJpbmcuZnJvbUNoYXJDb2RlKCgoYnl0ZXMgJiB1c2VkQnl0ZXMpID4+IDggKiBpKSAtIDEpOwogICAgICAgICAgICBpZiAodXJsQ2hhciAhPSAiJCIpIHsKICAgICAgICAgICAgICAgIHN0cmVhbVVybCArPSB1cmxDaGFyOwogICAgICAgICAgICB9CiAgICAgICAgICAgIHVzZWRCeXRlcyA9IHVzZWRCeXRlcyA8PCA4OwogICAgICAgIH0KICAgIH0KICAgIC8vY29uc29sZS5sb2coc3RyZWFtVXJsKQogICAgcmV0dXJuIHN0cmVhbVVybDsKfQp2YXIgZW5jcnlwdFN0cmluZyA9ICJIdGV0ekxvbmdTdHJpbmciOwp2YXIga2V5TnVtMSA9ICJIdGV0ektleTEiOwp2YXIga2V5TnVtMiA9ICJIdGV0ektleTIiOwp2YXIga2V5UmVzdWx0MSA9IDA7CnZhciBrZXlSZXN1bHQyID0gMDsKdmFyIG9ob3N0ID0gIkh0ZXR6SG9zdCI7Ci8vY29uc29sZS5sb2coZW5jcnlwdFN0cmluZywga2V5TnVtMSwga2V5TnVtMik7CnRyeSB7CiAgICB2YXIga2V5TnVtMV9PY3QgPSBwYXJzZUludChrZXlOdW0xLm1hdGNoKC9wYXJzZUludFwoJyguKiknLDhcKS8pWzFdLCA4KTsKICAgIHZhciBrZXlOdW0xX1N1YiA9IHBhcnNlSW50KGtleU51bTEubWF0Y2goL1wpXC0oW15cK10qKVwrLylbMV0pOwogICAgdmFyIGtleU51bTFfRGl2ID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXC9cKChbXlwtXSopXC0vKVsxXSk7CiAgICB2YXIga2V5TnVtMV9TdWIyID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXCsweDRcLShbXlwpXSopXCkvKVsxXSk7CiAgICBrZXlSZXN1bHQxID0gKGtleU51bTFfT2N0IC0ga2V5TnVtMV9TdWIgKyA0IC0ga2V5TnVtMV9TdWIyKSAvIChrZXlOdW0xX0RpdiAtIDgpOwogICAgdmFyIGtleU51bTJfT2N0ID0gcGFyc2VJbnQoa2V5TnVtMi5tYXRjaCgvXCgnKFteJ10qKScsLylbMV0sIDgpOwogICAgdmFyIGtleU51bTJfU3ViID0gcGFyc2VJbnQoa2V5TnVtMi5zdWJzdHIoa2V5TnVtMi5pbmRleE9mKCIpLSIpICsgMikpOwogICAga2V5UmVzdWx0MiA9IGtleU51bTJfT2N0IC0ga2V5TnVtMl9TdWI7CiAgICBjb25zb2xlLmxvZyhrZXlOdW0xLCBrZXlOdW0yKTsKfSBjYXRjaCAoZSkgewogICAgLy9jb25zb2xlLmVycm9yKGUuc3RhY2spOwogICAgdGhyb3cgRXJyb3IoIktleSBOdW1iZXJzIG5vdCBwYXJzZWQhIik7Cn0KdmFyIHNyYyA9IG9ob3N0ICsgJy9zdHJlYW0vJyArIGdldE9wZW5sb2FkVVJMKGVuY3J5cHRTdHJpbmcsIGtleVJlc3VsdDEsIGtleVJlc3VsdDIpOwp4R2V0dGVyLmZ1Y2soc3JjKTs=";
-                            js = base64Decode(js);
-                            js = js.replace("HtetzLongString", longString);
-                            js = js.replace("HtetzKey1", key1);
-                            js = js.replace("HtetzKey2", key2);
-                            js = js.replace("HtetzHost",getDomainFromURL(url));
-                            js = base64Encode(js);
-                            webView.loadUrl("javascript:(function() {" +
-                                    "var parent = document.getElementsByTagName('head').item(0);" +
-                                    "var script = document.createElement('script');" +
-                                    "script.type = 'text/javascript';" +
-                                    // Tell the browser to BASE64-decode the string into your script !!!
-                                    "script.innerHTML = window.atob('" + js + "');" +
-                                    "parent.appendChild(script)" +
-                                    "})()");
-                        }
-
-                        @Override
-                        public void onError(ANError anError) {
-                            onComplete.onError();
-                        }
-                    });
-        }
-    }
+//    private void openload(final String url) {
+//        if (url != null) {
+//            AndroidNetworking.get(url)
+//                    .addHeaders("User-agent", agent)
+//                    .build()
+//                    .getAsString(new StringRequestListener() {
+//                        @Override
+//                        public void onResponse(String response) {
+//                            String longString = getLongEncrypt(response);
+//                            if (longString==null){
+//                                longString = getLongEncrypt2(response);
+//                            }
+//                            String key1 = getKey1(response);
+//                            String key2 = getKey2(response);
+//                            String js = "ZnVuY3Rpb24gZ2V0T3BlbmxvYWRVUkwoZW5jcnlwdFN0cmluZywga2V5MSwga2V5MikgewogICAgdmFyIHN0cmVhbVVybCA9ICIiOwogICAgdmFyIGhleEJ5dGVBcnIgPSBbXTsKICAgIGZvciAodmFyIGkgPSAwOyBpIDwgOSAqIDg7IGkgKz0gOCkgewogICAgICAgIGhleEJ5dGVBcnIucHVzaChwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpLCBpICsgOCksIDE2KSk7CiAgICB9CiAgICBlbmNyeXB0U3RyaW5nID0gZW5jcnlwdFN0cmluZy5zdWJzdHJpbmcoOSAqIDgpOwogICAgdmFyIGl0ZXJhdG9yID0gMDsKICAgIGZvciAodmFyIGFyckl0ZXJhdG9yID0gMDsgaXRlcmF0b3IgPCBlbmNyeXB0U3RyaW5nLmxlbmd0aDsgYXJySXRlcmF0b3IrKykgewogICAgICAgIHZhciBtYXhIZXggPSA2NDsKICAgICAgICB2YXIgdmFsdWUgPSAwOwogICAgICAgIHZhciBjdXJySGV4ID0gMjU1OwogICAgICAgIGZvciAodmFyIGJ5dGVJdGVyYXRvciA9IDA7IGN1cnJIZXggPj0gbWF4SGV4OyBieXRlSXRlcmF0b3IgKz0gNikgewogICAgICAgICAgICBpZiAoaXRlcmF0b3IgKyAxID49IGVuY3J5cHRTdHJpbmcubGVuZ3RoKSB7CiAgICAgICAgICAgICAgICBtYXhIZXggPSAweDhGOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGN1cnJIZXggPSBwYXJzZUludChlbmNyeXB0U3RyaW5nLnN1YnN0cmluZyhpdGVyYXRvciwgaXRlcmF0b3IgKyAyKSwgMTYpOwogICAgICAgICAgICB2YWx1ZSArPSAoY3VyckhleCAmIDYzKSA8PCBieXRlSXRlcmF0b3I7CiAgICAgICAgICAgIGl0ZXJhdG9yICs9IDI7CiAgICAgICAgfQogICAgICAgIHZhciBieXRlcyA9IHZhbHVlIF4gaGV4Qnl0ZUFyclthcnJJdGVyYXRvciAlIDldIF4ga2V5MSBeIGtleTI7CiAgICAgICAgdmFyIHVzZWRCeXRlcyA9IG1heEhleCAqIDIgKyAxMjc7CiAgICAgICAgZm9yICh2YXIgaSA9IDA7IGkgPCA0OyBpKyspIHsKICAgICAgICAgICAgdmFyIHVybENoYXIgPSBTdHJpbmcuZnJvbUNoYXJDb2RlKCgoYnl0ZXMgJiB1c2VkQnl0ZXMpID4+IDggKiBpKSAtIDEpOwogICAgICAgICAgICBpZiAodXJsQ2hhciAhPSAiJCIpIHsKICAgICAgICAgICAgICAgIHN0cmVhbVVybCArPSB1cmxDaGFyOwogICAgICAgICAgICB9CiAgICAgICAgICAgIHVzZWRCeXRlcyA9IHVzZWRCeXRlcyA8PCA4OwogICAgICAgIH0KICAgIH0KICAgIC8vY29uc29sZS5sb2coc3RyZWFtVXJsKQogICAgcmV0dXJuIHN0cmVhbVVybDsKfQp2YXIgZW5jcnlwdFN0cmluZyA9ICJIdGV0ekxvbmdTdHJpbmciOwp2YXIga2V5TnVtMSA9ICJIdGV0ektleTEiOwp2YXIga2V5TnVtMiA9ICJIdGV0ektleTIiOwp2YXIga2V5UmVzdWx0MSA9IDA7CnZhciBrZXlSZXN1bHQyID0gMDsKdmFyIG9ob3N0ID0gIkh0ZXR6SG9zdCI7Ci8vY29uc29sZS5sb2coZW5jcnlwdFN0cmluZywga2V5TnVtMSwga2V5TnVtMik7CnRyeSB7CiAgICB2YXIga2V5TnVtMV9PY3QgPSBwYXJzZUludChrZXlOdW0xLm1hdGNoKC9wYXJzZUludFwoJyguKiknLDhcKS8pWzFdLCA4KTsKICAgIHZhciBrZXlOdW0xX1N1YiA9IHBhcnNlSW50KGtleU51bTEubWF0Y2goL1wpXC0oW15cK10qKVwrLylbMV0pOwogICAgdmFyIGtleU51bTFfRGl2ID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXC9cKChbXlwtXSopXC0vKVsxXSk7CiAgICB2YXIga2V5TnVtMV9TdWIyID0gcGFyc2VJbnQoa2V5TnVtMS5tYXRjaCgvXCsweDRcLShbXlwpXSopXCkvKVsxXSk7CiAgICBrZXlSZXN1bHQxID0gKGtleU51bTFfT2N0IC0ga2V5TnVtMV9TdWIgKyA0IC0ga2V5TnVtMV9TdWIyKSAvIChrZXlOdW0xX0RpdiAtIDgpOwogICAgdmFyIGtleU51bTJfT2N0ID0gcGFyc2VJbnQoa2V5TnVtMi5tYXRjaCgvXCgnKFteJ10qKScsLylbMV0sIDgpOwogICAgdmFyIGtleU51bTJfU3ViID0gcGFyc2VJbnQoa2V5TnVtMi5zdWJzdHIoa2V5TnVtMi5pbmRleE9mKCIpLSIpICsgMikpOwogICAga2V5UmVzdWx0MiA9IGtleU51bTJfT2N0IC0ga2V5TnVtMl9TdWI7CiAgICBjb25zb2xlLmxvZyhrZXlOdW0xLCBrZXlOdW0yKTsKfSBjYXRjaCAoZSkgewogICAgLy9jb25zb2xlLmVycm9yKGUuc3RhY2spOwogICAgdGhyb3cgRXJyb3IoIktleSBOdW1iZXJzIG5vdCBwYXJzZWQhIik7Cn0KdmFyIHNyYyA9IG9ob3N0ICsgJy9zdHJlYW0vJyArIGdldE9wZW5sb2FkVVJMKGVuY3J5cHRTdHJpbmcsIGtleVJlc3VsdDEsIGtleVJlc3VsdDIpOwp4R2V0dGVyLmZ1Y2soc3JjKTs=";
+//                            js = base64Decode(js);
+//                            js = js.replace("HtetzLongString", longString);
+//                            js = js.replace("HtetzKey1", key1);
+//                            js = js.replace("HtetzKey2", key2);
+//                            js = js.replace("HtetzHost",getDomainFromURL(url));
+//                            js = base64Encode(js);
+//                            webView.loadUrl("javascript:(function() {" +
+//                                    "var parent = document.getElementsByTagName('head').item(0);" +
+//                                    "var script = document.createElement('script');" +
+//                                    "script.type = 'text/javascript';" +
+//                                    // Tell the browser to BASE64-decode the string into your script !!!
+//                                    "script.innerHTML = window.atob('" + js + "');" +
+//                                    "parent.appendChild(script)" +
+//                                    "})()");
+//                        }
+//
+//                        @Override
+//                        public void onError(ANError anError) {
+//                            onComplete.onError();
+//                        }
+//                    });
+//        }
+//    }
 
     private void okru(String url) {
         if (url != null) {
@@ -751,40 +724,64 @@ public class XGetter {
         }
     }
 
-    private void uptoStream(String url) {
+    public static String getUpToStreamID(String string) {
+        final String regex = "[-\\w]{12,}";
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(string);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
+
+    private void uptoStream(final String url) {
         if (url != null) {
-            AndroidNetworking.get(url)
-                    .addHeaders("User-agent", agent)
+            AndroidNetworking.get("https://uptostream.com/api/streaming/source/get?token=&file_code="+getUpToStreamID(url))
                     .build()
                     .getAsString(new StringRequestListener() {
                         @Override
                         public void onResponse(String response) {
-                            String regex = "sources.*?\\.parse.*'(.*?)'";
-                            String json = get(regex,response);
-                            if (json!=null){
-                                try {
-                                    JSONArray array = new JSONArray(json);
-                                    ArrayList<XModel> xModels = new ArrayList<>();
-                                    for (int i=0;i<array.length();i++){
-                                        String src = array.getJSONObject(i).getString("src");
-                                        String label = array.getJSONObject(i).getString("label");
-                                        String lang = array.getJSONObject(i).getString("lang");
+                            try {
+                                response = new JSONObject(response).getJSONObject("data").getString("sources");
+                                new UpToStream().get(context, response, new UpToStream.OnDone() {
+                                    @Override
+                                    public void result(String result) {
+                                        if (result!=null){
+                                            try {
+                                                JSONArray array = new JSONArray(result);
+                                                ArrayList<XModel> xModels = new ArrayList<>();
+                                                for (int i=0;i<array.length();i++){
+                                                    String src = array.getJSONObject(i).getString("src");
+                                                    String label = array.getJSONObject(i).getString("label");
+                                                    String lang = array.getJSONObject(i).getString("lang");
+                                                    if (lang!=null && !lang.isEmpty()){
+                                                        lang = lang.toUpperCase();
+                                                    }
 
-                                        if (lang!=null && !lang.isEmpty()){
-                                            lang = lang.toUpperCase();
+                                                    String quality=label+","+ lang;
+                                                    putModel(quality,src,xModels);
+                                                    putModel(src,quality,xModels);
+                                                }
+
+                                                if (xModels.size()!=0) {
+                                                    onComplete.onTaskCompleted(sortMe(xModels), true);
+                                                }else onComplete.onError();
+                                            } catch (JSONException e) {
+                                                onComplete.onError();
+                                            }
+                                        }else {
+                                            onComplete.onError();
                                         }
-
-                                        String quality=label+","+ lang;
-                                        putModel(quality,src,xModels);
-                                        putModel(src,quality,xModels);
                                     }
 
-                                    if (xModels.size()!=0) {
-                                        onComplete.onTaskCompleted(sortMe(xModels), true);
-                                    }else onComplete.onError();
-                                } catch (JSONException e) {
-                                    onComplete.onError();
-                                }
+                                    @Override
+                                    public void retry() {
+                                        uptoStream(url);
+                                    }
+                                });
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                onComplete.onError();
                             }
                         }
 
@@ -809,54 +806,16 @@ public class XGetter {
         }
     }
 
-    private void rapidVideo(final String mUrl){
-        AndroidNetworking.get(mUrl)
-                .build()
-                .getAsString(new StringRequestListener() {
-                    @Override
-                    public void onResponse(String response) {
-                        ArrayList<XModel> xModels = new ArrayList<>();
-                        Document document = Jsoup.parse(response);
-                        if (document.html().contains("<source")){
-                            Elements element = document.getElementsByTag("source");
-                            for (int i=0;i<element.size();i++){
-                                Element temp = element.get(i);
-                                if (temp.hasAttr("src")) {
-                                    String url = temp.attr("src");
-                                    putModel(url, temp.attr("label"), xModels);
-                                }
-                            }
-                        }else {
-                            Elements element = document.getElementsByTag("a");
-                            for (int i=0;i<element.size();i++){
-                                if (element.get(i).hasAttr("href")) {
-                                    String url = element.get(i).attr("href");
-                                    if (url.contains(".mp4")) {
-                                        String quality = element.get(i).text().replace("Download","").replace(" ","");;
-                                        putModel(url, quality, xModels);
-                                    }
-                                }
-                            }
-                        }
-                        if ( xModels.size()!=0){
-                            onComplete.onTaskCompleted(sortMe(xModels),true);
-                        }else onComplete.onError();
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        onComplete.onError();
-                    }
-                });
-    }
-
     private void vidozafiles(final String url){
         AndroidNetworking.get(url)
                 .build()
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        onComplete.onTaskCompleted(Vidoza.fetch(response),false);
+                        ArrayList<XModel> xModels = Vidoza.fetch(response);
+                        if (xModels!=null) {
+                            onComplete.onTaskCompleted(xModels, false);
+                        }else onComplete.onError();
                     }
 
                     @Override
@@ -921,35 +880,20 @@ public class XGetter {
         }else onComplete.onError();
     }
 
-    private void verystream(String url){
-        AndroidNetworking.get(url)
-                .build()
-                .getAsString(new StringRequestListener() {
-                    @Override
-                    public void onResponse(String response) {
-                        ArrayList<XModel> xModels = VeryStream.fetch(response);
-                        if (xModels!=null){
-                            onComplete.onTaskCompleted(xModels,false);
-                        }else onComplete.onError();
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        onComplete.onError();
-                    }
-                });
-    }
-
     private void dailyMotion(String url){
         AndroidNetworking.get("https://www.dailymotion.com/embed/video/"+DailyMotion.getDailyMotionID(url))
                 .build()
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        ArrayList<XModel> xModels = DailyMotion.fetch(response);
-                        if (xModels!=null){
-                            onComplete.onTaskCompleted(sortMe(xModels),true);
-                        }else onComplete.onError();
+                        new DailyMotion().fetch(response, new DailyMotion.OnDone() {
+                            @Override
+                            public void onResult(ArrayList<XModel> xModels) {
+                                if (xModels!=null){
+                                    onComplete.onTaskCompleted(sortMe(xModels),true);
+                                }else onComplete.onError();
+                            }
+                        });
                     }
 
                     @Override

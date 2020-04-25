@@ -37,6 +37,9 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.FullScreen" />
 
+        <activity
+            android:name=".Player.JWPlayer"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation" />
     </application>
 
 </manifest>

@@ -21,6 +21,9 @@ public class Vidoza {
             if (null!=videosUrl){
                 XModel xModel = new XModel();
                 xModel.setUrl(videosUrl);
+
+                System.out.println(videosUrl);
+
                 xModel.setQuality("Normal");
                 ArrayList<XModel> xModels = new ArrayList<>();
                 xModels.add(xModel);
@@ -33,17 +36,11 @@ public class Vidoza {
     }
 
     public static String scrapergenerico(String code, String regex) throws UnsupportedEncodingException {
-
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(code);
-
-
-        while (matcher.find()) {
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                code = matcher.group(i);
-            }
+        if (matcher.find()) {
+            return matcher.group(1);
         }
-
-        return code;
+        return null;
     }
 }

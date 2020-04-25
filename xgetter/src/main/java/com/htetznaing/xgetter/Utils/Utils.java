@@ -12,6 +12,11 @@ import java.util.regex.Pattern;
 
 public class Utils {
     public static void putModel(String url, String quality, ArrayList<XModel> model){
+        for (XModel x:model){
+            if (x.getQuality().equalsIgnoreCase(quality)){
+                return;
+            }
+        }
         XModel xModel = new XModel();
         xModel.setUrl(url);
         xModel.setQuality(quality);

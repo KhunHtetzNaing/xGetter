@@ -4,12 +4,14 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +31,7 @@ import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.XGetter;
+import com.htetznaing.xgetterexample.Player.JWPlayer;
 import com.htetznaing.xgetterexample.Player.SimpleVideoPlayer;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
 import com.htetznaing.xplayer.XPlayer;
@@ -73,13 +76,12 @@ public class MainActivity extends AppCompatActivity {
                     if (vidURL!=null) {
                         //This video you can choose qualities
                         for (XModel model : vidURL) {
-                            String url = model.getUrl();
                             //If google drive video you need to set cookie for play or download
-                            String cookie = model.getCookie();
                         }
                         multipleQualityDialog(vidURL);
                     }else done(null);
                 }else {
+                    System.out.println(vidURL.get(0).getUrl());
                    done(vidURL.get(0));
                 }
             }
@@ -110,40 +112,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void openload(View view) {
-        letGo("https://openload.co/f/ManbcvAX2_M/");
-    }
-
-    public void streamango(View view) {
-        letGo("https://fruithosts.net/f/scqfctmltrormqar");
-    }
-
-    public void streamcherry(View view) {
-        letGo("https://streamcherry.com/f/nfbbfdpcqnafkltc/10000000_133548554346206_9058973369364748674_n_mp4");
-    }
-
-    public void megaup(View view) {
-        letGo("https://megaup.net/3tD1V?pt=ns7RGzoGCR%2F0dl9WG4J0b8FWzwcixEtyF1yia8JH6zM%3D");
-    }
-
     public void mp4upload(View view) {
         letGo("https://www.mp4upload.com/ct5j6f6hn1fk");
     }
 
-    public void vidcloud(View view) {
-        letGo("https://vcstream.to/embed/5d4685b52d726/34147942_424434834686205_6312223197668311040_n.mp4");
-    }
-
-    public void rapidvideo(View view) {
-        letGo("https://www.rapidvideo.com/v/FW5M4CBTFF");
-    }
-
     public void gdrive(View view) {
-        letGo("https://drive.google.com/open?id=1nxWszNOJqkx7q0r_lFI_0IfAPiDGCmRJ");
+        letGo("https://drive.google.com/open?id=1IebKJvPykCjbWroUAhFtxLkjfbEh8nVU");
     }
 
     public void gphotos(View view) {
-        letGo("https://photos.google.com/share/AF1QipPsU5wF954O4FwAaLp1YiTmCBv1c2cHg2dpu53fpVFggA_Ba8N9V0yH2mo7mcEHEQ/photo/AF1QipN2p_PrQiRRKgeg5flVmTaS-NSVbhTsfp1b15cf?key=NU81ZkxmY09NMWp0M01QNlY3Mng5OVA5VXNzUjJn");
+        letGo("https://photos.google.com/share/AF1QipMkSCF43RzZEXWyGNMYWHCegzCgdW5ao_qJEBVZ8SPkS2IQmHZFz4a13PfAZGgvUQ/photo/AF1QipNnj95SaWHJca-Q8rUxzuRkYxX6UmnDSVykJhhw?key=dGhiZnl1SURYZmRhcFF0OVdueEk2TEtDWG9pb0J3");
     }
 
     public void fb(View view) {
@@ -151,11 +129,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void mediafire(View view) {
-        letGo("https://www.mediafire.com/file/dd00f818ybeu83x/");
+        letGo("http://www.mediafire.com/file/i8sjfas751yknlm/PaO_Ma_Lay_%255BOfficial_MV%255D_-_%25281080P_HD%2529.mp4/file");
     }
 
     public void okru(View view) {
-        letGo("https://ok.ru/video/31800494765");
+        letGo("https://ok.ru/video/2155182492341");
     }
 
     public void vk(View view) {
@@ -167,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void youtube(View view) {
-        letGo("https://www.youtube.com/watch?v=Q4CSEK663Wc");
+        letGo("https://youtu.be/O6Xu-9mhCQ0");
     }
 
     public void solidfiles(View view) {
@@ -175,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void vidozafiles(View view) {
-        letGo("https://vidoza.net/ptzlgta9cl1q.html");
+        letGo("https://vidoza.net/8tpr1zvluray.html");
     }
 
     public void uptostreamfiles(View view) {
@@ -194,12 +172,8 @@ public class MainActivity extends AppCompatActivity {
         letGo("https://www.fembed.com/v/53k5qudgx48m08g");
     }
 
-    public void verystream(View view) {
-        letGo("https://verystream.com/stream/gLjiUKSiBp4");
-    }
-
     public void filerio(View view){
-        letGo("https://filerio.in/lgdgftj4vpfn");
+        letGo("https://filerio.in/9sufkwnytiwp");
     }
 
     public void dailymotion(View view) {
@@ -207,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean checkInternet() {
-        boolean what = false;
+        boolean what;
         CheckInternet checkNet = new CheckInternet(this);
         if (checkNet.isInternetOn()) {
             what = true;
@@ -238,6 +212,17 @@ public class MainActivity extends AppCompatActivity {
                             watchDialog(xModel);
                         }
                     })
+                    .setNeutralText("Copy")
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                            clipboardManager.setText(xModel.getUrl());
+                            if (clipboardManager.hasText()){
+                                Toast.makeText(MainActivity.this, "Copied", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
                     .setNegativeText("Download")
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
@@ -263,6 +248,19 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private String encode(String text){
+        if (text==null){
+            return text;
+        }
+        try {
+            byte[] data = text.getBytes("UTF-8");
+            return Base64.encodeToString(data, Base64.DEFAULT);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void watchDialog(XModel xModel){
         MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(this);
         builder.setTitle("Notice!")
@@ -274,6 +272,10 @@ public class MainActivity extends AppCompatActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                            String url = "https://jwplayerx.blogspot.com/?url=" + encode(xModel.getUrl()) + "&title=" + encode("Test") + "&thumb=" + encode("https://previews.customer.envatousercontent.com/files/279005072/inlinepreview.jpg");
+//                        Intent intent = new Intent(getApplicationContext(), JWPlayer.class);
+//                        intent.putExtra("url", url);
+//                        intent.putExtra("title","Hello World");
                             Intent intent = new Intent(getApplicationContext(), SimpleVideoPlayer.class);
                             intent.putExtra("url",xModel.getUrl());
                             //If google drive you need to put cookie
@@ -391,30 +393,25 @@ public class MainActivity extends AppCompatActivity {
                 "\n" +
                 "#Supported Sites\n" +
                 "\n" +
-                "1. Openload\n" +
-                "2. StreaMango\n" +
-                "3. RapidVideo\n" +
-                "4. StreamCherry\n" +
-                "5. Google Drive\n" +
-                "6. MegaUp\n" +
-                "7. Google Photos\n" +
-                "8. Mp4Upload\n" +
-                "9. Facebook\n" +
-                "10. Mediafire\n" +
-                "11. Ok.Ru\n" +
-                "12. VK\n" +
-                "13. Twitter\n" +
-                "14. Youtube\n" +
-                "15. SolidFiles\n" +
-                "16. Vidoza\n" +
-                "17. UptoStream\n" +
-                "18. SendVid\n" +
-                "19. FanSubs\n" +
-                "20. Uptobox\n" +
-                "21. FEmbed\n" +
-                "22. VeryStream\n" +
-                "23. FileRio\n" +
-                "24. DailyMotion\n" +
+                "1. Google Drive\n" +
+                "2. MegaUp\n" +
+                "3. Google Photos\n" +
+                "4. Mp4Upload\n" +
+                "5. Facebook\n" +
+                "6. Mediafire\n" +
+                "7. Ok.Ru\n" +
+                "8. VK\n" +
+                "9. Twitter\n" +
+                "10. Youtube\n" +
+                "11. SolidFiles\n" +
+                "12. Vidoza\n" +
+                "13. UptoStream\n" +
+                "14. SendVid\n" +
+                "15. FanSubs\n" +
+                "16. Uptobox\n" +
+                "17. FEmbed\n" +
+                "18. FileRio\n" +
+                "19. DailyMotion\n" +
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter" +
                 "\n" +
