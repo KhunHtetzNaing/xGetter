@@ -1,11 +1,7 @@
-  
-    
-  
 # xGetter Library for Android!  
 [![](https://jitpack.io/v/KhunHtetzNaing/XGetter.svg)](https://jitpack.io/#KhunHtetzNaing/XGetter)  
-  
 
-#NOTE
+**#NOTE**
 ***I don't know why google photos can't stream in Video Player (eg. ExoPlayer)  
 But, you can download and play in JWPlayer -_-***
 
@@ -50,38 +46,73 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
   
 ပထမဦးဆုံး **build.gradle(project)** ထဲက  
   
- allprojects { repositories { ....... maven { url 'https://jitpack.io' } //ဒီကုဒ်လေးထည့်ပေးပါ။ } }  
+
+    allprojects {
+      repositories {  
+      google()  
+            jcenter()  
+            maven { url "https://jitpack.io" }  //Add this
+     }}
+
 ပြီးရင် **build.gradle(app)** ထဲက  
   
- dependencies { ............... implementation 'com.github.KhunHtetzNaing:xGetter:2.0.0' }  
+
+    dependencies {  
+    	implementation 'com.github.KhunHtetzNaing:xGetter:2.0.0'
+    }
+
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။  
 **AIDE** သမားဆိုရင်တော့ **Save** ပြီး **Download** လုပ်ခိုင်းရင်လုပ်ပေးပါ။  
 **မှတ်ချက်။ ။အင်တာနက်ဖွင့်ထားဖို့လိုပါမယ်**  
   
-**AndroidManifest.xml ထဲမှာ  
+**AndroidManifest.xml** ထဲမှာ  
   
- <application ..... android:usesCleartextTraffic="true">  
+
+     <application ..... android:usesCleartextTraffic="true">
+
+  
+ 
 ထည့်ပေးဖို့လိုပါမယ်။  
   
 ပြီးရင်တော့ကိုယ်ခေါ်ချင်တဲ့ Activity ကနေ  
-  
- XGetter xGetter = new XGetter(this); xGetter.onFinish(new XGetter.OnTaskCompleted() {  
- @Override public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) { if (multiple_quality){ //This video you can choose qualities for (XModel model : vidURL){ String url = model.getUrl(); //If google drive video you need to set cookie for play or download String cookie = model.getCookie(); } }else { //If single String url = vidURL.get(0).getUrl(); } }  
- @Override public void onError() { //Error } });  
- xGetter.find("Video လင့်");  
+
+    XGetter xGetter = new XGetter(this);  
+    xGetter.onFinish(new XGetter.OnTaskCompleted() {  
+        @Override  
+      public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {  
+            if (multiple_quality){ //This video you can choose qualities  
+      for (XModel model : vidURL){  
+                    String url = model.getUrl();   
+     String cookie = model.getCookie(); //If google drive video you need to set cookie for play or download  
+      }   
+            }else {//If single  
+      String url = vidURL.get(0).getUrl();  
+      }  
+        }  
+      
+        @Override  
+      public void onError() {  
+            //Error  
+      }  
+    });
+
 ## IMPORTANT  
 Okhttp3 ကိုအသုံးပြုထားသည့်အတွက်  
 **proguard-rules.pro** ထည့်ပေးရန်လိုအပ်ပါသည်။  
   
- # JSR 305 annotations are for embedding nullability information.     -dontwarn javax.annotation.**  
-     # A resource is loaded with a relative path so the package of this class must be preserved.       
+
+      # JSR 305 annotations are for embedding nullability information.  
+    -dontwarn javax.annotation.**  
       
+    # A resource is loaded with a relative path so the package of this class must be preserved.  
     -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase  
-     # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.  
-     -dontwarn org.codehaus.mojo.animal_sniffer.*  
-     # OkHttp platform used only on JVM and when Conscrypt dependency is available.  
-     -dontwarn okhttp3.internal.platform.ConscryptPlatform  
-  
+      
+    # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.  
+    -dontwarn org.codehaus.mojo.animal_sniffer.*  
+      
+    # OkHttp platform used only on JVM and when Conscrypt dependency is available.  
+    -dontwarn okhttp3.internal.platform.ConscryptPlatform
+
   
 အသုံးပြုရတာလည်းလွယ်ပါတယ် :)  
 - Example APK => http://bit.ly/2TDvLQ2  
