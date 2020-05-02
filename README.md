@@ -71,6 +71,8 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 **AIDE** သမားဆိုရင်တော့ **Save** ပြီး **Download** လုပ်ခိုင်းရင်လုပ်ပေးပါ။  
 **မှတ်ချက်။ ။အင်တာနက်ဖွင့်ထားဖို့လိုပါမယ်**  
   
+  If not working [download this jar](https://github.com/KhunHtetzNaing/xGetter/raw/master/app/release/xgetter) file and put to **YourProject/app/libs/**
+  
 **AndroidManifest.xml** ထဲမှာ  
   
 
@@ -122,7 +124,7 @@ Okhttp3 ကိုအသုံးပြုထားသည့်အတွက်
 
   
 အသုံးပြုရတာလည်းလွယ်ပါတယ် :)  
-- Example APK => http://bit.ly/2TDvLQ2  
+- Example APK => https://bit.ly/3bZ2GHX
 - Example Project => http://bit.ly/2Sr6Hiw  
 - Repo => https://github.com/KhunHtetzNaing/xGetter  
 #HtetzNaing #XGetter #2019
