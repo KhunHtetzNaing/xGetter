@@ -71,7 +71,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 **AIDE** သမားဆိုရင်တော့ **Save** ပြီး **Download** လုပ်ခိုင်းရင်လုပ်ပေးပါ။  
 **မှတ်ချက်။ ။အင်တာနက်ဖွင့်ထားဖို့လိုပါမယ်**  
   
-  If not working [download this jar](https://github.com/KhunHtetzNaing/xGetter/raw/master/app/release/xgetter) file and put to **YourProject/app/libs/**
+  If not working [download this jar](https://github.com/KhunHtetzNaing/xGetter/raw/master/app/release/xgetter.jar) file and put to **YourProject/app/libs/**
   
 **AndroidManifest.xml** ထဲမှာ  
   
