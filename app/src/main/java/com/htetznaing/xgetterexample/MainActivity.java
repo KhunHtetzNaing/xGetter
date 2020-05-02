@@ -27,6 +27,9 @@ import androidx.core.content.ContextCompat;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.StringRequestListener;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.htetznaing.xgetter.Model.XModel;
@@ -40,8 +43,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -102,6 +107,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
         edit_query = findViewById(R.id.edit_query);
+
+        parseMe();
+    }
+
+    private void parseMe() {
+        AndroidNetworking.initialize(this);
+        AndroidNetworking.get("https://www.youtube.com/get_video_info?video_id=bOh9a2euDEM&eurl=https%3A%2F%2Fyoutube.googleapis.com%2Fv%2FbOh9a2euDEM")
+                .setUserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36")
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println("onResponse: "+response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        System.out.println("onError: "+anError.getErrorDetail());
+                    }
+                });
     }
 
     private void letGo(String url) {
@@ -178,6 +203,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void dailymotion(View view) {
         letGo("https://www.dailymotion.com/video/xyt1t1");
+    }
+
+    public void megaup(View view) {
+        letGo("https://megaup.net/Lx8o/");
     }
 
     public boolean checkInternet() {
@@ -412,6 +441,10 @@ public class MainActivity extends AppCompatActivity {
                 "17. FEmbed\n" +
                 "18. FileRio\n" +
                 "19. DailyMotion\n" +
+                "20. MegaUp\n" +
+                "21. GoUnlimited\n" +
+                "22. CocoScope\n" +
+                "23. VidBM\n" +
                 "\n" +
                 "Github Repo => https://github.com/KhunHtetzNaing/xGetter" +
                 "\n" +
@@ -559,5 +592,17 @@ public class MainActivity extends AppCompatActivity {
         } catch (ActivityNotFoundException e2) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad")));
         }
+    }
+
+    public void gounlimited(View view) {
+        letGo("https://gounlimited.to/fnuwuz7jyyz9");
+    }
+
+    public void cocoscope(View view) {
+        letGo("https://www.cocoscope.com/watch?v=15614");
+    }
+
+    public void vidbm(View view) {
+        letGo("https://www.vidbm.com/n27dkro8fo8v.html");
     }
 }

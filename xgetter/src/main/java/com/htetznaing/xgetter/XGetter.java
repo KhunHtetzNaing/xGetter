@@ -16,9 +16,12 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.htetznaing.xgetter.Core.Fembed;
 import com.htetznaing.xgetter.Core.GDrive;
+import com.htetznaing.xgetter.Core.GoUnlimitedTO;
 import com.htetznaing.xgetter.Core.MP4Upload;
+import com.htetznaing.xgetter.Core.MegaUp;
 import com.htetznaing.xgetter.Core.SolidFiles;
 import com.htetznaing.xgetter.Core.UpToStream;
+import com.htetznaing.xgetter.Core.VidBM;
 import com.htetznaing.xgetter.Core.Vidoza;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
@@ -39,10 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import at.huber.youtubeExtractor.VideoMeta;
-import at.huber.youtubeExtractor.YouTubeExtractor;
-import at.huber.youtubeExtractor.YtFile;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -63,7 +62,7 @@ import static com.htetznaing.xgetter.Utils.Utils.sortMe;
  *   Khun Htetz Naing
  *   https://facebook.com/KhunHtetzNaing0
  * Repo => https://github.com/KhunHtetzNaing/xGetter
- * Google Drive,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox,FEmbed,FileRio,DailyMotion Stream/Download URL Finder!
+ * Google Drive,Google Photos,Mp4Upload,Facebook,Mediafire,Ok.Ru,VK,Twitter,Youtube,SolidFiles,Vidoza,UptoStream,SendVid,FanSubs,Uptobox,FEmbed,FileRio,DailyMotion,MegaUp,GoUnlimited,CocoScope,VidBM Stream/Download URL Finder!
  *
  */
 
@@ -87,6 +86,10 @@ public class XGetter {
     private final String uptostream = "https?:\\/\\/(www\\.)?(uptostream|uptobox)\\.[^\\/,^\\.]{2,}.+";
     private final String fansubs = "https?:\\/\\/(www\\.)?(fansubs\\.tv)\\/(v|watch)\\/.+";
     private final String fembed = "https?:\\/\\/(www\\.)?(fembed|vcdn)\\.[^\\/,^\\.]{2,}\\/(v|f)\\/.+";
+    private final String megaup = "https?:\\/\\/(www\\.)?(megaup)\\.[^\\/,^\\.]{2,}\\/.+";
+    private final String gounlimited = "https?:\\/\\/(www\\.)?(gounlimited)\\.[^\\/,^\\.]{2,}\\/.+";
+    private final String cocoscope = "https?:\\/\\/(www\\.)?(cocoscope)\\.[^\\/,^\\.]{2,}\\/(watch\\?v).+";
+    private final String vidbm = "https?:\\/\\/(www\\.)?(vidbm)\\.[^\\/,^\\.]{2,}\\/.+";
 
     public XGetter(Context view) {
         this.context = view;
@@ -140,7 +143,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, isOkRu = false,isVk=false,tw=false,gdrive=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false,isDailyMotion=false;
+        boolean mfire = false, isOkRu = false,isVk=false,tw=false,gdrive=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false,isDailyMotion=false,isMegaUp=false,isGoUnlimited = false,isCocoscope=false,isVidBM=false;
        if (check(mp4upload, url)) {
             run = true;
             isMP4Uload = true;
@@ -206,9 +209,9 @@ public class XGetter {
         }else if (check(twitter,url)){
             run = true;
             tw = true;
-        }else if (check(youtube,url)){
-            run = true;
-            yt = true;
+//        }else if (check(youtube,url)){
+//            run = true;
+//            yt = true;
         }else if (check(solidfiles,url)){
             run = true;
             solidf = true;
@@ -261,7 +264,23 @@ public class XGetter {
         }else if (DailyMotion.getDailyMotionID(url)!=null){
             isDailyMotion = true;
             run = true;
-        }
+        }else if (check(megaup,url)){
+           //Megaup
+           isMegaUp = true;
+           run = true;
+       }else if (check(gounlimited,url)){
+           //https://gounlimited.to/
+           isGoUnlimited = true;
+           run = true;
+       }else if (check(cocoscope,url)){
+           //https://www.cocoscope.com/
+           isCocoscope = true;
+           run = true;
+       }else if (check(vidbm,url)){
+           //https://www.vidbm.com/
+           run = true;
+           isVidBM = true;
+       }
 
         if (run) {
             if (check(gphoto, url)) {
@@ -278,8 +297,8 @@ public class XGetter {
                 twitter(url);
             } else if (gdrive) {
                 gdrive(url);
-            } else if (yt) {
-                youtube(url);
+//            } else if (yt) {
+//                youtube(url);
             } else if (solidf){
                 solidfiles(url);
             } else if (isvidoza){
@@ -298,12 +317,56 @@ public class XGetter {
                 sendvid(url);
             } else if (isDailyMotion){
                 dailyMotion(url);
+            } else if (isMegaUp){
+                megaUp(url);
+            } else if (isGoUnlimited){
+                goUnlimited(url);
+            } else if (isCocoscope){
+                sendvid(url);
+            } else if (isVidBM){
+                vidBM(url);
             }
         }else onComplete.onError();
     }
 
-    private void solidfiles(final String url){
+    private void vidBM(String url) {
+        AndroidNetworking.get(url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = VidBM.fetch(response);
+                        if (xModels!=null){
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
 
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
+    }
+
+    private void megaUp(String url) {
+        new MegaUp().get(context, url,new MegaUp.OnDone() {
+            @Override
+            public void result(String result) {
+                if (result!=null){
+                    ArrayList<XModel> xModels = new ArrayList<>();
+                    XModel xModel = new XModel();
+                    xModel.setUrl(result);
+                    xModel.setQuality("Normal");
+                    xModels.add(xModel);
+                    onComplete.onTaskCompleted(xModels,false);
+                }else {
+                    onComplete.onError();
+                }
+            }
+        });
+    }
+
+    private void solidfiles(final String url){
         AndroidNetworking.get(url)
                 .addHeaders("User-Agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36")
                 .build()
@@ -407,7 +470,6 @@ public class XGetter {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        System.out.println(url+"\n\n"+response);
                         ArrayList<XModel> xModels = MP4Upload.fetch(response);
                         if (xModels!=null){
                             onComplete.onTaskCompleted(xModels,false);
@@ -421,29 +483,24 @@ public class XGetter {
                 });
     }
 
-    private void youtube(String url){
-        if (check(youtube,url)) {
-            new YouTubeExtractor(context) {
-                @Override
-                public void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta vMeta) {
-                    if (ytFiles != null) {
-                        ArrayList<XModel> xModels = new ArrayList<>();
+    private void goUnlimited(final String url){
+        AndroidNetworking.get(url)
+                .setUserAgent(agent)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        ArrayList<XModel> xModels = GoUnlimitedTO.fetch(response);
+                        if (xModels!=null){
+                            onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
 
-                        for (int i = 0, itag; i < ytFiles.size(); i++) {
-                            itag = ytFiles.keyAt(i);
-                            YtFile ytFile = ytFiles.get(itag);
-                            if (ytFile.getFormat().getExt().equals("mp4") && ytFile.getFormat().getAudioBitrate()!=-1){
-                                putModel(ytFile.getUrl(), ytFile.getFormat().getHeight() + "p", xModels);
-                            }
-                        }
-
-                        onComplete.onTaskCompleted(sortMe(xModels), true);
-                    }else {
+                    @Override
+                    public void onError(ANError anError) {
                         onComplete.onError();
                     }
-                }
-            }.extract(url, false, false);
-        }else onComplete.onError();
+                });
     }
 
     private void mfire(String url) {
@@ -903,33 +960,31 @@ public class XGetter {
                 });
     }
 
-    public void destroyWebView() {
-        webView.clearHistory();
 
-        // NOTE: clears RAM cache, if you pass true, it will also clear the disk cache.
-        // Probably not a great idea to pass true if you have other WebViews still alive.
-        webView.clearCache(true);
-
-        // Loading a blank page is optional, but will ensure that the WebView isn't doing anything when you destroy it.
-        webView.loadUrl("about:blank");
-
-        webView.onPause();
-        webView.removeAllViews();
-        webView.destroyDrawingCache();
-
-        // NOTE: This pauses JavaScript execution for ALL WebViews,
-        // do not use if you have other WebViews still alive.
-        // If you create another WebView after calling this,
-        // make sure to call mWebView.resumeTimers().
-        webView.pauseTimers();
-
-        // NOTE: This can occasionally cause a segfault below API 17 (4.2)
-        webView.destroy();
-
-        // Null out the reference so that you don't end up re-using it.
-        webView = null;
-    }
-
+//    private void youtube(String url){
+//        if (check(youtube,url)) {
+//            new YouTubeExtractor(context) {
+//                @Override
+//                public void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta vMeta) {
+//                    if (ytFiles != null) {
+//                        ArrayList<XModel> xModels = new ArrayList<>();
+//
+//                        for (int i = 0, itag; i < ytFiles.size(); i++) {
+//                            itag = ytFiles.keyAt(i);
+//                            YtFile ytFile = ytFiles.get(itag);
+//                            if (ytFile.getFormat().getExt().equals("mp4") && ytFile.getFormat().getAudioBitrate()!=-1){
+//                                putModel(ytFile.getUrl(), ytFile.getFormat().getHeight() + "p", xModels);
+//                            }
+//                        }
+//
+//                        onComplete.onTaskCompleted(sortMe(xModels), true);
+//                    }else {
+//                        onComplete.onError();
+//                    }
+//                }
+//            }.extract(url, false, false);
+//        }else onComplete.onError();
+//    }
 
     private void letFuck(WebView view) {
         byte[] bytes = Base64.decode("aHR0cHM6Ly9yYXcuZ2l0aGFjay5jb20vS2h1bkh0ZXR6TmFpbmcvRmlsZXMvbWFzdGVyL3hnZXR0ZXIuanM=".getBytes(),Base64.DEFAULT);

@@ -26,7 +26,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
  - **7. Ok.Ru**  
  - **8. VK**  
  - **9. Twitter**  
- - **10. Youtube**  
+ - **10. ~~Youtube~~**  
  - **11. SolidFiles**  
  - **12. Vidoza**  
  - **13. UptoStream**  
@@ -35,6 +35,12 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
  - **16. Uptobox**  
  - **17. FEmbed**  
  - **18. FileRio**  
+
+## New supported sites [v2.0.1]
+ - **19. MegaUp**  
+ - **20. GoUnlimited**  
+ - **21. CocoScope**  
+ - **22. VidBM**  
   
 တို့ပဲဖြစ်ပါတယ်။  
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။  
@@ -58,7 +64,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
   
 
     dependencies {  
-    	implementation 'com.github.KhunHtetzNaing:xGetter:2.0.0'
+    	implementation 'com.github.KhunHtetzNaing:xGetter:2.0.1'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။  
@@ -68,7 +74,8 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
 **AndroidManifest.xml** ထဲမှာ  
   
 
-     <application ..... android:usesCleartextTraffic="true">
+     <application .....
+	     android:usesCleartextTraffic="true">
 
   
  

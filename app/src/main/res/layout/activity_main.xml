@@ -77,6 +77,7 @@
                         android:layout_height="wrap_content" />
 
                     <Button
+                        android:visibility="gone"
                         android:onClick="youtube"
                         android:text="Youtube"
                         android:layout_width="match_parent"
@@ -102,6 +103,24 @@
                     <Button
                         android:onClick="fansubs"
                         android:text="FanSubs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="megaup"
+                        android:text="MegaUp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="gounlimited"
+                        android:text="GoUnlimited"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="cocoscope"
+                        android:text="Cocoscope"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -164,6 +183,12 @@
                     <Button
                         android:onClick="dailymotion"
                         android:text="DailyMotion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="vidbm"
+                        android:text="VidBM"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
