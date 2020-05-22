@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -33,28 +34,18 @@ import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.XGetter;
-import com.htetznaing.xgetterexample.Player.JWPlayer;
 import com.htetznaing.xgetterexample.Player.SimpleVideoPlayer;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
 import com.htetznaing.xplayer.XPlayer;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
     XGetter xGetter;
@@ -224,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
         String url = null;
         if (xModel!=null) {
             url = xModel.getUrl();
+            checkFileSize(xModel);
         }
         MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(this);
         if (url!=null) {
@@ -296,32 +288,15 @@ public class MainActivity extends AppCompatActivity {
                 .setStyle(Style.HEADER_WITH_ICON)
                 .setIcon(R.drawable.right)
                 .withDialogAnimation(true)
-                .setPositiveText("Simple Exoplayer")
+                .setPositiveText("Own Exoplayer")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            String url = "https://jwplayerx.blogspot.com/?url=" + encode(xModel.getUrl()) + "&title=" + encode("Test") + "&thumb=" + encode("https://previews.customer.envatousercontent.com/files/279005072/inlinepreview.jpg");
-//                        Intent intent = new Intent(getApplicationContext(), JWPlayer.class);
-//                        intent.putExtra("url", url);
-//                        intent.putExtra("title","Hello World");
-                            Intent intent = new Intent(getApplicationContext(), SimpleVideoPlayer.class);
-                            intent.putExtra("url",xModel.getUrl());
-                            //If google drive you need to put cookie
-                            if (xModel.getCookie()!=null){
-                                intent.putExtra("cookie",xModel.getCookie());
-                            }
-                            startActivity(intent);
-                    }
-                })
-                .setNegativeText("PIP")
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         watchVideo(xModel);
                     }
                 })
-                .setNeutralText("MXPlayer")
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                .setNegativeText("MXPlayer")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         openWithMXPlayer(xModel);
@@ -598,10 +573,74 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void cocoscope(View view) {
-        letGo("https://www.cocoscope.com/watch?v=15614");
+        letGo("https://www.cocoscope.com/watch?v=57072");
     }
 
     public void vidbm(View view) {
         letGo("https://www.vidbm.com/n27dkro8fo8v.html");
+    }
+
+    public void pstream(View view) {
+        letGo("https://www.pstream.net/v/BRrExbMveZOvP4B");
+    }
+
+    public void vlare(View view) {
+        letGo("https://vlare.tv/v/V0egtPxz");
+    }
+
+    public void streamWiki(View view) {
+        letGo("https://stream.kiwi/e/Auy1iW");
+    }
+
+    public void vivosx(View view) {
+        letGo("https://vivo.sx/5427854097");
+    }
+
+    public void bittube(View view) {
+        letGo("https://bittube.video/videos/watch/36231473-613d-47c6-89a3-4bff2502dc92");
+    }
+
+    public void videobin(View view) {
+        letGo("https://videobin.co/4swhhd3thhe7");
+    }
+
+    private void checkFileSize(XModel xModel){
+        new AsyncTask<Void,Void,String>(){
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                if (xModel.getUrl()!=null) {
+                    try {
+                        URLConnection connection = new URL(xModel.getUrl()).openConnection();
+                        if (xModel.getCookie() != null) {
+                            connection.setRequestProperty("Cookie", xModel.getCookie());
+                        }
+                        connection.connect();
+                        return calculateFileSize(connection.getContentLength());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                System.out.println("File Size: "+s);
+                Toast.makeText(MainActivity.this, "File Size: "+s, Toast.LENGTH_SHORT).show();
+            }
+        }.execute();
+    }
+
+    private String calculateFileSize(long size) {
+        if(size <= 0) return "0";
+        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public void fourshared(View view) {
+        letGo("https://www.4shared.com/video/bLza9r9mea/45016068_2204489923208618_5254.html");
     }
 }

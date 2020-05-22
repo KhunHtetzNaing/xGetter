@@ -123,6 +123,30 @@
                         android:text="Cocoscope"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="vlare"
+                        android:text="Vlare"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="vivosx"
+                        android:text="VivoSX"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="videobin"
+                        android:text="VideoBin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="fourshared"
+                        android:text="4Shared"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -189,6 +213,24 @@
                     <Button
                         android:onClick="vidbm"
                         android:text="VidBM"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="pstream"
+                        android:text="PStream"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="streamWiki"
+                        android:text="StreamWIKI"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="bittube"
+                        android:text="BitTube"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>

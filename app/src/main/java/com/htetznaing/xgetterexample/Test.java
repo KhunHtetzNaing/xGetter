@@ -39,43 +39,43 @@ public class Test {
 //            e.printStackTrace();
 //        }
 
-//        try {
-//            Connection.Response response = Jsoup.connect("https://mate01.y2mate.com/analyze/ajax")
-//                    .userAgent(userAgent)
-//                    .method(Connection.Method.POST)
-//                    .ignoreContentType(true)
-//                    .data("url","https://www.youtube.com/watch?v=-0M4Rw5tV1I")
-//                    .data("ajax","1")
-//                    .execute();
-//            String html = response.parse().html();
-//            String result = getHTML(html);
-//
-//            String convert_url = getExtra("url: ?\"(.*?)\"",html);
-//            String convert__id = getExtra("_id: ?'(.*?)'",html);
-//            String convert_v_id = getExtra("v_id: ?'(.*?)'",html);
-//
-//            Document document = Jsoup.parse(result);
-//            Elements elements = document.getElementsByTag("li");
-//            for (Element e:elements){
-//                String cat = e.text();
-//                if (cat.equalsIgnoreCase("video")){
-//                    //Video
-//                    ArrayList<MyModel> mp4 = parseData(document,"mp4");
-//                    for (MyModel m:mp4){
-//                        convert(convert_url,convert__id,convert_v_id,m.type,m.quality);
-//                    }
-//                }else if (cat.equalsIgnoreCase("mp3")){
-//                    //MP3
-//                    ArrayList<MyModel> mp3 = parseData(document,"mp3");
-//                }else if (cat.equalsIgnoreCase("audio")){
-//                    //Audio
-//                    ArrayList<MyModel> audio = parseData(document,"audio");
-//                }
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Connection.Response response = Jsoup.connect("https://mate01.y2mate.com/analyze/ajax")
+                    .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36")
+                    .method(Connection.Method.POST)
+                    .ignoreContentType(true)
+                    .data("url","https://www.youtube.com/watch?v=-0M4Rw5tV1I")
+                    .data("ajax","1")
+                    .execute();
+            String html = response.parse().html();
+            String result = getHTML(html);
+
+            String convert_url = getExtra("url: ?\"(.*?)\"",html);
+            String convert__id = getExtra("_id: ?'(.*?)'",html);
+            String convert_v_id = getExtra("v_id: ?'(.*?)'",html);
+
+            Document document = Jsoup.parse(result);
+            Elements elements = document.getElementsByTag("li");
+            for (Element e:elements){
+                String cat = e.text();
+                if (cat.equalsIgnoreCase("video")){
+                    //Video
+                    ArrayList<MyModel> mp4 = parseData(document,"mp4");
+                    for (MyModel m:mp4){
+                        convert(convert_url,convert__id,convert_v_id,m.type,m.quality);
+                    }
+                }else if (cat.equalsIgnoreCase("mp3")){
+                    //MP3
+                    ArrayList<MyModel> mp3 = parseData(document,"mp3");
+                }else if (cat.equalsIgnoreCase("audio")){
+                    //Audio
+                    ArrayList<MyModel> audio = parseData(document,"audio");
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

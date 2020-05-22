@@ -159,6 +159,10 @@ public class SimpleVideoPlayer extends AppCompatActivity {
             dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), null, httpDataSourceFactory);
         }
 
+        DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent, null);
+        httpDataSourceFactory.getDefaultRequestProperties().set("Referer", "");
+        dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(), null, httpDataSourceFactory);
+
         MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url));
         player.prepare(videoSource);
         player.setPlayWhenReady(true);

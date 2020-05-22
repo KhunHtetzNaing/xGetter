@@ -1,3 +1,6 @@
+# Beware
+If you publish your app use this library, google will be suspended your app!
+
 # xGetter Library for Android!  
 [![](https://jitpack.io/v/KhunHtetzNaing/XGetter.svg)](https://jitpack.io/#KhunHtetzNaing/XGetter)  
 

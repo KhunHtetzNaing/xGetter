@@ -35,12 +35,10 @@ class XPlayer : AppCompatActivity() {
         @JvmField val XPLAYER_COOKIE = "xPlayer.COOKIE"
     }
 
-    var isInPipMode:Boolean = false
     lateinit var mUrl: String
     var mCookie:String = "null"
     lateinit var player : SimpleExoPlayer
     private var videoPosition:Long = 0L
-    var isPIPModeeEnabled:Boolean = true //Has the user disabled PIP mode in AppOpps?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +52,6 @@ class XPlayer : AppCompatActivity() {
         if(intent.getStringExtra(XPLAYER_COOKIE)!=null) {
             mCookie = intent.getStringExtra(XPLAYER_COOKIE)
         }
-
         savedInstanceState?.let { videoPosition = savedInstanceState.getLong(XPLAYER_POSITION) }
     }
 
@@ -147,7 +144,7 @@ class XPlayer : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         System.out.println("onResume")
-        if(videoPosition > 0L && !isInPipMode){
+        if(videoPosition > 0L){
             player.seekTo(videoPosition)
         }
         //Makes sure that the media controls pop up on resuming and when going between PIP and non-PIP states.
@@ -188,55 +185,6 @@ class XPlayer : AppCompatActivity() {
     }
 
     override fun onBackPressed(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && isPIPModeeEnabled) {
-            enterPIPMode()
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
-        if(newConfig !=null){
-            videoPosition = player.currentPosition
-            isInPipMode = !isInPictureInPictureMode
-        }
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-    }
-
-    //Called when the user touches the Home or Recents button to leave the app.
-    override fun onUserLeaveHint() {
-        super.onUserLeaveHint()
-        enterPIPMode()
-    }
-
-    @Suppress("DEPRECATION")
-    fun enterPIPMode(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
-            videoPosition = player.currentPosition
-            playerView.useController = false
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val params = PictureInPictureParams.Builder()
-                this.enterPictureInPictureMode(params.build())
-            } else {
-                this.enterPictureInPictureMode()
-            }
-            /* We need to check this because the system permission check is publically hidden for integers for non-manufacturer-built apps
-               https://github.com/aosp-mirror/platform_frameworks_base/blob/studio-3.1.2/core/java/android/app/AppOpsManager.java#L1640
-               ********* If we didn't have that problem *********
-                val appOpsManager = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-                if(appOpsManager.checkOpNoThrow(AppOpManager.OP_PICTURE_IN_PICTURE, packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA).uid, packageName) == AppOpsManager.MODE_ALLOWED)
-                30MS window in even a restricted memory device (756mb+) is more than enough time to check, but also not have the system complain about holding an action hostage.
-             */
-            Handler().postDelayed({checkPIPPermission()}, 30)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun checkPIPPermission(){
-        isPIPModeeEnabled = isInPictureInPictureMode
-        if(!isInPictureInPictureMode){
-            onBackPressed()
-        }
+        super.onBackPressed()
     }
 }

@@ -1,6 +1,7 @@
 package com.htetznaing.xgetter.Utils;
 
 import android.util.Base64;
+import android.webkit.CookieManager;
 
 import com.htetznaing.xgetter.Model.XModel;
 
@@ -20,6 +21,7 @@ public class Utils {
         XModel xModel = new XModel();
         xModel.setUrl(url);
         xModel.setQuality(quality);
+        xModel.setCookie(CookieManager.getInstance().getCookie(url));
         model.add(xModel);
     }
 

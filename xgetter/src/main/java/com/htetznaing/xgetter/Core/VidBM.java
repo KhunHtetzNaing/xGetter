@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 public class VidBM {
     public static ArrayList<XModel> fetch(String response){
         String encoded = getEncode(response);
+
+        System.out.println(response);
+
         if (encoded!=null && AADecoder.isAAEncoded(encoded)){
             try {
                 String src = getSrc(AADecoder.decode(encoded));

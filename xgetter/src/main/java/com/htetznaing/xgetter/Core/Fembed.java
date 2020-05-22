@@ -36,11 +36,7 @@ public class Fembed {
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
-            String id = matcher.group(3);
-            if (id.contains("/")){
-                id = id.replace("/","");
-            }
-            return id;
+            return matcher.group(3).replaceAll("&|/","");
         }
         return null;
     }

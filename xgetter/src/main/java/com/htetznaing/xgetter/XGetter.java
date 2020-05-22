@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
-import android.util.SparseArray;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -14,15 +13,23 @@ import android.webkit.WebViewClient;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.htetznaing.xgetter.Core.BitTube;
 import com.htetznaing.xgetter.Core.Fembed;
 import com.htetznaing.xgetter.Core.GDrive;
+import com.htetznaing.xgetter.Core.GDrive2020;
 import com.htetznaing.xgetter.Core.GoUnlimitedTO;
 import com.htetznaing.xgetter.Core.MP4Upload;
 import com.htetznaing.xgetter.Core.MegaUp;
+import com.htetznaing.xgetter.Core.Muvix;
+import com.htetznaing.xgetter.Core.Pstream;
 import com.htetznaing.xgetter.Core.SolidFiles;
+import com.htetznaing.xgetter.Core.StreamKIWI;
 import com.htetznaing.xgetter.Core.UpToStream;
-import com.htetznaing.xgetter.Core.VidBM;
+import com.htetznaing.xgetter.Core.VideoBIN;
+import com.htetznaing.xgetter.Core.VideoBmX;
 import com.htetznaing.xgetter.Core.Vidoza;
+import com.htetznaing.xgetter.Core.VivoSX;
+import com.htetznaing.xgetter.Core.Vlare;
 import com.htetznaing.xgetter.Model.XModel;
 import com.htetznaing.xgetter.Core.Twitter;
 import com.htetznaing.xgetter.Core.DailyMotion;
@@ -90,6 +97,14 @@ public class XGetter {
     private final String gounlimited = "https?:\\/\\/(www\\.)?(gounlimited)\\.[^\\/,^\\.]{2,}\\/.+";
     private final String cocoscope = "https?:\\/\\/(www\\.)?(cocoscope)\\.[^\\/,^\\.]{2,}\\/(watch\\?v).+";
     private final String vidbm = "https?:\\/\\/(www\\.)?(vidbm)\\.[^\\/,^\\.]{2,}\\/.+";
+    private final String muvix = "https?:\\/\\/(www\\.)?(muvix)\\.[^\\/,^\\.]{2,}\\/(video|download).+";
+    private final String pstream = "https?:\\/\\/(www\\.)?(pstream)\\.[^\\/,^\\.]{2,}\\/(.*)\\/.+";
+    private final String vlareTV = "https?:\\/\\/(www\\.)?(vlare\\.tv)\\/(.*)\\/.+";
+    private final String vivoSX = "https?:\\/\\/(www\\.)?(vivo\\.sx)\\/.+";
+    private final String streamKiwi = "https?:\\/\\/(www\\.)?(stream\\.kiwi)\\/(.*)\\/.+";
+    private final String bitTube = "https?:\\/\\/(www\\.)?(bittube\\.video\\/videos)\\/(watch|embed)\\/.+";
+    private final String videoBIN = "https?:\\/\\/(www\\.)?(videobin\\.co)\\/.+";
+    private final String fourShared = "https?:\\/\\/(www\\.)?(4shared\\.com)\\/(video|web\\/embed)\\/.+";
 
     public XGetter(Context view) {
         this.context = view;
@@ -143,7 +158,7 @@ public class XGetter {
         init();
         boolean fb = false;
         boolean run = false;
-        boolean mfire = false, isOkRu = false,isVk=false,tw=false,gdrive=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false,isDailyMotion=false,isMegaUp=false,isGoUnlimited = false,isCocoscope=false,isVidBM=false;
+        boolean mfire = false, isOkRu = false,isVk=false,tw=false,gdrive=false,yt=false,solidf=false,isvidoza=false,isuptostream=false,isFanSubs=false,isMP4Uload=false,isSendVid = false,isFembed=false,isVeryStream = false,isFileRio=false,isDailyMotion=false,isMegaUp=false,isGoUnlimited = false,isCocoscope=false,isVidBM=false,isMuvix = false,isPStream=false,isVlareTV = false,isVivoSX=false,isStreamKiwi=false,isBitTube=false,isVideoBin=false,is4Shared;
        if (check(mp4upload, url)) {
             run = true;
             isMP4Uload = true;
@@ -173,7 +188,7 @@ public class XGetter {
             //gdrive
             run = true;
             gdrive = true;
-            url = get_drive_id(url);
+//            url = get_drive_id(url);
         } else if (check_fb_video(url)) {
             //fb
             run = true;
@@ -280,6 +295,39 @@ public class XGetter {
            //https://www.vidbm.com/
            run = true;
            isVidBM = true;
+       }else if (check(muvix,url)){
+           //https://muvix.us/video/kAoMUo4QMpwWTkn/
+           url = url.replaceAll("/video/","/download/");
+           isMuvix = true;
+           run = true;
+       }else if (check(pstream,url)){
+           //https://www.pstream.net/v/BRrExbMveZOvP4B
+           run = true;
+           isPStream = true;
+       }else if(check(vlareTV,url)){
+           //https://vlare.tv/v/V0egtPxz
+           run = true;
+           isVlareTV = true;
+       }else if (check(vivoSX,url)){
+           //https://vivo.sx/60d91cc3aa
+           run = true;
+           isVivoSX = true;
+       }else if (check(streamKiwi,url)){
+           //https://stream.kiwi/e/Auy1iW
+           run = true;
+           isStreamKiwi = true;
+       }else if (check(bitTube,url)){
+           //https://bittube.video/videos/watch/36231473-613d-47c6-89a3-4bff2502dc92
+           run = true;
+           isBitTube = true;
+       }else if (check(videoBIN,url)){
+           //https://videobin.co/4swhhd3thhe7
+           isVideoBin = true;
+           run = true;
+       }else if (check(fourShared,url)){
+           //https://www.4shared.com/video/bLza9r9mea/45016068_2204489923208618_5254.html
+           is4Shared = true;
+           run = true;
        }
 
         if (run) {
@@ -322,22 +370,38 @@ public class XGetter {
             } else if (isGoUnlimited){
                 goUnlimited(url);
             } else if (isCocoscope){
-                sendvid(url);
+                cocoScope(url);
             } else if (isVidBM){
                 vidBM(url);
+            } else if (isMuvix){
+                muvix(url);
+            } else if (isPStream){
+                Pstream.fetch(url,onComplete);
+            } else if (isVlareTV){
+                Vlare.fetch(url,onComplete);
+            } else if (isVivoSX){
+                VivoSX.fetch(url,onComplete);
+            } else if (isStreamKiwi){
+                StreamKIWI.get(context,url,onComplete);
+            } else if (isBitTube){
+                BitTube.fetch(url,onComplete);
+            } else if (isVideoBin){
+                VideoBIN.fetch(url,onComplete);
+            } else if (isStreamKiwi){
+                StreamKIWI.get(context,url,onComplete);
             }
         }else onComplete.onError();
     }
 
-    private void vidBM(String url) {
+    private void muvix(String url) {
         AndroidNetworking.get(url)
                 .build()
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        ArrayList<XModel> xModels = VidBM.fetch(response);
+                        ArrayList<XModel> xModels = Muvix.fetch(response);
                         if (xModels!=null){
-                            onComplete.onTaskCompleted(xModels,false);
+                            onComplete.onTaskCompleted(xModels,true);
                         }else onComplete.onError();
                     }
 
@@ -346,6 +410,29 @@ public class XGetter {
                         onComplete.onError();
                     }
                 });
+    }
+
+    private void vidBM(String url) {
+//        url = url.replaceAll(".com/",".com/embed-");
+//        AndroidNetworking.get(url)
+//                .setUserAgent(agent)
+//                .build()
+//                .getAsString(new StringRequestListener() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        ArrayList<XModel> xModels = VidBM.fetch(response);
+//                        if (xModels!=null){
+//                            onComplete.onTaskCompleted(xModels,false);
+//                        }else onComplete.onError();
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError anError) {
+//                        onComplete.onError();
+//                    }
+//                });
+
+        VideoBmX.get(context,url,onComplete);
     }
 
     private void megaUp(String url) {
@@ -406,45 +493,49 @@ public class XGetter {
 //    }
 
     private void gdrive(final String url){
-        CookieJar cookieJar = new CookieJar() {
-            private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
-
-            @Override
-            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                System.out.println("saveFromResponse: "+cookies);
-                cookie = getDRIVE_STREAM(cookies.toString())+getCookie(cookies.toString());
-                cookieStore.put(url.host(), cookies);
-            }
-
-            @Override
-            public List<Cookie> loadForRequest(HttpUrl url) {
-                List<Cookie> cookies = cookieStore.get(url.host());
-                return cookies != null ? cookies : new ArrayList<Cookie>();
-            }
-        };
-
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .cookieJar(cookieJar)
-                .build();
-
-        AndroidNetworking.get("https://drive.google.com/get_video_info?docid="+url)
-                .setOkHttpClient(okHttpClient)
-                .build()
-                .getAsString(new StringRequestListener() {
-                    @Override
-                    public void onResponse(String response) {
-                        ArrayList<XModel> xModels = GDrive.fetch(cookie,response);
-                        if (xModels!=null && cookie!=null && !cookie.contains("null")) {
-                            onComplete.onTaskCompleted(sortMe(xModels), true);
-                            cookie = null;
-                        }else onComplete.onError();
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        onComplete.onError();
-                    }
-                });
+        GDrive2020.get(context,url,onComplete);
+//
+//        CookieJar cookieJar = new CookieJar() {
+//            private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
+//
+//            @Override
+//            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+//                System.out.println("saveFromResponse: "+cookies);
+//                cookie = getDRIVE_STREAM(cookies.toString())+getCookie(cookies.toString());
+//
+//                System.out.println("saveFromResponse: Result => "+cookie);
+//                cookieStore.put(url.host(), cookies);
+//            }
+//
+//            @Override
+//            public List<Cookie> loadForRequest(HttpUrl url) {
+//                List<Cookie> cookies = cookieStore.get(url.host());
+//                return cookies != null ? cookies : new ArrayList<Cookie>();
+//            }
+//        };
+//
+//        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+//                .cookieJar(cookieJar)
+//                .build();
+//
+//        AndroidNetworking.get("https://drive.google.com/get_video_info?docid="+url)
+//                .setOkHttpClient(okHttpClient)
+//                .build()
+//                .getAsString(new StringRequestListener() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        ArrayList<XModel> xModels = GDrive.fetch(cookie,response);
+//                        if (xModels!=null && cookie!=null && !cookie.contains("null")) {
+//                            onComplete.onTaskCompleted(sortMe(xModels), true);
+//                            cookie = null;
+//                        }else onComplete.onError();
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError anError) {
+//                        onComplete.onError();
+//                    }
+//                });
     }
 
     private void twitter(final String url){
@@ -894,6 +985,44 @@ public class XGetter {
                             ArrayList<XModel> xModels = new ArrayList<>();
                             putModel(src,"Normal",xModels);
                             onComplete.onTaskCompleted(xModels,false);
+                        }else onComplete.onError();
+                    }
+
+                    private String getSrc(String response){
+                        final String regex = "<source ?src=\"(.*?)\"";
+                        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                        final Matcher matcher = pattern.matcher(response);
+
+                        if (matcher.find()) {
+                            return matcher.group(1);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        onComplete.onError();
+                    }
+                });
+    }
+
+    private void cocoScope(String url){
+        AndroidNetworking.get(url)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        String src = getSrc(response);
+                        boolean lowQuality = response.contains("VHSButton");
+                        if (src!=null){
+                            ArrayList<XModel> xModels = new ArrayList<>();
+                            putModel(src,"Normal",xModels);
+                            if (lowQuality) {
+                                String last = src.substring(src.lastIndexOf("."));
+                                src = src.replace(last, "_360" + last);
+                                putModel(src, "Low", xModels);
+                            }
+                            onComplete.onTaskCompleted(xModels,lowQuality);
                         }else onComplete.onError();
                     }
 

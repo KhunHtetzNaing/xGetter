@@ -11,17 +11,19 @@ import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.io.UnsupportedEncodingException;
+import com.htetznaing.xgetter.Model.XModel;
+import com.htetznaing.xgetter.XGetter;
 
-public class MegaUp {
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
+public class VideoBmX {
     private static WebView webView;
-    private static OnDone onDone;
-    private Handler mHandler = new Handler();
-    private boolean stopMMHandler = false;
+    private static XGetter.OnTaskCompleted onTaskCompleted;
 
     @SuppressLint("JavascriptInterface")
-    public void get(Context context,String url, final OnDone onDone){
-        this.onDone = onDone;
+    public static void get(Context context,String url, final XGetter.OnTaskCompleted onDone){
+        onTaskCompleted = onDone;
         webView = new WebView(context);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new MyInterface(),"xGetter");
@@ -29,6 +31,7 @@ public class MegaUp {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                System.out.println("Load => Find");
                 findMe();
             }
         });
@@ -39,15 +42,16 @@ public class MegaUp {
                 final String fileName= URLUtil.guessFileName(url,contentDisposition,mimetype);
                 if (webView.getTitle().contains(fileName)) {
                     destroyWebView();
-                    stopMMHandler = true;
                     result(url);
                 }
             }
         });
+
+        url = url.replaceAll(".com/",".com/embed-");
         webView.loadUrl(url);
     }
 
-    public static String decodeBase64(String coded){
+    private static String decodeBase64(String coded){
         try {
             return new String(Base64.decode(coded.getBytes("UTF-8"), Base64.DEFAULT));
         } catch (UnsupportedEncodingException e) {
@@ -56,23 +60,14 @@ public class MegaUp {
         return null;
     }
 
-    private void findMe() {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (webView!=null) {
-                    webView.loadUrl("javascript: (function() {" + decodeBase64(getJs()) + "})()");
-                    if (!stopMMHandler) {
-                        mHandler.postDelayed(this, 100);
-                    }
-                }
-            }
-        };
-        mHandler.post(runnable);
+    private static void findMe() {
+        if (webView!=null) {
+            webView.loadUrl("javascript: (function() {" + decodeBase64(getJs()) + "})()");
+        }
     }
 
-    private String getJs(){
-        return "aWYgKHdpbmRvdy5sb2NhdGlvbi5ocmVmLmluZGV4T2YoJ2Vycm9yLmh0bWwnKSAhPT0gLTEpIHsKICAgIHhHZXR0ZXIuZXJyb3Iod2luZG93LmxvY2F0aW9uLmhyZWYpOwp9IGVsc2UgewogICAgc2Vjb25kcyA9IDA7CiAgICBkaXNwbGF5KCk7CgogICAgdmFyIHJlZ2V4ID0gL2hyZWY9JyguKiknL2dtLAogICAgICAgIHN0ciA9IGRvY3VtZW50LmJvZHkuaW5uZXJIVE1MLAogICAgICAgIG07CgogICAgaWYgKChtID0gcmVnZXguZXhlYyhzdHIpKSAhPT0gbnVsbCkgewogICAgICAgIGRsKG1bMV0pOwogICAgfQoKICAgIGZ1bmN0aW9uIGRsKHVybCkgewogICAgICAgIHZhciBhbmNob3IgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdhJyk7CiAgICAgICAgYW5jaG9yLnNldEF0dHJpYnV0ZSgnaHJlZicsIHVybCk7CiAgICAgICAgYW5jaG9yLnNldEF0dHJpYnV0ZSgnZG93bmxvYWQnLCBkb2N1bWVudC50aXRsZSk7CiAgICAgICAgYW5jaG9yLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7CiAgICAgICAgZG9jdW1lbnQuYm9keS5hcHBlbmRDaGlsZChhbmNob3IpOwogICAgICAgIGFuY2hvci5jbGljaygpOwogICAgICAgIGRvY3VtZW50LmJvZHkucmVtb3ZlQ2hpbGQoYW5jaG9yKTsKICAgIH0KCn0=";
+    private static String getJs(){
+        return "dmFyIHNyYyA9IGRvY3VtZW50LmdldEVsZW1lbnRzQnlUYWdOYW1lKCd2aWRlbycpOwppZihzcmMpewogICAgc3JjID0gc3JjLml0ZW0oMCkuc3JjOwogICAgZGwoc3JjKTsKfQoKZnVuY3Rpb24gZGwodXJsKSB7CiAgICAgICAgdmFyIGFuY2hvciA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2EnKTsKICAgICAgICBhbmNob3Iuc2V0QXR0cmlidXRlKCdocmVmJywgdXJsKTsKICAgICAgICBhbmNob3Iuc2V0QXR0cmlidXRlKCdkb3dubG9hZCcsIGRvY3VtZW50LnRpdGxlKTsKICAgICAgICBhbmNob3Iuc3R5bGUuZGlzcGxheSA9ICdub25lJzsKICAgICAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKGFuY2hvcik7CiAgICAgICAgYW5jaG9yLmNsaWNrKCk7CiAgICAgICAgZG9jdW1lbnQuYm9keS5yZW1vdmVDaGlsZChhbmNob3IpOwp9";
     }
 
     private static void destroyWebView() {
@@ -81,7 +76,7 @@ public class MegaUp {
         }
     }
 
-    private class MyInterface {
+    private static class MyInterface {
         @SuppressWarnings("unused")
         @JavascriptInterface
         public void error(final String error) {
@@ -89,7 +84,6 @@ public class MegaUp {
                 @Override
                 public void run() {
                     destroyWebView();
-                    stopMMHandler = true;
                     result(null);
                 }
             });
@@ -98,10 +92,14 @@ public class MegaUp {
 
     private static void result(String result){
         destroyWebView();
-        onDone.result(result);
-    }
-
-    public interface OnDone{
-        void result(String result);
+        System.out.println("Fucked: "+result);
+        if (result!=null && !result.isEmpty()){
+            ArrayList<XModel> xModels = new ArrayList<>();
+            XModel model = new XModel();
+            model.setUrl(result);
+            model.setQuality("Normal");
+            xModels.add(model);
+            onTaskCompleted.onTaskCompleted(xModels,false);
+        }else onTaskCompleted.onError();
     }
 }
