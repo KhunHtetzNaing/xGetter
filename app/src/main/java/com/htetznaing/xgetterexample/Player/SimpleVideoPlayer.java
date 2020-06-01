@@ -26,7 +26,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.htetznaing.xgetter.Model.XModel;
+import com.htetznaing.lowcostvideo.Model.XModel;
 import com.htetznaing.xgetterexample.R;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
 

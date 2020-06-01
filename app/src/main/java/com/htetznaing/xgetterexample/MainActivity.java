@@ -32,9 +32,8 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
-import com.htetznaing.xgetter.Model.XModel;
-import com.htetznaing.xgetter.XGetter;
-import com.htetznaing.xgetterexample.Player.SimpleVideoPlayer;
+import com.htetznaing.lowcostvideo.LowCostVideo;
+import com.htetznaing.lowcostvideo.Model.XModel;
 import com.htetznaing.xgetterexample.Utils.XDownloader;
 import com.htetznaing.xplayer.XPlayer;
 
@@ -48,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    XGetter xGetter;
+    LowCostVideo xGetter;
     ProgressDialog progressDialog;
     String org;
     EditText edit_query;
@@ -60,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        xGetter = new XGetter(this);
+        xGetter = new LowCostVideo(this);
 
-        xGetter.onFinish(new XGetter.OnTaskCompleted() {
+        xGetter.onFinish(new LowCostVideo.OnTaskCompleted() {
 
             @Override
             public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {
@@ -76,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                         multipleQualityDialog(vidURL);
                     }else done(null);
                 }else {
-                    System.out.println(vidURL.get(0).getUrl());
                    done(vidURL.get(0));
                 }
             }
@@ -140,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fb(View view) {
-        letGo("925916414463007");
+        letGo("317455892574677");
     }
 
     public void mediafire(View view) {
@@ -168,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void vidozafiles(View view) {
-        letGo("https://vidoza.net/8tpr1zvluray.html");
+        letGo("https://vidoza.net/vjo82qvj91d0.html");
     }
 
     public void uptostreamfiles(View view) {
@@ -392,7 +390,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showAbout() {
-        String message = "Extract stream/download url!\n" +
+        String message = "Need to fix\n" +
+                "4Shared\n" +
+                "StreamWIKI\n" +
+                "\n" +
+                "Extract stream/download url!\n" +
                 "\n" +
                 "#Supported Sites\n" +
                 "\n" +
@@ -405,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                 "7. Ok.Ru\n" +
                 "8. VK\n" +
                 "9. Twitter\n" +
-                "10. Youtube\n" +
+                "10. Youtube [Removed]\n" +
                 "11. SolidFiles\n" +
                 "12. Vidoza\n" +
                 "13. UptoStream\n" +
@@ -419,9 +421,16 @@ public class MainActivity extends AppCompatActivity {
                 "21. GoUnlimited\n" +
                 "22. CocoScope\n" +
                 "23. VidBM\n" +
+                "23. Vlare\n" +
+                "24. pStream\n" +
+                "25. Vivo.sx\n" +
+                "26. VideoBin\n" +
+                "27. BitTube\n" +
+                "28. 4Shared\n" +
+                "29. StreamTape\n" +
+                "30. Vudeo\n" +
                 "\n" +
-                "Github Repo => https://github.com/KhunHtetzNaing/xGetter" +
-                "\n" +
+                "Github Repo => https://github.com/KhunHtetzNaing/xGetter\n" +
                 "Developer => https://facebook.com/KhunHtetzNaing0";
         View view = getLayoutInflater().inflate(R.layout.done, null);
         TextView textView = view.findViewById(R.id.message);
@@ -597,7 +606,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void bittube(View view) {
-        letGo("https://bittube.video/videos/watch/36231473-613d-47c6-89a3-4bff2502dc92");
+        letGo("https://bittube.video/videos/watch/8e02be96-fa09-4309-a469-3c74c945182b");
     }
 
     public void videobin(View view) {
@@ -627,7 +636,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                System.out.println("File Size: "+s);
+                System.out.println(xModel.getUrl()+" => File Size: "+s+"\nCookie => "+xModel.getCookie());
                 Toast.makeText(MainActivity.this, "File Size: "+s, Toast.LENGTH_SHORT).show();
             }
         }.execute();
@@ -642,5 +651,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void fourshared(View view) {
         letGo("https://www.4shared.com/video/bLza9r9mea/45016068_2204489923208618_5254.html");
+    }
+    public void streamtape(View view) {
+        letGo("https://streamtape.com/v/GbmzAG9ZaVHlzK/%5BAsahi%5D_Fugou_Keiji_-_Balance_-_UNLIMITED_-_01_%5B1080p%5D.mp4");
+    }
+
+    public void vudeo(View view) {
+        letGo("https://vudeo.net/azhfxfpzq6yq.html");
     }
 }

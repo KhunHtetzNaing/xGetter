@@ -1,8 +1,5 @@
 package com.htetznaing.xgetterexample;
 
-import com.htetznaing.xgetter.Model.XModel;
-import com.htetznaing.xgetter.Utils.GPhotosUtils;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,13 +7,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.htetznaing.xgetter.Utils.GPhotosUtils.getGPhotoLink;
 
 public class Test {
     public static void main(String zz[]){

@@ -1,20 +1,16 @@
-# Beware
-If you publish your app use this library, google will be suspended your app!
+# xGetter => LowCostVideo [3.0]
+I change something to comply with Google play policy.
+- Remove external javascript file
+- Change the class name to LowCostVideo
+- Rewrite codes
 
 # xGetter Library for Android!  
 [![](https://jitpack.io/v/KhunHtetzNaing/XGetter.svg)](https://jitpack.io/#KhunHtetzNaing/XGetter)  
 
-**#NOTE**
-***I don't know why google photos can't stream in Video Player (eg. ExoPlayer)  
-But, you can download and play in JWPlayer -_-***
-
 ရုပ်ရှင်နဲ့ Video App ဖန်တီးချင်သူတွေအနေနဲ့  
-အသုံးဝင်မယ့် Lib လေးတစ်ခုဖန်တီးပေးထားပါတယ်။  
-Video တွေကို အကန့်အသတ်မရှိ Free တင်လို့ရပြီ  
-ကြည့်တဲ့အချိန်မှာကြော်ငြာအရမ်းတက်တဲ့  
-Openload, Streamango တို့လိုလင့်တွေကနေ  
+အသုံးဝင်မယ့် Library လေးပါ။   
 ကြော်ငြာကြည့်စရာမလိုပဲ  
-တိုက်ရိုက်ဒေါင်းဖို့လင့်ဆွဲထုတ်ပေးနိုင်တဲ့ကောင်လေးပါ။  
+တိုက်ရိုက်ဒေါင်းဖို့လင့်ဆွဲထုတ်ပေးနိုင်ပြီး
 ရလာတဲ့လင့်ကို တိုက်ရိုက်ဒေါင်းမလား  
 ကိုယ်ပိုင် Player နဲ့တိုက်ရိုက်ပြမလား  
 အဆင်ပြေသလိုအသုံးချနိုင်ပါတယ်။  
@@ -38,12 +34,22 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
  - **16. Uptobox**  
  - **17. FEmbed**  
  - **18. FileRio**  
-
-## New supported sites [v2.0.1]
  - **19. MegaUp**  
  - **20. GoUnlimited**  
  - **21. CocoScope**  
- - **22. VidBM**  
+ - **22. VidBM**
+ 
+## New supported sites [3.0]
+
+- **23. Vlare**
+- **24. pStream**
+- **25. Vivo.sx**
+- **26. VideoBin**
+- **27. BitTube**
+- **28. 4Shared**
+- **29. StreamTape**
+- **30. Vudeo**
+  
   
 တို့ပဲဖြစ်ပါတယ်။  
 ဒီဆိုဒ်တွေအားလုံးကနေ ကြော်ငြာကြည့်စရာမလိုပဲတိုက်ရိုက်လင့်ထုတ်ပေးမှာပါ။  
@@ -67,7 +73,7 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
   
 
     dependencies {  
-    	implementation 'com.github.KhunHtetzNaing:xGetter:2.0.1'
+    	implementation 'com.github.KhunHtetzNaing:xGetter:3.0'
     }
 
 **Android Studio** သမားတွေဆိုရင်တော့ **Sync Now** လုပ်ပေးပါ။  
@@ -88,8 +94,8 @@ Openload, Streamango တို့လိုလင့်တွေကနေ
   
 ပြီးရင်တော့ကိုယ်ခေါ်ချင်တဲ့ Activity ကနေ  
 
-    XGetter xGetter = new XGetter(this);  
-    xGetter.onFinish(new XGetter.OnTaskCompleted() {  
+    LowCostVideo xGetter = new LowCostVideo(this);  
+    xGetter.onFinish(new LowCostVideo.OnTaskCompleted() {  
         @Override  
       public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {  
             if (multiple_quality){ //This video you can choose qualities  
