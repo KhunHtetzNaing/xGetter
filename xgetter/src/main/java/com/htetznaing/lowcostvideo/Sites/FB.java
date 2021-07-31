@@ -18,7 +18,7 @@ Khun Htetz Naing
 
 public class FB {
     public static void fetch(String url, final LowCostVideo.OnTaskCompleted onTaskCompleted){
-        AndroidNetworking.post("https://fbdown.net/download.php")
+        AndroidNetworking.post("https://fdown.net/download.php")
                 .addBodyParameter("URLz", "https://www.facebook.com/video.php?v="+ url)
                 .addHeaders("User-agent", agent)
                 .build()
